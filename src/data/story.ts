@@ -19,7 +19,7 @@ export const CHAPTERS = [
  *   count 는 뽑힌 파일 수와 같아야 한다 (10초 영상 → 120장).
  */
 export const FILM = {
-  // 2026-10-19 Gemini 생성 영상(ph/gemini_generated_video_ac038f0e.mp4)에서 뽑은 120장 — 실제 촬영본이 오면 교체
+  // 2026-10-19 Gemini 생성 영상(ph/gemini_generated_video_01d911d3.mp4)에서 뽑은 120장 — 실제 촬영본이 오면 교체
   sequence: { base: '/film/f', pad: 3, ext: '.webp', count: 120 } as { base: string; pad: number; ext: string; count: number } | null,
   /** 첫 장 / 움직임 줄임 설정일 때 보이는 정지 사진 — 영상의 마지막 장(완성된 파우치) */
   poster: '/film/poster.webp' as string | null,
