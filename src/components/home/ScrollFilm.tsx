@@ -121,23 +121,11 @@ export default function ScrollFilm({ hero }: { hero: ReactNode }) {
     }
   }, [reduced, seq, phases])
 
-  const shade = (
-    <div
-      aria-hidden="true"
-      className="absolute inset-0"
-      style={{
-        background:
-          'linear-gradient(to top, rgba(20,10,14,0.95) 0%, rgba(20,10,14,0.4) 50%, rgba(20,10,14,0.1) 80%, transparent 100%)',
-      }}
-    />
-  )
-
   if (reduced) {
     return (
       <Scene id="film" label="돌돌 비트즙" bare>
         <div className="relative flex min-h-svh items-end overflow-hidden">
           <Backdrop />
-          {shade}
           <div className="relative z-10 w-full">{hero}</div>
         </div>
         <div className="mx-auto flex max-w-5xl flex-col gap-16 px-5 py-28 md:px-10">
@@ -159,7 +147,6 @@ export default function ScrollFilm({ hero }: { hero: ReactNode }) {
         <div className="sticky top-0 h-svh overflow-hidden">
           <Backdrop />
           {seq && <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 h-full w-full" />}
-          {shade}
 
           {/* 히어로 — 첫 구간에만 보인다. 사라져도 자리를 지킨다(투명 · 클릭 막음) */}
           <div
