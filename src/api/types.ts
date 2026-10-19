@@ -1,4 +1,4 @@
-// docs/api.md 와 1:1 로 맞춘 타입
+// BE 저장소의 docs/api.md 와 1:1 로 맞춘 타입
 
 export type Role = 'USER' | 'ADMIN'
 
