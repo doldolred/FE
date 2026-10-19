@@ -8,7 +8,7 @@ export const CHAPTERS = [
   ['01', '비트', '#beet'],
   ['02', '과정', '#process'],
   ['03', '약속', '#promise'],
-  ['04', '상품', '#shop'],
+  ['04', '라인업', '#shop'],
 ] as const
 
 /**

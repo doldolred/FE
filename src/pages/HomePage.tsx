@@ -5,13 +5,13 @@ import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import Chapter from '../components/home/Chapter'
 import Line from '../components/home/Line'
+import Lineup from '../components/home/Lineup'
 import ProcessScene from '../components/home/ProcessScene'
 import Scene from '../components/home/Scene'
 import SceneDots from '../components/home/SceneDots'
 import ScrollFilm from '../components/home/ScrollFilm'
 import ScrubText from '../components/home/ScrubText'
 import { getErrorMessage } from '../lib/errors'
-import { formatPrice } from '../lib/format'
 import { CHAPTERS, MANIFESTO, PROMISES } from '../data/story'
 
 /**
@@ -121,36 +121,20 @@ export default function HomePage() {
       {/* ── 03 약속 ─────────────────────────────────────────── */}
       <ScrubText id="promise" label="약속" en="03 — OUR PROMISE" text={MANIFESTO} />
 
-      {/* ── 04 상품 ─────────────────────────────────────────── */}
-      <Chapter id="shop" n="04" en="SHOP" label="상품" title={['오늘부터', '한 포씩']}>
-        {isPending ? (
-          <p className="text-cream/50">불러오는 중…</p>
-        ) : error ? (
-          <p role="alert" className="text-beet-200">
+      {/* ── 04 라인업 — 상품을 좌우로 넘기며 360° 로 본다 ──────── */}
+      {isPending ? (
+        <Scene id="shop" label="라인업" bare className="chapter">
+          <p className="py-28 text-center text-cream/50">불러오는 중…</p>
+        </Scene>
+      ) : error ? (
+        <Scene id="shop" label="라인업" bare className="chapter">
+          <p role="alert" className="py-28 text-center text-beet-200">
             {getErrorMessage(error)}
           </p>
-        ) : products.length === 0 ? (
-          <p className="text-cream/50">준비 중인 상품이 없어요.</p>
-        ) : (
-          <ul className="flex flex-col">
-            {products.map((p) => (
-              <li key={p.id} className="scrub-in">
-                <Link
-                  to={`/products/${p.id}`}
-                  className="group flex items-baseline justify-between gap-4 border-b border-cream/15 py-6 transition-colors duration-500 hover:border-beet-300 md:py-8"
-                >
-                  <span className="text-2xl font-bold text-cream transition-[color,transform] duration-500 ease-soft group-hover:translate-x-2 group-hover:text-beet-300 md:text-4xl">
-                    {p.name}
-                  </span>
-                  <span className="shrink-0 text-right text-sm text-cream/60 md:text-base">
-                    {p.stock === 0 ? '품절' : formatPrice(p.price)}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Chapter>
+        </Scene>
+      ) : (
+        <Lineup products={products} />
+      )}
 
       {/* ── 마지막 한 화면 ──────────────────────────────────── */}
       <Scene id="start" label="시작" className="flex items-center">

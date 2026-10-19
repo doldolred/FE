@@ -5,9 +5,11 @@ import { addCartItem } from '../api/cart'
 import { fetchProduct } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import ProductImage from '../components/product/ProductImage'
+import ProductShowcase from '../components/product/ProductShowcase'
 import Button from '../components/ui/Button'
 import QuantityStepper from '../components/ui/QuantityStepper'
 import { ErrorMessage, Loading } from '../components/ui/Status'
+import { SHOWCASE } from '../data/showcase'
 import { formatPrice } from '../lib/format'
 import { useIsLoggedIn } from '../stores/authStore'
 
@@ -51,11 +53,24 @@ export default function ProductDetailPage() {
     else setAdded(true)
   }
 
-  return (
-    <div className="grid gap-10 md:grid-cols-2">
-      <ProductImage src={product.imageUrl} alt={product.name} className="rounded-2xl" />
+  // 쇼케이스(360° · 특징)가 있는 상품은 위에 어두운 무대, 아래에 구매 패널
+  const showcase = SHOWCASE[product.id]
 
-      <div>
+  return (
+    <div className="space-y-10">
+      {showcase && <ProductShowcase name={product.name} showcase={showcase} withFeatures />}
+
+      <div className={`grid gap-10 ${showcase ? 'md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]' : 'md:grid-cols-2'}`}>
+        {showcase ? (
+          <div>
+            <p className="text-xs font-semibold tracking-[0.3em] text-beet-600">{showcase.wordmark}</p>
+            <p className="mt-2 text-lg text-neutral-600">{showcase.tagline}</p>
+          </div>
+        ) : (
+          <ProductImage src={product.imageUrl} alt={product.name} className="rounded-2xl" />
+        )}
+
+        <div>
         <h1 className="text-2xl font-bold">{product.name}</h1>
         <p className="mt-3 text-2xl font-extrabold text-beet-800">{formatPrice(product.price)}</p>
         {product.description && <p className="mt-6 whitespace-pre-line text-neutral-600">{product.description}</p>}
@@ -108,6 +123,7 @@ export default function ProductDetailPage() {
             {soldOut ? '품절' : '바로 구매'}
           </Button>
         </div>
+      </div>
       </div>
     </div>
   )
