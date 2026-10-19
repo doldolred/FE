@@ -1,12 +1,6 @@
-import { apiGet } from './client'
+import { api } from './client'
+import type { Product } from './types'
 
-export interface Product {
-  id: number
-  name: string
-  description: string | null
-  price: number
-  stock: number
-  imageUrl: string | null
-}
+export const fetchProducts = () => api.get<Product[]>('/api/products')
 
-export const fetchProducts = () => apiGet<Product[]>('/api/products')
+export const fetchProduct = (id: number) => api.get<Product>(`/api/products/${id}`)

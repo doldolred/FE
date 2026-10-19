@@ -1,57 +1,292 @@
-:root {
-  --beet: #8e1b4a;
-  --text: #222;
-  --muted: #666;
-  --border: #eee;
-  font-family: Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
-  color: var(--text);
-  background: #fff;
-}
+@import 'tailwindcss';
 
-* {
-  box-sizing: border-box;
+@theme {
+  --font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+
+  /* 브랜드 컬러: 비트 */
+  --color-beet-50: #fdf2f6;
+  --color-beet-100: #fce7ef;
+  --color-beet-200: #f9cfe0;
+  --color-beet-300: #f0729f; /* 어두운 바탕 위 강조 */
+  --color-beet-500: #c0265f;
+  --color-beet-600: #a61e52;
+  --color-beet-700: #8e1b4a;
+  --color-beet-800: #74173d;
+  --color-beet-900: #5c1231;
+
+  /* 메인 스토리텔링 — 비트 잉크 바탕 + 크림 글자 */
+  --color-ink: #140a0e;
+  --color-cream: #f6eee9;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body {
-  margin: 0;
+  @apply bg-white text-neutral-900 antialiased;
 }
 
-.header {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
+/* ── 메인: 빅 히어로 + 스크롤 스토리텔링 ──────────────────────────
+ * 연출은 두 겹이다:
+ *   1. 스크롤 구동(animation-timeline: view()) — 지원 브라우저에서 항목이 스크롤에 따라 밝아진다(.scrub-in)
+ *   2. 그 밖에는 IntersectionObserver 가 붙이는 data-active 로 한 번 나타난다(components/home/Scene)
+ * JS 가 없으면(html[data-motion] 없음) 전부 그냥 보인다 — 숨기는 건 스크립트가 붙은 뒤에만.
+ */
+html {
+  scroll-behavior: smooth;
 }
 
-.logo {
-  color: var(--beet);
-  font-weight: 700;
-  font-size: 20px;
-  text-decoration: none;
+.scene {
+  min-height: 100svh;
+  position: relative;
+  overflow: hidden;
 }
 
-.container {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 24px 16px;
+html[data-motion='on'] [data-scene] [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 900ms var(--ease-soft),
+    transform 1100ms var(--ease-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html[data-motion='on'] [data-scene][data-active='true'] [data-reveal] {
+  opacity: 1;
+  transform: none;
 }
 
-.product-grid {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+/* 표제 줄 — 아래에서 올라오며 나타난다(줄마다 조금씩 늦게) */
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.line-inner {
+  display: block;
+}
+html[data-motion='on'] [data-scene] .line-inner {
+  transform: translateY(110%);
+  transition: transform 1200ms var(--ease-soft);
+  transition-delay: var(--line-delay, 0ms);
+}
+html[data-motion='on'] [data-scene][data-active='true'] .line-inner {
+  transform: none;
 }
 
-.product-card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+/* 장면 배경 — 들어오며 천천히 가라앉는다 */
+html[data-motion='on'] .scene-bg {
+  transform: scale(1.08);
+  transition: transform 1600ms var(--ease-soft);
+}
+html[data-motion='on'] [data-scene][data-active='true'] .scene-bg {
+  transform: scale(1);
+}
+@supports (animation-timeline: view()) {
+  html[data-motion='on'] .scene-bg {
+    transition: none;
+    animation: scene-bg-drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  @keyframes scene-bg-drift {
+    from {
+      transform: scale(1.12) translateY(-3%);
+    }
+    to {
+      transform: scale(1) translateY(3%);
+    }
+  }
+
+  /* 글 덩어리 — 배경과 반대로 천천히 떠오른다(시차) */
+  html[data-motion='on'] .scene-text {
+    animation: scene-text linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  @keyframes scene-text {
+    from {
+      transform: translateY(7vh);
+    }
+    to {
+      transform: translateY(-7vh);
+    }
+  }
+
+  /* 장의 항목 — 아래에서 올라오는 동안 흐림 → 또렷 */
+  html[data-motion='on'] .scrub-in {
+    animation: scrub-in linear both;
+    animation-timeline: view();
+    animation-range: entry 15% entry 70%;
+  }
+  @keyframes scrub-in {
+    from {
+      opacity: 0.12;
+      transform: translateY(32px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
-.product-card p {
-  color: var(--muted);
+/* 장의 바탕 — 잉크 속에서 아주 조금 밝아졌다 어두워진다 */
+.chapter {
+  background: linear-gradient(180deg, transparent 0%, #1d0f15 50%, transparent 100%);
 }
 
-.error {
-  color: #c00;
+/* 페이지 진행 막대 — 맨 위 2px. 스크롤 구동이 되는 브라우저에서만 */
+.page-progress {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  height: 2px;
+  width: 100%;
+  background: var(--color-beet-300);
+  transform-origin: left;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  html[data-motion='on'] .page-progress {
+    display: block;
+    animation: page-progress linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes page-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* 비트 단면 — 촬영본 전 히어로 자리. 나이테처럼 겹친 고리 */
+.beet-slice {
+  background:
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 18px, rgba(255, 200, 222, 0.09) 18px 20px),
+    radial-gradient(circle at 50% 50%, #e2457e 0%, #b0205a 40%, #74173d 72%, #3d0a20 100%);
+  box-shadow:
+    0 0 140px 30px rgba(214, 51, 108, 0.3),
+    inset 0 0 80px rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
+}
+html[data-motion='on'] .hero-glow {
+  animation: hero-glow 14s ease-in-out infinite alternate;
+}
+@keyframes hero-glow {
+  from {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  to {
+    transform: translate(-4%, 3%) scale(1.08) rotate(8deg);
+  }
+}
+
+/* 스크롤 안내 — 아래로 흐르는 선 */
+.scroll-cue::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 48px;
+  margin: 10px auto 0;
+  background: linear-gradient(to bottom, var(--color-beet-300), transparent);
+  animation: cue-flow 2.2s var(--ease-soft) infinite;
+}
+@keyframes cue-flow {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+/* 과정 — 진행 막대 */
+.process-track {
+  transform-origin: left;
+  transform: scaleX(var(--progress, 0));
+  transition: transform 700ms var(--ease-soft);
+}
+
+/* 선언문 낱말 — 스크롤 진행이 닿으면 밝아진다(ScrubText 가 data-lit 을 단다) */
+.scrub-word {
+  display: inline-block;
+  opacity: 0.16;
+  transition: opacity 450ms var(--ease-soft);
+}
+.scrub-word[data-lit='true'] {
+  opacity: 1;
+}
+
+/* 단계가 바뀔 때 큰 숫자 · 장 이름이 떠오른다 */
+html[data-motion='on'] .step-numeral {
+  animation: step-numeral 700ms var(--ease-soft) both;
+}
+@keyframes step-numeral {
+  from {
+    opacity: 0;
+    transform: translateY(0.15em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.scene-dot {
+  transition:
+    width 500ms var(--ease-soft),
+    background-color 500ms var(--ease-soft);
+}
+
+/* 필름 문장 · 과정 설명 — key 가 바뀌어 다시 붙을 때마다 아래에서 떠오른다 */
+.film-caption {
+  animation: film-caption 900ms var(--ease-soft) both;
+}
+@keyframes film-caption {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .film-caption,
+  html[data-motion='on'] [data-scene] [data-reveal],
+  html[data-motion='on'] [data-scene] .line-inner,
+  html[data-motion='on'] .scene-bg,
+  html[data-motion='on'] .scene-text,
+  html[data-motion='on'] .hero-glow,
+  html[data-motion='on'] .step-numeral,
+  html[data-motion='on'] .scrub-in,
+  .scrub-word,
+  .page-progress,
+  .scroll-cue::after,
+  .process-track {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
