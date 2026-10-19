@@ -1,0 +1,57 @@
+:root {
+  --beet: #8e1b4a;
+  --text: #222;
+  --muted: #666;
+  --border: #eee;
+  font-family: Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  color: var(--text);
+  background: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  color: var(--beet);
+  font-weight: 700;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.product-grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.product-card p {
+  color: var(--muted);
+}
+
+.error {
+  color: #c00;
+}
