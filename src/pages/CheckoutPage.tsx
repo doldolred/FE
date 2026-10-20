@@ -6,11 +6,14 @@ import { createOrder } from '../api/orders'
 import { queryKeys } from '../api/queryKeys'
 import type { CreateOrderRequest } from '../api/types'
 import OrderSummaryBox from '../components/order/OrderSummaryBox'
+import PayMethodPicker from '../components/order/PayMethodPicker'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { getFieldErrors } from '../lib/errors'
 import { formatPrice } from '../lib/format'
+import { PAYMENT_ENABLED, type PayMethod } from '../lib/payment'
+import { usePayment } from '../hooks/usePayment'
 import { useAuthStore } from '../stores/authStore'
 
 export default function CheckoutPage() {
@@ -26,6 +29,8 @@ export default function CheckoutPage() {
     address2: '',
     memo: '',
   })
+  const [payMethod, setPayMethod] = useState<PayMethod>('card')
+  const { pay, paying } = usePayment()
   const set = (key: keyof CreateOrderRequest) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }))
 
@@ -38,7 +43,9 @@ export default function CheckoutPage() {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders })
       queryClient.invalidateQueries({ queryKey: queryKeys.products })
       queryClient.setQueryData(queryKeys.order(order.orderNumber), order)
-      navigate(`/mypage/orders/${order.orderNumber}?complete=1`, { replace: true })
+      // 주문(결제 대기)을 먼저 만들고 그 금액으로 결제창을 띄운다. 키가 아직 없으면 결제 대기로 접수만
+      if (PAYMENT_ENABLED) pay(order, payMethod)
+      else navigate(`/mypage/orders/${order.orderNumber}?complete=1`, { replace: true })
     },
   })
   const fieldErrors = getFieldErrors(orderMutation.error)
@@ -104,6 +111,12 @@ export default function CheckoutPage() {
             ))}
           </ul>
         </section>
+
+        {PAYMENT_ENABLED && (
+          <section>
+            <PayMethodPicker value={payMethod} onChange={setPayMethod} disabled={orderMutation.isPending || paying} />
+          </section>
+        )}
       </div>
 
       <OrderSummaryBox totalPrice={cart.totalPrice}>
@@ -112,10 +125,16 @@ export default function CheckoutPage() {
             <ErrorMessage error={orderMutation.error} />
           </div>
         )}
-        <Button type="submit" className="mt-6 w-full" disabled={orderMutation.isPending}>
-          {orderMutation.isPending ? '주문 중…' : `${formatPrice(cart.totalPrice)} 주문하기`}
+        <Button type="submit" className="mt-6 w-full" disabled={orderMutation.isPending || paying}>
+          {orderMutation.isPending || paying
+            ? '결제 준비 중…'
+            : `${formatPrice(cart.totalPrice)} ${PAYMENT_ENABLED ? '결제하기' : '주문하기'}`}
         </Button>
-        <p className="mt-3 text-center text-xs text-neutral-500">결제 연동 전이라 주문은 '결제 대기'로 접수돼요.</p>
+        <p className="mt-3 text-center text-xs text-neutral-500">
+          {PAYMENT_ENABLED
+            ? '결제창을 닫아도 주문은 30분 동안 남아 있어 다시 결제할 수 있어요.'
+            : "결제 연동 전이라 주문은 '결제 대기'로 접수돼요."}
+        </p>
       </OrderSummaryBox>
     </form>
   )

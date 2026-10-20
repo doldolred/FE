@@ -94,6 +94,14 @@ export interface OrderItem {
   lineTotal: number
 }
 
+export interface PaymentInfo {
+  provider: 'NICEPAY' | 'PORTONE'
+  method: string | null
+  amount: number
+  approvedAt: string
+  receiptUrl: string | null
+}
+
 export interface OrderDetail {
   orderNumber: string
   status: OrderStatus
@@ -105,5 +113,7 @@ export interface OrderDetail {
   address2: string | null
   memo: string | null
   items: OrderItem[]
+  /** 결제 승인 후에만 채워진다. BE 결제 연동 전에는 오지 않을 수 있다 */
+  payment?: PaymentInfo | null
   createdAt: string
 }
