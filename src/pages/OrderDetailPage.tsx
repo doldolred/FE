@@ -110,6 +110,9 @@ export default function OrderDetailPage() {
             <Row label="결제 수단" value={methodLabel(payment.method)} />
             <Row label="결제 금액" value={formatPrice(payment.amount)} />
             <Row label="결제 일시" value={formatDate(payment.approvedAt)} />
+            {payment.status === 'CANCELLED' && payment.cancelledAt && (
+              <Row label="환불 일시" value={formatDate(payment.cancelledAt)} />
+            )}
             {payment.receiptUrl && (
               <div className="flex gap-4">
                 <dt className="w-16 shrink-0 text-neutral-500">영수증</dt>

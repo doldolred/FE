@@ -96,9 +96,12 @@ export interface OrderItem {
 
 export interface PaymentInfo {
   provider: 'NICEPAY' | 'PORTONE'
+  /** CANCELLED = 주문 취소로 환불됨 */
+  status: 'PAID' | 'CANCELLED'
   method: string | null
   amount: number
   approvedAt: string
+  cancelledAt: string | null
   receiptUrl: string | null
 }
 
