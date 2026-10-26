@@ -1,0 +1,818 @@
+/*
+ * 프로토타입 v4 (protohtml/v4.html · v4-product.html) 를 옮긴 화면 — 메인 · 상품 상세 · 출시 예정.
+ * 색은 고객 가이드대로 포인트 #E4002B 하나 + 흰 · 검 무채색, 글꼴은 Pretendard 하나 (v4 의 남색 · 라임 · Anton 대신).
+ */
+:root {
+  --dd-ink: #111111;
+  --dd-red: #e4002b;
+  --dd-paper: #ffffff;
+  --dd-gray: #f1f1f1;
+  --dd-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 큰 영문 · 한글 표제 — Pretendard 가장 굵게, 자간을 좁혀 포스터처럼 */
+.dd-display {
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+.dd-logo {
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  font-size: 19px;
+}
+
+/* ── 흐름 ─────────────────────────────── */
+.dd-flow {
+  position: relative;
+}
+.dd-sec {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+}
+/* 찢어진 종이 경계 — 파우치가 경계 앞으로 지나간다 */
+.dd-torn {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  width: 100%;
+  height: clamp(50px, 8vw, 110px);
+  z-index: 1;
+  display: block;
+}
+
+/* 0 LINEUP — 화면을 붙잡아 두고(pin) 그 안에서 제품들이 만난다 */
+.dd-s0 {
+  background: var(--dd-paper);
+  color: var(--dd-ink);
+  height: 260svh;
+  overflow: clip; /* hidden 이면 sticky 가 안 붙는다 */
+}
+.dd-s0 .pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.dd-s0 .bgword {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  font-size: clamp(110px, 21vw, 360px);
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(17, 17, 17, 0.12);
+}
+.dd-s0 .kicker,
+.dd-s0 .count {
+  position: absolute;
+  top: 84px;
+  margin: 0;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+.dd-s0 .kicker {
+  left: clamp(16px, 4vw, 56px);
+  font-style: italic;
+}
+.dd-s0 .count {
+  right: clamp(16px, 4vw, 56px);
+}
+.dd-s0 .hint {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  translate: -50% 0;
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 900;
+  font-size: clamp(13px, 1.2vw, 16px);
+  background: var(--dd-ink);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+}
+.dd-s0 .cue {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  translate: -50% 0;
+  margin: 0;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+.dd-s0 .cue i {
+  display: block;
+  font-style: normal;
+  animation: dd-nudge 1.4s ease-in-out infinite;
+}
+@keyframes dd-nudge {
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/* 라인업 한 칸 — 위치는 스크롤에 따라 JS 가 옮긴다. 그림 칸 높이(--ah)는 파우치 크기에 맞춘다 */
+.dd-lineup {
+  position: absolute;
+  inset: 0;
+}
+.dd-lp {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - var(--ah, 300px) / 2);
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  pointer-events: none;
+  will-change: transform;
+  outline: none;
+}
+.dd-lp .art {
+  height: var(--ah, 300px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.dd-lp .art svg {
+  height: 100%;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 26px 22px rgba(17, 17, 17, 0.25));
+  transition: transform 350ms var(--dd-ease);
+}
+.dd-lp[data-art='jar'] .art svg {
+  height: 60%;
+}
+.dd-lp:hover .art svg,
+.dd-lp:focus-visible .art svg {
+  transform: translateY(-8px) scale(1.05);
+}
+.dd-tag {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  background: #fff;
+  color: var(--dd-ink);
+  border: 2px solid var(--dd-ink);
+  border-radius: 16px;
+  padding: 8px 14px;
+  box-shadow: 4px 4px 0 var(--dd-ink);
+  white-space: nowrap;
+  transition:
+    transform 250ms var(--dd-ease),
+    background 250ms;
+}
+.dd-tag b {
+  font-weight: 900;
+  font-size: 14px;
+}
+.dd-tag i {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  color: #6b6b6b;
+}
+.dd-lp[data-main] .dd-tag {
+  background: var(--dd-ink);
+  color: #fff;
+}
+.dd-lp[data-main] .dd-tag i {
+  color: var(--dd-red);
+}
+.dd-lp:hover .dd-tag,
+.dd-lp:focus-visible .dd-tag {
+  transform: translateY(-3px) rotate(-2deg);
+}
+
+/* 1 UNBEETABLE — 화면에 들어오면(.in) 글자 · 통비트 연출 시작 */
+.dd-s1 {
+  background: var(--dd-ink);
+  color: #fff;
+}
+.dd-s1 .big {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  translate: -50% -50%;
+  z-index: 1;
+  font-size: clamp(64px, 13.5vw, 230px);
+  color: var(--dd-red);
+  white-space: nowrap;
+  animation: dd-rise 900ms var(--dd-ease) both;
+}
+.dd-s1 .lead {
+  position: absolute;
+  left: clamp(16px, 4vw, 56px);
+  bottom: 22%;
+  z-index: 4;
+  margin: 0;
+  font-size: clamp(13px, 1.2vw, 16px);
+  line-height: 1.5;
+}
+.dd-s1 .lead b {
+  font-weight: 900;
+}
+.dd-s1 .try {
+  position: absolute;
+  right: clamp(16px, 4vw, 56px);
+  bottom: 22%;
+  z-index: 4;
+  background: var(--dd-red);
+  color: #fff;
+  font-weight: 900;
+  font-size: 13px;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 rgba(255, 255, 255, 0.18);
+  transition: transform 200ms;
+}
+.dd-s1 .try:hover {
+  transform: translateY(-2px);
+}
+.dd-beetroot {
+  position: absolute;
+  z-index: 2;
+  width: clamp(110px, 12vw, 190px);
+  left: 60%;
+  top: 46%;
+  animation: dd-drop 1200ms 250ms var(--dd-ease) both;
+}
+.dd-beetroot svg,
+.dd-props svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 16px 18px rgba(0, 0, 0, 0.3));
+}
+.dd-s1:not(.in) .big,
+.dd-s1:not(.in) .dd-beetroot {
+  animation-play-state: paused;
+}
+@keyframes dd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dd-drop {
+  from {
+    transform: translateY(-80vh) rotate(-60deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+
+/* 2 비트만 */
+.dd-s2 {
+  background: var(--dd-gray);
+  color: var(--dd-ink);
+}
+.dd-s2 .big {
+  position: absolute;
+  left: clamp(16px, 4vw, 56px);
+  top: 18%;
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(50px, 8vw, 132px);
+  line-height: 1.02;
+}
+.dd-s2 .big span {
+  display: block;
+}
+.dd-s2 .big em {
+  font-style: normal;
+  color: var(--dd-red);
+}
+.dd-s2 .note {
+  position: absolute;
+  left: clamp(16px, 4vw, 56px);
+  bottom: 20%;
+  z-index: 4;
+  margin: 0;
+  max-width: 34ch;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 600;
+}
+.dd-s2 .stickers {
+  position: absolute;
+  right: clamp(16px, 5vw, 80px);
+  top: 22%;
+  z-index: 4;
+  display: grid;
+  gap: 12px;
+  justify-items: end;
+}
+.dd-sticker {
+  display: inline-block;
+  background: #fff;
+  color: var(--dd-ink);
+  font-weight: 900;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--dd-ink);
+  box-shadow: 4px 4px 0 var(--dd-ink);
+  transform: rotate(var(--r, -4deg));
+}
+.dd-sticker[data-red] {
+  background: var(--dd-red);
+  color: #fff;
+}
+
+/* 3 + DAILY RED */
+.dd-s3 {
+  background: var(--dd-red);
+  color: #fff;
+  min-height: 110svh;
+}
+.dd-s3 .big {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  translate: -50% -50%;
+  z-index: 1;
+  font-size: clamp(64px, 12vw, 210px);
+  white-space: nowrap;
+}
+.dd-plinth {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  z-index: 2;
+  width: min(92vw, 1100px);
+  height: 30svh;
+}
+.dd-plinth .top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 22%;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #f2f2f2, #d2d2d2);
+}
+.dd-plinth .face {
+  position: absolute;
+  inset: 22% 0 0 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 60%, rgba(0, 0, 0, 0.08) 0 3px, transparent 4px),
+    linear-gradient(180deg, #c4c4c4, #8e8e8e);
+  background-size:
+    38px 38px,
+    52px 52px,
+    auto;
+}
+.dd-props {
+  position: absolute;
+  left: 50%;
+  bottom: calc(30svh - 6px);
+  translate: -50% 0;
+  z-index: 2;
+  width: min(92vw, 1100px);
+  height: 0;
+}
+.dd-props .box {
+  position: absolute;
+  right: 8%;
+  bottom: 0;
+  width: clamp(120px, 13vw, 200px);
+  aspect-ratio: 0.8;
+  border-radius: 6px;
+  background: linear-gradient(160deg, #2a2a2a, #0c0c0c);
+  box-shadow:
+    inset -16px 0 0 rgba(255, 255, 255, 0.06),
+    0 20px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 10%;
+}
+.dd-props .box b {
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.04em;
+  color: var(--dd-red);
+  font-size: clamp(20px, 2.2vw, 32px);
+  line-height: 0.92;
+}
+.dd-props .box span {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+}
+.dd-props .beet-a {
+  position: absolute;
+  left: 10%;
+  bottom: -6px;
+  width: clamp(90px, 9vw, 150px);
+  transform: rotate(-12deg);
+}
+.dd-props .beet-b {
+  position: absolute;
+  left: 22%;
+  bottom: -10px;
+  width: clamp(56px, 5.5vw, 90px);
+  transform: rotate(24deg);
+}
+.dd-props .slice {
+  position: absolute;
+  right: 28%;
+  bottom: -4px;
+  width: clamp(44px, 4vw, 66px);
+}
+.dd-s3 .caption {
+  position: absolute;
+  left: clamp(16px, 6vw, 96px);
+  top: 38%;
+  z-index: 4;
+  margin: 0;
+  max-width: 18ch;
+  font-weight: 800;
+  font-size: clamp(15px, 1.5vw, 20px);
+  line-height: 1.45;
+}
+
+/* ── 흐르는 파우치 — 네 섹션 위를 내내 따라간다 ── */
+.dd-track {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.dd-traveler {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+}
+
+/* 사진 파우치 (PhotoPouch) — 각도 사진 세 장을 겹쳐 두고 돌아간 정도에 맞는 한 장만 보인다 */
+.dd-pouch {
+  --w: clamp(150px, 17vw, 260px);
+  width: var(--w);
+  height: calc(var(--w) * 1.79);
+  perspective: 1400px;
+}
+.dd-pouch-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  filter: brightness(var(--lf, 1)) drop-shadow(0 30px 28px rgba(0, 0, 0, 0.28));
+}
+.dd-pouch-body img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 180ms linear;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.dd-pouch[data-pick='front'] img[data-a='front'],
+.dd-pouch[data-pick='left'] img[data-a='left'],
+.dd-pouch[data-pick='right'] img[data-a='right'] {
+  opacity: 1;
+}
+/* 필름 반사광 — 파우치 모양(사진의 투명 부분)으로 잘라서 */
+.dd-pouch .sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.38) 44%, rgba(255, 255, 255, 0.06) 52%, transparent 64%);
+  background-size: 260% 100%;
+  background-position: var(--sx, 50%) 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  -webkit-mask: var(--mask) center / contain no-repeat;
+  mask: var(--mask) center / contain no-repeat;
+}
+
+/* ── 구매 띠 ───────────────────────────── */
+.dd-buybar {
+  position: relative;
+  z-index: 5;
+  background: var(--dd-ink);
+  color: #fff;
+  padding: clamp(60px, 10vh, 100px) clamp(16px, 5vw, 64px);
+}
+.dd-buybar .inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+.dd-buybar h2 {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  font-size: clamp(34px, 4.4vw, 60px);
+  line-height: 1.05;
+}
+.dd-buybar h2 em {
+  font-style: normal;
+  color: var(--dd-red);
+}
+.dd-buybar p {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+.dd-buybar .cta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.dd-buybar .price {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  font-size: clamp(28px, 3vw, 42px);
+}
+
+/* 두툼한 버튼 — 아래 그림자가 눌리면 들어간다 */
+.dd-btn {
+  display: inline-grid;
+  place-items: center;
+  height: 58px;
+  padding: 0 30px;
+  border-radius: 999px;
+  border: 2px solid var(--dd-ink);
+  background: #fff;
+  color: var(--dd-ink);
+  font-weight: 900;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--dd-ink);
+  transition:
+    transform 200ms,
+    box-shadow 200ms;
+}
+.dd-btn[data-primary] {
+  background: var(--dd-red);
+  color: #fff;
+}
+.dd-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--dd-ink);
+}
+.dd-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--dd-ink);
+}
+.dd-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.dd-buybar .dd-btn {
+  height: 60px;
+  border-color: var(--dd-red);
+  box-shadow: 0 6px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ── 상품 상세 · 출시 예정 (v4-product) ─────── */
+.dd-stage {
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+  border-radius: 28px;
+  background: var(--dd-gray);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--dd-ink);
+  box-shadow: 8px 8px 0 var(--dd-ink);
+  touch-action: pan-y;
+  user-select: none;
+  animation: dd-up 700ms var(--dd-ease) both;
+}
+.dd-stage .word {
+  position: absolute;
+  inset: auto 0 6% 0;
+  text-align: center;
+  font-size: clamp(52px, 7.5vw, 112px);
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(17, 17, 17, 0.14);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.dd-stage .badge {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  z-index: 2;
+  background: var(--dd-ink);
+  color: #fff;
+  font-weight: 900;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+.dd-stage .badge[data-red] {
+  background: var(--dd-red);
+}
+.dd-stage .spin-hint {
+  position: absolute;
+  right: 18px;
+  top: 22px;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0.6;
+}
+.dd-stage .art {
+  position: relative;
+  height: 72%;
+  display: grid;
+  place-items: center;
+  animation: dd-float 4.5s ease-in-out infinite;
+}
+.dd-stage .art svg {
+  height: 100%;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 30px 26px rgba(17, 17, 17, 0.25));
+}
+.dd-stage .art[data-art='jar'] {
+  height: 50%;
+}
+.dd-stage .grab {
+  cursor: grab;
+}
+.dd-stage .grab:active {
+  cursor: grabbing;
+}
+.dd-stage .dd-pouch {
+  --w: clamp(150px, 19vw, 250px);
+}
+@keyframes dd-float {
+  50% {
+    transform: translateY(-14px) rotate(-2deg);
+  }
+}
+@keyframes dd-up {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+}
+.dd-info > * {
+  animation: dd-up 700ms var(--dd-ease) both;
+}
+.dd-info > *:nth-child(2) {
+  animation-delay: 60ms;
+}
+.dd-info > *:nth-child(3) {
+  animation-delay: 120ms;
+}
+.dd-info > *:nth-child(4) {
+  animation-delay: 180ms;
+}
+.dd-info > *:nth-child(n + 5) {
+  animation-delay: 240ms;
+}
+
+.dd-more-card {
+  border-radius: 22px;
+  overflow: hidden;
+  background: #fff;
+  color: var(--dd-ink);
+  border: 2px solid #fff;
+  transition: transform 300ms var(--dd-ease);
+}
+.dd-more-card:hover {
+  transform: translateY(-6px) rotate(-1deg);
+}
+.dd-more-card .pic {
+  height: 220px;
+  display: grid;
+  place-items: center;
+  background: var(--dd-gray);
+}
+.dd-more-card .pic svg {
+  height: 78%;
+  width: auto;
+  filter: drop-shadow(0 16px 14px rgba(17, 17, 17, 0.22));
+}
+.dd-more-card .pic[data-art='jar'] svg {
+  height: 56%;
+}
+.dd-more-card .pic img {
+  height: 82%;
+  width: auto;
+  filter: drop-shadow(0 16px 14px rgba(17, 17, 17, 0.22));
+}
+
+@media (max-width: 860px) {
+  .dd-s0 .kicker,
+  .dd-s0 .count {
+    top: 72px;
+    font-size: 11px;
+  }
+  .dd-lp {
+    gap: 10px;
+  }
+  .dd-tag {
+    padding: 6px 9px;
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--dd-ink);
+  }
+  .dd-tag b {
+    font-size: 11px;
+  }
+  .dd-tag i {
+    font-size: 10px;
+  }
+  .dd-tag .opt {
+    display: none;
+  }
+  .dd-s1 .big {
+    top: 34%;
+  }
+  .dd-s1 .lead,
+  .dd-s1 .try {
+    bottom: 15%;
+  }
+  .dd-beetroot {
+    left: 4%;
+    top: 50%;
+    width: 96px;
+  }
+  .dd-s2 .big {
+    top: 88px; /* 헤더(60px) 아래 */
+  }
+  .dd-s2 .stickers {
+    top: auto;
+    bottom: 22%;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-items: start;
+  }
+  .dd-sticker {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+  .dd-s2 .note {
+    bottom: 13%;
+    right: 16px;
+    font-size: 14px;
+  }
+  .dd-s3 .big {
+    top: 16%;
+  }
+  .dd-s3 .caption {
+    top: 27%;
+    font-size: 14px;
+  }
+  .dd-props .box {
+    right: 2%;
+  }
+  .dd-props .beet-b {
+    display: none;
+  }
+  .dd-stage {
+    aspect-ratio: 1 / 0.95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-s0 .cue i,
+  .dd-s1 .big,
+  .dd-beetroot,
+  .dd-stage,
+  .dd-stage .art,
+  .dd-info > * {
+    animation: none !important;
+  }
+  .dd-pouch-body img,
+  .dd-btn,
+  .dd-tag,
+  .dd-more-card {
+    transition: none !important;
+  }
+}

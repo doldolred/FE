@@ -7,7 +7,7 @@ import { buttonClass } from '../components/ui/buttonStyles'
 import OrderSummaryBox from '../components/order/OrderSummaryBox'
 import QuantityStepper from '../components/ui/QuantityStepper'
 import { Empty, ErrorMessage, Loading } from '../components/ui/Status'
-import { productImageSrc } from '../data/showcase'
+import { productImageSrc } from '../data/lineup'
 import { formatPrice } from '../lib/format'
 
 export default function CartPage() {

@@ -23,11 +23,11 @@ export default function OptionPicker({
             aria-checked={selected}
             disabled={o.soldOut}
             onClick={() => onChange(o.id)}
-            className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-              selected ? 'border-beet-700 bg-beet-50 ring-1 ring-beet-700' : 'border-neutral-300 hover:border-neutral-500'
+            className={`flex items-center justify-between rounded-2xl border-2 px-4 py-3 text-left transition-[box-shadow,transform] disabled:cursor-not-allowed disabled:opacity-45 ${
+              selected ? 'border-neutral-900 shadow-[4px_4px_0_#111]' : 'border-neutral-300 hover:border-neutral-900'
             }`}
           >
-            <span className="font-semibold">
+            <span className="font-extrabold">
               {o.name}
               {o.soldOut && <span className="ml-2 text-xs font-normal text-neutral-500">일시품절</span>}
             </span>
