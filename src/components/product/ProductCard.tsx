@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Product } from '../../api/types'
+import { productImageSrc } from '../../data/showcase'
 import { formatPrice } from '../../lib/format'
 import ProductImage from './ProductImage'
 
@@ -9,7 +10,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link to={`/products/${product.id}`} className="group block">
       <div className="relative overflow-hidden rounded-xl">
         <ProductImage
-          src={product.imageUrl}
+          src={productImageSrc(product.id, product.imageUrl)}
           alt={product.name}
           className="transition-transform duration-300 group-hover:scale-105"
         />

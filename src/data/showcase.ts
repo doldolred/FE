@@ -22,6 +22,8 @@ export interface Showcase {
   accent: string
   turntable: FrameSequence | null
   poster: string | null
+  /** 360° 묶음 대신 몇 각도 사진만 있을 때 — 무대 아래 작은 버튼으로 바꿔 본다 */
+  angles: { label: string; src: string }[]
   features: ShowcaseFeature[]
 }
 
@@ -30,16 +32,26 @@ export const SHOWCASE: Record<number, Showcase> = {
   1: {
     wordmark: 'RED BEET',
     tagline: '비트만 그대로 짜낸 120ml 한 포',
-    accent: '#f0729f',
+    accent: '#E4002B',
     turntable: null,
-    poster: '/film/poster.webp',
+    poster: '/products/beet/pouch-front.webp',
+    angles: [
+      { label: '정면', src: '/products/beet/pouch-front.webp' },
+      { label: '왼쪽', src: '/products/beet/pouch-left.webp' },
+      { label: '오른쪽', src: '/products/beet/pouch-right.webp' },
+    ],
     features: [
       { at: 0.0, title: '비트 100%', body: '물 · 설탕 · 향료 없이 비트만 담았어요.' },
       { at: 0.25, title: '120ml 한 포', body: '한 번 마실 만큼. 뜯어서 바로 마셔요.' },
-      { at: 0.5, title: '국내산 비트', body: '제철에 거둔 비트를 산지에서 받아 씁니다.' },
-      { at: 0.75, title: '30포 한 상자', body: '한 달치. 냉장 보관하면 더 신선해요.' },
+      { at: 0.5, title: '제주산 비트', body: '제주에서 거둔 비트를 받아 씁니다.' },
+      { at: 0.75, title: '30포 · 60포', body: '한 달치, 두 달치. 냉장 보관하면 더 신선해요.' },
     ],
   },
+}
+
+/** 상품 사진 — 관리자가 올린 사진이 먼저, 없으면 쇼케이스 정면 사진 */
+export function productImageSrc(productId: number, imageUrl: string | null): string | null {
+  return imageUrl ?? SHOWCASE[productId]?.poster ?? null
 }
 
 /** 회전 위치(0 → 1)에 가장 가까운 특징의 번호 */

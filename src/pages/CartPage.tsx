@@ -7,6 +7,7 @@ import { buttonClass } from '../components/ui/buttonStyles'
 import OrderSummaryBox from '../components/order/OrderSummaryBox'
 import QuantityStepper from '../components/ui/QuantityStepper'
 import { Empty, ErrorMessage, Loading } from '../components/ui/Status'
+import { productImageSrc } from '../data/showcase'
 import { formatPrice } from '../lib/format'
 
 export default function CartPage() {
@@ -54,7 +55,7 @@ export default function CartPage() {
           {cart.items.map((item) => (
             <li key={item.id} className="flex gap-4 py-5">
               <Link to={`/products/${item.productId}?option=${item.optionId}`} className="w-24 shrink-0 overflow-hidden rounded-lg">
-                <ProductImage src={item.imageUrl} alt={item.productName} className="text-sm" />
+                <ProductImage src={productImageSrc(item.productId, item.imageUrl)} alt={item.productName} className="text-sm" />
               </Link>
               <div className="flex flex-1 flex-col justify-between gap-3 sm:flex-row sm:items-center">
                 <div>

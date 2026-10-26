@@ -12,11 +12,13 @@ interface Props {
 
 /**
  * 어두운 무대 위의 360° 상품 — 뒤에 큰 영문 이름이 깔리고, 돌리면 각도에 맞는 특징이 켜진다.
- * 사진 묶음이 아직 없으면 정지 사진 + 특징 전부 켜짐.
+ * 사진 묶음이 아직 없으면 정지 사진 + 특징 전부 켜짐. 각도 사진(angles)이 있으면 아래 버튼으로 바꿔 본다.
  */
 export default function ProductShowcase({ name, showcase, withFeatures = false, className = '' }: Props) {
   const [active, setActive] = useState(0)
+  const [angle, setAngle] = useState(0)
   const hasFrames = showcase.turntable !== null
+  const angles = hasFrames ? [] : showcase.angles
 
   const onFrame = useCallback(
     (index: number, count: number) => {
@@ -49,7 +51,37 @@ export default function ProductShowcase({ name, showcase, withFeatures = false, 
 
       <div className={`relative grid gap-8 p-6 md:p-10 ${withFeatures ? 'md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]' : ''}`}>
         <div className="relative aspect-square w-full md:aspect-[4/5]">
-          <Turntable frames={showcase.turntable} poster={showcase.poster} alt={name} onFrame={onFrame} />
+          {angles.length > 0 ? (
+            angles.map((a, i) => (
+              <img
+                key={a.src}
+                src={a.src}
+                alt={i === angle ? `${name} — ${a.label}` : ''}
+                aria-hidden={i === angle ? undefined : true}
+                className={`absolute inset-0 h-full w-full object-contain pb-10 transition-opacity duration-500 ease-soft ${i === angle ? 'opacity-100' : 'opacity-0'}`}
+              />
+            ))
+          ) : (
+            <Turntable frames={showcase.turntable} poster={showcase.poster} alt={name} onFrame={onFrame} />
+          )}
+          {angles.length > 1 && (
+            <div className="absolute inset-x-0 bottom-0 flex justify-center gap-2" role="group" aria-label="각도">
+              {angles.map((a, i) => (
+                <button
+                  key={a.src}
+                  type="button"
+                  aria-pressed={i === angle}
+                  onClick={() => setAngle(i)}
+                  onMouseEnter={() => setAngle(i)}
+                  className={`min-h-8 rounded-full border px-3 text-xs transition-colors ${
+                    i === angle ? 'border-[var(--accent)] text-cream' : 'border-cream/20 text-cream/50 hover:text-cream'
+                  }`}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          )}
           {hasFrames && (
             <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-[0.65rem] tracking-[0.3em] text-cream/40">
               ← 끌어서 돌려 보세요 →

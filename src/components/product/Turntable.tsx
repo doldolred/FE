@@ -185,7 +185,7 @@ export default function Turntable({ frames, poster, alt, onFrame, className = ''
   if (!frames) {
     return (
       <div className={`flex items-center justify-center ${className}`}>
-        <ProductImage src={poster} alt={alt} className="!aspect-auto h-full w-full !object-contain" />
+        <ProductImage src={poster} alt={alt} className="!aspect-auto h-full w-full !bg-transparent !object-contain" />
       </div>
     )
   }

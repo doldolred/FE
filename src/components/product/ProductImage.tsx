@@ -7,7 +7,7 @@ interface Props {
 /** 이미지가 아직 없을 때는 비트색 플레이스홀더 */
 export default function ProductImage({ src, alt, className = '' }: Props) {
   if (src) {
-    return <img src={src} alt={alt} className={`aspect-square w-full object-cover ${className}`} />
+    return <img src={src} alt={alt} className={`aspect-square w-full bg-neutral-100 object-cover ${className}`} />
   }
   return (
     <div

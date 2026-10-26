@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../../api/types'
-import { SHOWCASE } from '../../data/showcase'
+import { productImageSrc, SHOWCASE } from '../../data/showcase'
 import { formatPrice } from '../../lib/format'
 import ProductImage from '../product/ProductImage'
 import ProductShowcase from '../product/ProductShowcase'
@@ -55,7 +55,7 @@ export default function Lineup({ products }: { products: Product[] }) {
               <ProductShowcase key={`stage-${product.id}`} name={product.name} showcase={showcase} />
             ) : (
               <div className="overflow-hidden rounded-3xl">
-                <ProductImage src={product.imageUrl} alt={product.name} />
+                <ProductImage src={productImageSrc(product.id, product.imageUrl)} alt={product.name} />
               </div>
             )}
 
