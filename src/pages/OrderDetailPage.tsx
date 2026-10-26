@@ -89,15 +89,25 @@ export default function OrderDetailPage() {
         <h2 className="mb-3 font-bold">주문 상품</h2>
         <ul className="divide-y divide-neutral-200 rounded-xl border border-neutral-200">
           {order.items.map((item) => (
-            <li key={item.productId} className="flex justify-between px-4 py-3 text-sm">
-              <Link to={`/products/${item.productId}`} className="hover:underline">
-                {item.productName} <span className="text-neutral-500">× {item.quantity}</span>
+            <li key={item.optionId} className="flex justify-between px-4 py-3 text-sm">
+              <Link to={`/products/${item.productId}?option=${item.optionId}`} className="hover:underline">
+                {item.productName} {item.optionName} <span className="text-neutral-500">× {item.quantity}</span>
               </Link>
               <span className="font-medium">{formatPrice(item.lineTotal)}</span>
             </li>
           ))}
         </ul>
-        <div className="mt-4 flex justify-between px-1 font-bold">
+        <dl className="mt-4 space-y-1 px-1 text-sm text-neutral-600">
+          <div className="flex justify-between">
+            <dt>상품 금액</dt>
+            <dd>{formatPrice(order.itemsPrice)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt>배송비</dt>
+            <dd>{order.shippingFee === 0 ? '무료' : formatPrice(order.shippingFee)}</dd>
+          </div>
+        </dl>
+        <div className="mt-3 flex justify-between border-t border-neutral-200 px-1 pt-3 font-bold">
           <span>총 결제 금액</span>
           <span className="text-beet-800">{formatPrice(order.totalPrice)}</span>
         </div>

@@ -63,7 +63,23 @@ export default function Lineup({ products }: { products: Product[] }) {
               {showcase && <p className="text-xs font-semibold tracking-[0.3em] text-beet-300">{showcase.wordmark}</p>}
               <h3 className="mt-3 text-3xl font-extrabold tracking-tight break-keep text-cream md:text-5xl">{product.name}</h3>
               {showcase && <p className="mt-4 text-cream/70 md:text-lg">{showcase.tagline}</p>}
-              <p className="mt-6 text-2xl font-bold text-cream">{product.stock === 0 ? '품절' : formatPrice(product.price)}</p>
+              <p className="mt-6 text-2xl font-bold text-cream">{product.soldOut ? '품절' : `${formatPrice(product.minPrice)}~`}</p>
+              {/* 옵션(10포 · 30포 · 60포)도 각각 고를 수 있게 — 누르면 그 옵션이 골라진 채로 상세로 */}
+              <ul className="mt-5 flex flex-wrap gap-2" aria-label="옵션">
+                {product.options.map((o) => (
+                  <li key={o.id}>
+                    <Link
+                      to={`/products/${product.id}?option=${o.id}`}
+                      className={`inline-flex items-baseline gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
+                        o.soldOut ? 'border-cream/10 text-cream/30' : 'border-cream/25 text-cream/80 hover:border-beet-300 hover:text-cream'
+                      }`}
+                    >
+                      <span className="font-semibold">{o.name}</span>
+                      <span className="text-xs">{o.soldOut ? '일시품절' : formatPrice(o.price)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link to={`/products/${product.id}`} className={buttonClass('primary', 'rounded-full bg-beet-500 hover:bg-beet-600')}>
                   자세히 보기

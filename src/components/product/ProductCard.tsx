@@ -4,7 +4,7 @@ import { formatPrice } from '../../lib/format'
 import ProductImage from './ProductImage'
 
 export default function ProductCard({ product }: { product: Product }) {
-  const soldOut = product.stock === 0
+  const soldOut = product.soldOut
   return (
     <Link to={`/products/${product.id}`} className="group block">
       <div className="relative overflow-hidden rounded-xl">
@@ -20,7 +20,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
       </div>
       <h3 className="mt-3 font-medium text-neutral-900">{product.name}</h3>
-      <p className="mt-1 font-bold text-beet-800">{formatPrice(product.price)}</p>
+      <p className="mt-1 font-bold text-beet-800">{formatPrice(product.minPrice)}~</p>
     </Link>
   )
 }

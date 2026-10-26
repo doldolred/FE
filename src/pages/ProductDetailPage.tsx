@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { addCartItem } from '../api/cart'
 import { fetchProduct } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
+import OptionPicker, { ShippingNote } from '../components/product/OptionPicker'
 import ProductImage from '../components/product/ProductImage'
 import ProductShowcase from '../components/product/ProductShowcase'
 import Button from '../components/ui/Button'
@@ -15,10 +16,12 @@ import { useIsLoggedIn } from '../stores/authStore'
 
 export default function ProductDetailPage() {
   const id = Number(useParams().id)
+  const [params] = useSearchParams()
   const loggedIn = useIsLoggedIn()
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
+  const [picked, setPicked] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
 
@@ -28,8 +31,16 @@ export default function ProductDetailPage() {
     enabled: Number.isInteger(id),
   })
 
+  // 고른 옵션 → 주소의 ?option= → 품절 아닌 첫 옵션 (30포가 기본으로 잡힌다)
+  const fromQuery = Number(params.get('option'))
+  const option =
+    product?.options.find((o) => o.id === picked) ??
+    product?.options.find((o) => o.id === fromQuery && !o.soldOut) ??
+    product?.options.find((o) => !o.soldOut) ??
+    null
+
   const addMutation = useMutation({
-    mutationFn: () => addCartItem({ productId: id, quantity }),
+    mutationFn: () => addCartItem({ optionId: option!.id, quantity }),
     onSuccess: (cart) => queryClient.setQueryData(queryKeys.cart, cart),
   })
 
@@ -37,11 +48,11 @@ export default function ProductDetailPage() {
   if (isPending) return <Loading />
   if (error) return <ErrorMessage error={error} />
 
-  const soldOut = product.stock === 0
+  const soldOut = !option || option.soldOut
 
   const handleAdd = async (goCheckout: boolean) => {
     if (!loggedIn) {
-      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`)
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`)
       return
     }
     try {
@@ -71,59 +82,80 @@ export default function ProductDetailPage() {
         )}
 
         <div>
-        <h1 className="text-2xl font-bold">{product.name}</h1>
-        <p className="mt-3 text-2xl font-extrabold text-beet-800">{formatPrice(product.price)}</p>
-        {product.description && <p className="mt-6 whitespace-pre-line text-neutral-600">{product.description}</p>}
+          <h1 className="text-2xl font-bold">{product.name}</h1>
+          {option && (
+            <p className="mt-3 flex items-baseline gap-2">
+              {option.discountRate > 0 && <span className="text-xl font-extrabold text-beet-700">{option.discountRate}%</span>}
+              <span className="text-2xl font-extrabold">{formatPrice(option.price)}</span>
+              {option.discountRate > 0 && <span className="text-sm text-neutral-400 line-through">{formatPrice(option.listPrice)}</span>}
+            </p>
+          )}
+          {product.description && <p className="mt-6 whitespace-pre-line text-neutral-600">{product.description}</p>}
 
-        <dl className="mt-8 space-y-3 border-y border-neutral-200 py-6 text-sm">
-          <div className="flex">
-            <dt className="w-20 text-neutral-500">배송</dt>
-            <dd>무료배송</dd>
+          <div className="mt-8">
+            <p className="mb-2 text-sm font-semibold text-neutral-700">옵션</p>
+            <OptionPicker
+              options={product.options}
+              value={option?.id ?? null}
+              onChange={(optionId) => {
+                setPicked(optionId)
+                setQuantity(1)
+                setAdded(false)
+              }}
+            />
           </div>
-          <div className="flex items-center">
-            <dt className="w-20 text-neutral-500">수량</dt>
-            <dd>
-              <QuantityStepper
-                value={quantity}
-                onChange={(v) => {
-                  setQuantity(v)
-                  setAdded(false)
-                }}
-                max={Math.max(1, product.stock)}
-                disabled={soldOut}
-              />
-            </dd>
-          </div>
-        </dl>
 
-        <div className="mt-6 flex items-center justify-between">
-          <span className="text-sm text-neutral-500">총 상품금액</span>
-          <span className="text-xl font-bold">{formatPrice(product.price * quantity)}</span>
+          <dl className="mt-6 space-y-3 border-y border-neutral-200 py-6 text-sm">
+            <div className="flex">
+              <dt className="w-20 shrink-0 text-neutral-500">배송</dt>
+              <dd>
+                <ShippingNote />
+              </dd>
+            </div>
+            <div className="flex items-center">
+              <dt className="w-20 text-neutral-500">수량</dt>
+              <dd>
+                <QuantityStepper
+                  value={quantity}
+                  onChange={(v) => {
+                    setQuantity(v)
+                    setAdded(false)
+                  }}
+                  max={Math.max(1, Math.min(99, option?.stock ?? 1))}
+                  disabled={soldOut}
+                />
+              </dd>
+            </div>
+          </dl>
+
+          <div className="mt-6 flex items-center justify-between">
+            <span className="text-sm text-neutral-500">총 상품금액</span>
+            <span className="text-xl font-bold">{formatPrice((option?.price ?? 0) * quantity)}</span>
+          </div>
+
+          {addMutation.error && (
+            <div className="mt-4">
+              <ErrorMessage error={addMutation.error} />
+            </div>
+          )}
+          {added && (
+            <p className="mt-4 rounded-lg bg-beet-50 px-4 py-3 text-sm text-beet-800">
+              장바구니에 담았어요.{' '}
+              <Link to="/cart" className="font-semibold underline">
+                장바구니 보기
+              </Link>
+            </p>
+          )}
+
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <Button variant="secondary" disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(false)}>
+              장바구니
+            </Button>
+            <Button disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(true)}>
+              {soldOut ? '품절' : '바로 구매'}
+            </Button>
+          </div>
         </div>
-
-        {addMutation.error && (
-          <div className="mt-4">
-            <ErrorMessage error={addMutation.error} />
-          </div>
-        )}
-        {added && (
-          <p className="mt-4 rounded-lg bg-beet-50 px-4 py-3 text-sm text-beet-800">
-            장바구니에 담았어요.{' '}
-            <Link to="/cart" className="font-semibold underline">
-              장바구니 보기
-            </Link>
-          </p>
-        )}
-
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          <Button variant="secondary" disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(false)}>
-            장바구니
-          </Button>
-          <Button disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(true)}>
-            {soldOut ? '품절' : '바로 구매'}
-          </Button>
-        </div>
-      </div>
       </div>
     </div>
   )

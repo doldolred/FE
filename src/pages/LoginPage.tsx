@@ -49,6 +49,11 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
           로그인
         </Button>
+        <p className="text-right text-sm">
+          <Link to="/password/forgot" className="text-neutral-500 hover:underline">
+            비밀번호를 잊으셨나요?
+          </Link>
+        </p>
       </form>
       <p className="mt-6 text-center text-sm text-neutral-500">
         아직 회원이 아니신가요?{' '}

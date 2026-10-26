@@ -38,7 +38,7 @@ export const FILM = {
     {
       eyebrow: 'THE POUCH',
       title: '하루 한 포의 붉은 습관',
-      body: '100ml 한 포씩 담아, 아침에 뜯어 바로 마십니다.',
+      body: '120ml 한 포씩 담아, 아침에 뜯어 바로 마십니다.',
     },
   ],
 }
@@ -56,7 +56,7 @@ export const PROCESS = [
   { key: 'wash', title: '세척', en: 'WASH', body: '흙과 잔뿌리를 여러 번 씻어 냅니다.' },
   { key: 'press', title: '착즙', en: 'PRESS', body: '비트를 그대로 눌러 짜 즙만 받아 냅니다.' },
   { key: 'sterilize', title: '살균', en: 'STERILIZE', body: '맛과 색을 지키는 온도에서 살균합니다.' },
-  { key: 'pack', title: '포장', en: 'PACK', body: '100ml 한 포씩 나눠 담고 밀봉합니다.' },
+  { key: 'pack', title: '포장', en: 'PACK', body: '120ml 한 포씩 나눠 담고 밀봉합니다.' },
   { key: 'deliver', title: '배송', en: 'DELIVER', body: '주문을 확인하면 문 앞까지 보내 드립니다.' },
 ] as const
 

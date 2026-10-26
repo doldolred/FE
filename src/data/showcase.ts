@@ -29,13 +29,13 @@ export const SHOWCASE: Record<number, Showcase> = {
   // 1 = V1__init.sql 의 "돌돌 비트즙 30포"
   1: {
     wordmark: 'RED BEET',
-    tagline: '비트만 그대로 짜낸 100ml 한 포',
+    tagline: '비트만 그대로 짜낸 120ml 한 포',
     accent: '#f0729f',
     turntable: null,
     poster: '/film/poster.webp',
     features: [
       { at: 0.0, title: '비트 100%', body: '물 · 설탕 · 향료 없이 비트만 담았어요.' },
-      { at: 0.25, title: '100ml 한 포', body: '한 번 마실 만큼. 뜯어서 바로 마셔요.' },
+      { at: 0.25, title: '120ml 한 포', body: '한 번 마실 만큼. 뜯어서 바로 마셔요.' },
       { at: 0.5, title: '국내산 비트', body: '제철에 거둔 비트를 산지에서 받아 씁니다.' },
       { at: 0.75, title: '30포 한 상자', body: '한 달치. 냉장 보관하면 더 신선해요.' },
     ],

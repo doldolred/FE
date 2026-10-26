@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { fetchCart } from '../api/cart'
+import { fetchCart, fetchShippingQuote } from '../api/cart'
 import { createOrder } from '../api/orders'
 import { queryKeys } from '../api/queryKeys'
 import type { CreateOrderRequest } from '../api/types'
@@ -10,9 +10,10 @@ import PayMethodPicker from '../components/order/PayMethodPicker'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import { ErrorMessage, Loading } from '../components/ui/Status'
-import { getFieldErrors } from '../lib/errors'
+import { getErrorMessage, getFieldErrors } from '../lib/errors'
 import { formatPrice } from '../lib/format'
 import { PAYMENT_ENABLED, type PayMethod } from '../lib/payment'
+import { searchAddress } from '../lib/postcode'
 import { usePayment } from '../hooks/usePayment'
 import { useAuthStore } from '../stores/authStore'
 
@@ -30,11 +31,32 @@ export default function CheckoutPage() {
     memo: '',
   })
   const [payMethod, setPayMethod] = useState<PayMethod>('card')
+  const [addressError, setAddressError] = useState<string | null>(null)
   const { pay, paying } = usePayment()
   const set = (key: keyof CreateOrderRequest) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }))
 
   const { data: cart, isPending, error } = useQuery({ queryKey: queryKeys.cart, queryFn: fetchCart })
+
+  // 우편번호가 들어오면 제주 · 도서 추가 배송비까지 서버에 물어본다 (주문 때도 서버가 같은 규칙으로 계산)
+  const validZip = /^\d{5}$/.test(form.zipcode)
+  const quote = useQuery({
+    queryKey: ['shipping-quote', cart?.itemsPrice, form.zipcode],
+    queryFn: () => fetchShippingQuote(cart!.itemsPrice, form.zipcode),
+    enabled: !!cart && cart.items.length > 0 && validZip,
+  })
+  const shippingFee = validZip && quote.data ? quote.data.fee : (cart?.shippingFee ?? 0)
+  const totalPrice = (cart?.itemsPrice ?? 0) + shippingFee
+
+  const handleSearchAddress = async () => {
+    setAddressError(null)
+    try {
+      const picked = await searchAddress()
+      setForm((f) => ({ ...f, ...picked }))
+    } catch (e) {
+      setAddressError(getErrorMessage(e))
+    }
+  }
 
   const orderMutation = useMutation({
     mutationFn: createOrder,
@@ -78,8 +100,22 @@ export default function CheckoutPage() {
               onChange={set('receiverPhone')}
               error={fieldErrors.receiverPhone}
             />
-            {/* TODO: 우편번호 검색(다음 주소 API) 연결 */}
-            <Input label="우편번호" required maxLength={10} value={form.zipcode} onChange={set('zipcode')} error={fieldErrors.zipcode} />
+            <div className="flex items-end gap-2 sm:col-span-2">
+              <Input
+                label="우편번호"
+                required
+                inputMode="numeric"
+                maxLength={5}
+                className="w-32"
+                value={form.zipcode}
+                onChange={set('zipcode')}
+                error={fieldErrors.zipcode}
+              />
+              <Button variant="secondary" onClick={handleSearchAddress} className="mb-px">
+                주소 검색
+              </Button>
+            </div>
+            {addressError && <p className="text-xs text-red-600 sm:col-span-2">{addressError}</p>}
             <Input label="주소" required className="sm:col-span-2" value={form.address1} onChange={set('address1')} error={fieldErrors.address1} />
             <Input label="상세주소" className="sm:col-span-2" value={form.address2} onChange={set('address2')} error={fieldErrors.address2} />
             <Input
@@ -104,7 +140,7 @@ export default function CheckoutPage() {
             {cart.items.map((item) => (
               <li key={item.id} className="flex justify-between px-4 py-3 text-sm">
                 <span>
-                  {item.productName} <span className="text-neutral-500">× {item.quantity}</span>
+                  {item.productName} {item.optionName} <span className="text-neutral-500">× {item.quantity}</span>
                 </span>
                 <span className="font-medium">{formatPrice(item.lineTotal)}</span>
               </li>
@@ -119,7 +155,12 @@ export default function CheckoutPage() {
         )}
       </div>
 
-      <OrderSummaryBox totalPrice={cart.totalPrice}>
+      <OrderSummaryBox
+        itemsPrice={cart.itemsPrice}
+        shippingFee={shippingFee}
+        areaName={validZip ? quote.data?.areaName : null}
+        freeThreshold={cart.freeShippingThreshold}
+      >
         {orderMutation.error && (
           <div className="mt-4">
             <ErrorMessage error={orderMutation.error} />
@@ -128,7 +169,7 @@ export default function CheckoutPage() {
         <Button type="submit" className="mt-6 w-full" disabled={orderMutation.isPending || paying}>
           {orderMutation.isPending || paying
             ? '결제 준비 중…'
-            : `${formatPrice(cart.totalPrice)} ${PAYMENT_ENABLED ? '결제하기' : '주문하기'}`}
+            : `${formatPrice(totalPrice)} ${PAYMENT_ENABLED ? '결제하기' : '주문하기'}`}
         </Button>
         <p className="mt-3 text-center text-xs text-neutral-500">
           {PAYMENT_ENABLED
