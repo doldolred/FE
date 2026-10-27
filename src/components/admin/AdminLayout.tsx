@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { fetchWaitingInquiryCount } from '../../api/admin'
 import { useIsAdmin, useIsLoggedIn } from '../../stores/authStore'
 
 const MENU = [
@@ -6,6 +8,7 @@ const MENU = [
   { to: '/admin/orders', label: '주문' },
   { to: '/admin/products', label: '상품' },
   { to: '/admin/members', label: '회원' },
+  { to: '/admin/inquiries', label: '문의함' },
   { to: '/admin/shipping', label: '배송 지역' },
   { to: '/admin/banners', label: '띠배너' },
   { to: '/admin/notices', label: '공지사항' },
@@ -16,6 +19,13 @@ export default function AdminLayout() {
   const loggedIn = useIsLoggedIn()
   const isAdmin = useIsAdmin()
   const location = useLocation()
+  // 답변 대기 문의 수 — 메뉴에 빨간 숫자로 (1분마다 새로)
+  const waiting = useQuery({
+    queryKey: ['admin', 'inquiries-waiting'],
+    queryFn: fetchWaitingInquiryCount,
+    enabled: loggedIn && isAdmin,
+    refetchInterval: 60_000,
+  })
 
   if (!loggedIn) return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />
   if (!isAdmin) return <Navigate to="/" replace />
@@ -38,6 +48,9 @@ export default function AdminLayout() {
                 }
               >
                 {m.label}
+                {m.to === '/admin/inquiries' && (waiting.data?.count ?? 0) > 0 && (
+                  <span className="ml-1 rounded-full bg-beet-700 px-1.5 py-0.5 text-[11px] font-bold text-white tabular-nums">{waiting.data!.count}</span>
+                )}
               </NavLink>
             ))}
           </nav>

@@ -6,6 +6,7 @@ import { fetchOrders } from '../api/orders'
 import { queryKeys } from '../api/queryKeys'
 import OrderStatusBadge from '../components/order/OrderStatusBadge'
 import Button from '../components/ui/Button'
+import { buttonClass } from '../components/ui/buttonStyles'
 import Input from '../components/ui/Input'
 import { Empty, ErrorMessage, Loading } from '../components/ui/Status'
 import { getFieldErrors } from '../lib/errors'
@@ -95,6 +96,21 @@ export default function MyPage() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-xl font-bold">1:1 문의</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-neutral-50 p-6">
+          <p className="text-sm text-neutral-600">주문 · 배송 · 상품 무엇이든 물어보세요. 답변이 달리면 이메일로 알려 드려요.</p>
+          <div className="flex gap-2">
+            <Link to="/mypage/inquiries" className={buttonClass('secondary')}>
+              문의 내역
+            </Link>
+            <Link to="/mypage/inquiries/new" className={buttonClass('primary')}>
+              문의하기
+            </Link>
+          </div>
+        </div>
       </section>
 
       <ChangePasswordSection />

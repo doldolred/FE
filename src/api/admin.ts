@@ -5,7 +5,9 @@ import type {
   AdminOrderDetail,
   AdminOrderSummary,
   AdminProduct,
+  AdminInquiry,
   AdminProductRequest,
+  InquiryStatus,
   Banner,
   BannerRequest,
   Notice,
@@ -73,3 +75,10 @@ export const fetchAdminBanners = () => api.get<Banner[]>('/api/admin/banners')
 export const createBanner = (req: BannerRequest) => api.post<Banner>('/api/admin/banners', req)
 export const updateBanner = (id: number, req: BannerRequest) => api.put<Banner>(`/api/admin/banners/${id}`, req)
 export const deleteBanner = (id: number) => api.delete<void>(`/api/admin/banners/${id}`)
+
+// 문의함
+export const fetchAdminInquiries = (status: InquiryStatus | '', page: number) =>
+  api.get<Page<AdminInquiry>>(`/api/admin/inquiries${qs({ status, page, size: 20 })}`)
+export const fetchWaitingInquiryCount = () => api.get<{ count: number }>('/api/admin/inquiries/waiting-count')
+export const fetchAdminInquiry = (id: number) => api.get<AdminInquiry>(`/api/admin/inquiries/${id}`)
+export const answerInquiry = (id: number, answer: string) => api.put<AdminInquiry>(`/api/admin/inquiries/${id}/answer`, { answer })

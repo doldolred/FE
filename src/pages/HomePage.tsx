@@ -4,11 +4,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import type { Product } from '../api/types'
-import { Beetroot, BeetSlice, ProductArt, TornEdge } from '../components/lineup/Art'
-import PhotoPouch from '../components/lineup/PhotoPouch'
-import { posePouch } from '../lib/pouch'
-import { MAIN_PRODUCT_ID, SELLING, UPCOMING, type UpcomingProduct } from '../data/lineup'
+import { Beetroot, BeetShape, BeetSlice, ProductArt, TornEdge } from '../components/lineup/Art'
+import SvgPouch from '../components/lineup/SvgPouch'
+import { SELLING, UPCOMING, type UpcomingProduct } from '../data/lineup'
 import { formatPrice } from '../lib/format'
+import { posePouch } from '../lib/pouch'
 
 /**
  * 메인 — 프로토타입 v4 (protohtml/v4.html) 그대로의 흐름.
@@ -20,7 +20,8 @@ import { formatPrice } from '../lib/format'
  *   3 DAILY RED   파우치가 받침대 위에 내려앉는다
  *   구매 띠       옵션 · 가격 · 구매하기
  *
- * 파우치는 네 장면 위를 내내 따라가는 한 장 (실제 사진, components/lineup/PhotoPouch).
+ * 파우치는 네 장면 위를 내내 따라가는 한 장 (3D 그림, components/lineup/SvgPouch).
+ * 문구는 v4 원본 그대로, 사실만 실제 제품에 맞췄다 (120ml · 제주산 · 가격은 서버).
  * 효능 · 건강 주장 문구는 넣지 않는다 (식품).
  */
 
@@ -43,12 +44,12 @@ function buildKeys(d: number): Key[] {
     { s: 0.2, x: 0, y: 0, rz: -3, ry: -14, sc: d },
     { s: 0.42, x: 0, y: 0, rz: 2, ry: 8, sc: d },
     { s: PIN_END, x: 0, y: 0.05, rz: 6, ry: 60, sc: 0.95 },
-    // 1 ~ 3
+    // 1 ~ 3 — v3 와 같은 길 (한 바퀴 더 돈 각도)
     { s: 1.0, x: -0.02, y: 0.02, rz: 16, ry: 338, sc: 1.0 },
     { s: 1.45, x: -0.1, y: 0.18, rz: -12, ry: 510, sc: 1.05 },
     { s: 2.0, x: 0.16, y: 0.06, rz: -24, ry: 696, sc: 1.18 },
     { s: 2.5, x: 0.04, y: 0.2, rz: 8, ry: 840, sc: 1.05 },
-    { s: 3.05, x: 0.0, y: 0.13, rz: 0, ry: 1080, sc: 0.86 },
+    { s: 3.05, x: 0.0, y: 0.13, rz: 0, ry: 1060, sc: 0.86 },
   ]
 }
 
@@ -89,7 +90,6 @@ export default function HomePage() {
   const { data: products } = useQuery({ queryKey: queryKeys.products, queryFn: fetchProducts })
   // 라인업 맨 앞 = 사진이 준비된 판매중 상품 (지금은 레드비트즙 하나)
   const main: Product | undefined = products?.find((p) => SELLING[p.id]) ?? products?.[0]
-  const info = SELLING[main?.id ?? MAIN_PRODUCT_ID] ?? SELLING[MAIN_PRODUCT_ID]
   const location = useLocation()
 
   const flowRef = useRef<HTMLDivElement>(null)
@@ -166,24 +166,12 @@ export default function HomePage() {
       if (tag) tag.style.opacity = dwell.toFixed(3)
     }
 
-    // 헤더 글자색 — 흰 · 회색 장면엔 검게(로고 끝은 빨강), 검정 · 빨강 장면엔 희게
-    const root = document.documentElement.style
-    let tone = ''
-    const setTone = (s: number) => {
-      const next = s < 1 || (s >= 2 && s < 3) ? 'dark' : 'light'
-      if (next === tone) return
-      tone = next
-      root.setProperty('--dd-head', next === 'dark' ? '#111111' : '#ffffff')
-      root.setProperty('--dd-head-em', next === 'dark' ? '#e4002b' : '#ffffff')
-    }
-
     let hover = 0
     let raf = 0
     const frame = (now: number) => {
       const vw = window.innerWidth
       const vh = window.innerHeight
       const s = flowPos()
-      setTone(s)
       const k = interp(keys, s)
       const bob = reduced ? 0 : Math.sin(now / 1000) * 6
 
@@ -222,8 +210,6 @@ export default function HomePage() {
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', size)
-      root.removeProperty('--dd-head')
-      root.removeProperty('--dd-head-em')
     }
   }, [])
 
@@ -232,15 +218,15 @@ export default function HomePage() {
   const buyable = main?.options.filter((o) => !o.soldOut) ?? []
 
   return (
-    <div className="text-[var(--dd-ink)]">
+    <div>
       <div className="dd-flow" ref={flowRef}>
         {/* 0 LINEUP — 위에서 비트즙, 아래에서 앞으로 나올 제품. 가운데서 만난다 */}
         <section className="dd-sec dd-s0" id="lineup" aria-label="돌돌 제품 라인업">
           <div className="pin">
-            <div className="bgword dd-display" aria-hidden="true">
+            <div className="bgword" aria-hidden="true">
               LINEUP
             </div>
-            <p className="kicker">DOLDOL · BEET LINEUP</p>
+            <p className="kicker dd-kicker">DOLDOL · BEET LINEUP</p>
             <p className="count">{itemCount} ITEMS</p>
             <div className="dd-lineup" ref={lineupRef}>
               {/* 메인 — 그림은 흐르는 파우치가 맡고, 칸은 누르는 자리 + 이름표만 */}
@@ -272,59 +258,57 @@ export default function HomePage() {
               제품을 눌러 자세히 보세요
             </p>
           </div>
-          <TornEdge seed={3} color="#111111" />
+          <TornEdge seed={3} color="#16173d" />
         </section>
 
         {/* 1 UNBEETABLE */}
         <section className="dd-sec dd-s1" id="about" ref={s1Ref} aria-label="돌돌 레드비트즙">
-          <div className="big dd-display">Unbeetable</div>
+          <div className="big">Unbeetable</div>
           <div className="dd-beetroot" aria-hidden="true">
             <Beetroot />
           </div>
           <p className="lead">
-            제주 비트 하나로 꽉 채운
+            비트 하나로 꽉 채운
             <br />
             <b>한 포의 맛,</b> 직접 느껴 보세요.
           </p>
           <button className="try" type="button" onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}>
             맛보기 →
           </button>
-          <TornEdge seed={7} color="#f1f1f1" />
+          <TornEdge seed={7} color="#f6c3d4" />
         </section>
 
         {/* 2 비트만 */}
         <section className="dd-sec dd-s2" aria-label="비트만">
-          <h2 className="big dd-display">
+          <h2 className="big">
             <span>물도 설탕도</span>
-            <span>
-              없이, <em>비트만</em>
-            </span>
+            <span>없이, 비트만</span>
             <span>꽉 채웠어요</span>
           </h2>
           <div className="stickers" aria-hidden="true">
-            <span className="dd-sticker" style={tilt('-6deg')} data-red="">
+            <span className="dd-sticker" style={tilt('-6deg')}>
               비트 100%
             </span>
             <span className="dd-sticker" style={tilt('5deg')}>
-              제주산 비트
+              물 0% · 설탕 0%
             </span>
             <span className="dd-sticker" style={tilt('-3deg')}>
               120ml 한 포
             </span>
           </div>
-          <p className="note">제주 비트를 통째로 씻어 그대로 착즙했어요(NFC). 뜯어서 바로, 하루 한 포.</p>
-          <TornEdge seed={23} color="#e4002b" />
+          <p className="note">제주산 비트를 통째로 씻어 착즙했어요. 뜯어서 바로, 하루 한 포.</p>
+          <TornEdge seed={23} color="#d42a68" />
         </section>
 
         {/* 3 + DAILY RED */}
         <section className="dd-sec dd-s3" aria-label="매일 한 포">
-          <div className="big dd-display">+ Daily Red</div>
+          <div className="big">+ Daily Red</div>
           <p className="caption">
             매일 한 포,
             <br />
             붉은 습관.
             <br />
-            120ml × 30포 · 60포
+            120ml × 30포
           </p>
           <div className="dd-plinth" ref={plinthRef} aria-hidden="true">
             <div className="top" />
@@ -332,10 +316,10 @@ export default function HomePage() {
           </div>
           <div className="dd-props" aria-hidden="true">
             <div className="beet-a">
-              <Beetroot />
+              <BeetShape />
             </div>
             <div className="beet-b">
-              <Beetroot />
+              <BeetShape />
             </div>
             <div className="slice">
               <BeetSlice />
@@ -354,7 +338,7 @@ export default function HomePage() {
         {/* 네 장면 위를 내내 따라가는 비트즙 파우치 */}
         <div className="dd-track" aria-hidden="true">
           <div className="dd-traveler">
-            <PhotoPouch ref={pouchRef} photos={info.photos} alt="" />
+            <SvgPouch ref={pouchRef} />
           </div>
         </div>
       </div>
@@ -366,13 +350,13 @@ export default function HomePage() {
             <h2>
               돌돌 <em>레드비트즙</em>
               <br />
-              제주산 100% NFC
+              {buyable.length > 0 ? `${buyable.map((o) => o.name).join(' · ')} 한 상자` : '30포 한 상자'}
             </h2>
-            <p>120ml 파우치 · {buyable.length > 0 ? buyable.map((o) => o.name).join(' / ') : '30포 / 60포'} · 5만원 이상 무료배송</p>
+            <p>제주산 비트 100% · 120ml 파우치 · 5만원 이상 무료배송</p>
           </div>
           <div className="cta">
             {main && <span className="price">{main.soldOut ? '품절' : `${formatPrice(main.minPrice)}~`}</span>}
-            <Link className="dd-btn" data-primary="" to={mainHref}>
+            <Link className="btn" to={mainHref}>
               구매하기
             </Link>
           </div>

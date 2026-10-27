@@ -11,7 +11,9 @@ const nav = ({ isActive }: { isActive: boolean }) =>
 
 /**
  * 프로토타입 v4 헤더 — 양쪽 메뉴 · 가운데 로고. 맨 위에 띠배너(관리자 > 띠배너)가 붙는다.
- * overHero(메인): 장면 위에 투명하게 뜬다. 글자색은 지금 장면 바탕에 맞춰 메인이 정한다(--dd-head · --dd-head-em).
+ * overHero(메인): v4 원본처럼 장면 위에 떠서 글자가 바탕과 반대색(mix-blend-difference), 로고 끝 DOL 은 라임.
+ *   띠배너는 섞이면 색이 뒤집히니 따로 맨 위에 고정하고, 메뉴 줄은 그 아래(--dd-banner)에 둔다.
+ * 그 밖(상세 등): 위에 붙는 띠. 상품 상세는 제품 바탕색(--dd-page-bg · --dd-page-fg)을 따른다.
  */
 export default function Header({ overHero = false }: { overHero?: boolean }) {
   const loggedIn = useIsLoggedIn()
@@ -30,13 +32,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
     navigate('/')
   }
 
-  const headerClass = overHero
-    ? 'fixed inset-x-0 top-0 z-50 text-[var(--dd-head,#111)] transition-colors duration-300'
-    : 'sticky top-0 z-20 border-b-2 border-neutral-900 bg-white text-neutral-900'
-
-  return (
-    <header className={headerClass}>
-      <TopBanner />
+  const bar = (
       <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-4 text-[11px] font-extrabold tracking-[0.12em] sm:px-[clamp(16px,3vw,40px)]">
         <nav className="hidden gap-[clamp(16px,3vw,44px)] md:flex" aria-label="둘러보기">
           <Link to={{ pathname: '/', hash: '#lineup' }} className="hover:opacity-60">
@@ -50,7 +46,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           </Link>
         </nav>
         <Link to="/" className="dd-logo col-start-2" aria-label="돌돌 홈">
-          DOL<em className={`not-italic transition-colors duration-300 ${overHero ? 'text-[var(--dd-head-em,#e4002b)]' : 'text-[#e4002b]'}`}>DOL</em>
+          DOL<em className={overHero ? 'text-[#e6f05a]' : 'text-[#d42a68]'}>DOL</em>
         </Link>
         <nav className="flex items-center justify-end gap-3 sm:gap-[clamp(14px,2.4vw,32px)]" aria-label="내 메뉴">
           <NavLink to="/cart" className={nav}>
@@ -82,6 +78,24 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           )}
         </nav>
       </div>
+  )
+
+  if (overHero) {
+    return (
+      <>
+        <div className="fixed inset-x-0 top-0 z-[61]">
+          <TopBanner />
+        </div>
+        <header className="fixed inset-x-0 z-[60] text-white mix-blend-difference" style={{ top: 'var(--dd-banner, 0px)' }}>
+          {bar}
+        </header>
+      </>
+    )
+  }
+  return (
+    <header className="sticky top-0 z-20 border-b-2 border-[var(--dd-page-line,#16173d)] bg-[var(--dd-page-bg,#fff)] text-[var(--dd-page-fg,#16173d)] transition-colors duration-300">
+      <TopBanner />
+      {bar}
     </header>
   )
 }

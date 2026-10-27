@@ -308,3 +308,35 @@ export interface Banner {
 }
 
 export type BannerRequest = Omit<Banner, 'id'>
+
+// ── 1:1 문의 ─────────────────────────────────────────
+
+export type InquiryCategory = 'ORDER' | 'SHIPPING' | 'PRODUCT' | 'CANCEL' | 'MEMBER' | 'ETC'
+export type InquiryStatus = 'WAITING' | 'ANSWERED'
+
+export interface Inquiry {
+  id: number
+  category: InquiryCategory
+  title: string
+  content: string
+  /** 관련 주문 (선택) */
+  orderNumber: string | null
+  status: InquiryStatus
+  answer: string | null
+  answeredAt: string | null
+  createdAt: string
+}
+
+export interface CreateInquiryRequest {
+  category: InquiryCategory
+  title: string
+  content: string
+  orderNumber?: string
+}
+
+/** 관리자용 — 누가 물었는지까지 */
+export interface AdminInquiry extends Inquiry {
+  memberId: number
+  memberEmail: string
+  memberName: string
+}

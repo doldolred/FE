@@ -6,6 +6,7 @@ import { queryKeys } from '../api/queryKeys'
 import OrderStatusBadge from '../components/order/OrderStatusBadge'
 import PayMethodPicker from '../components/order/PayMethodPicker'
 import Button from '../components/ui/Button'
+import { buttonClass } from '../components/ui/buttonStyles'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { usePayment } from '../hooks/usePayment'
 import { CANCELLABLE_STATUSES, formatDate, formatPrice } from '../lib/format'
@@ -152,11 +153,16 @@ export default function OrderDetailPage() {
         <Link to="/mypage" className="text-sm text-neutral-500 hover:underline">
           ← 주문 내역
         </Link>
-        {CANCELLABLE_STATUSES.includes(order.status) && (
-          <Button variant="secondary" onClick={handleCancel} disabled={cancelMutation.isPending}>
-            주문 취소
-          </Button>
-        )}
+        <div className="flex gap-2">
+          <Link to={`/mypage/inquiries/new?order=${order.orderNumber}`} className={buttonClass('ghost')}>
+            이 주문 문의하기
+          </Link>
+          {CANCELLABLE_STATUSES.includes(order.status) && (
+            <Button variant="secondary" onClick={handleCancel} disabled={cancelMutation.isPending}>
+              주문 취소
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   )

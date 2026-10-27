@@ -4,19 +4,20 @@
 @theme {
   --font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
 
-  /* 브랜드 컬러 — 포인트는 #E4002B(팬톤 185C) 하나, 나머지는 흰 · 검 무채색 (고객 가이드).
-   * 이름은 예전 그대로 beet-* — 700 이 기본 포인트(버튼 · 강조) */
-  --color-beet-50: #fff1f3;
-  --color-beet-100: #ffe0e5;
-  --color-beet-200: #ffc2cc;
-  --color-beet-300: #ff6b80; /* 검은 바탕 위 강조 */
-  --color-beet-500: #e4002b;
-  --color-beet-600: #e4002b;
-  --color-beet-700: #e4002b;
-  --color-beet-800: #b80023;
-  --color-beet-900: #8a001a;
+  /* 브랜드 컬러 — 프로토타입 v4 의 비트색 (styles/lineup.css 의 남색 · 라임 · 핑크와 같이 쓴다) */
+  --color-beet-50: #fdf2f6;
+  --color-beet-100: #fce7ef;
+  --color-beet-200: #f9cfe0;
+  --color-beet-300: #f0729f; /* 어두운 바탕 위 강조 */
+  --color-beet-500: #d42a68;
+  --color-beet-600: #c0265f;
+  --color-beet-700: #d42a68;
+  --color-beet-800: #8e1b4a;
+  --color-beet-900: #5c1231;
 
-  --color-ink: #111111;
+  /* v4 남색 · 라임 */
+  --color-ink: #16173d;
+  --color-lime: #e6f05a;
   --color-cream: #ffffff;
 
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);

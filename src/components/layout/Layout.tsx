@@ -3,13 +3,16 @@ import Footer from './Footer'
 import Header from './Header'
 
 export default function Layout() {
-  // 메인은 풀블리드 (프로토타입 v4) — 헤더가 장면 위에 뜨고, 본문 폭 제한이 없다
+  // 메인 · 상품 상세 · 출시 예정은 풀블리드 (프로토타입 v4) — 본문 폭 제한 없이 화면 전체에 제 바탕색을 깐다
   const isHome = useMatch('/') !== null
+  const isProduct = useMatch('/products/:id') !== null
+  const isLineup = useMatch('/lineup/:slug') !== null
+  const fullBleed = isHome || isProduct || isLineup
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header overHero={isHome} />
-      {isHome ? (
+      {fullBleed ? (
         <main id="main" className="flex-1">
           <Outlet />
         </main>
@@ -18,7 +21,7 @@ export default function Layout() {
           <Outlet />
         </main>
       )}
-      <Footer dark={isHome} />
+      <Footer dark={fullBleed} />
     </div>
   )
 }
