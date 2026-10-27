@@ -271,3 +271,20 @@ export interface ShippingArea {
   zipTo: string
   extraFee: number
 }
+
+// ── 공지사항 ─────────────────────────────────────────
+
+export interface Notice {
+  id: number
+  title: string
+  /** 줄바꿈 그대로 보여 주는 일반 글 (HTML 아님) */
+  content: string
+  /** 목록 맨 위 고정 */
+  pinned: boolean
+  /** false = 손님에게 안 보임 (관리자 화면에만) */
+  published: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type NoticeRequest = Pick<Notice, 'title' | 'content' | 'pinned' | 'published'>

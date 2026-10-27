@@ -7,6 +7,7 @@ const MENU = [
   { to: '/admin/products', label: '상품' },
   { to: '/admin/members', label: '회원' },
   { to: '/admin/shipping', label: '배송 지역' },
+  { to: '/admin/notices', label: '공지사항' },
 ]
 
 /** /admin/** — 관리자만. 서버도 /api/admin/** 를 ADMIN 만 허용하므로 화면 가드는 편의용 */

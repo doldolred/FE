@@ -5,4 +5,6 @@ export const queryKeys = {
   cart: ['cart'] as const,
   orders: ['orders'] as const,
   order: (orderNumber: string) => ['orders', orderNumber] as const,
+  notices: (page: number) => ['notices', page] as const,
+  notice: (id: number) => ['notices', 'detail', id] as const,
 }

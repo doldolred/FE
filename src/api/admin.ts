@@ -6,6 +6,8 @@ import type {
   AdminOrderSummary,
   AdminProduct,
   AdminProductRequest,
+  Notice,
+  NoticeRequest,
   ChangeOrderStatusRequest,
   OrderStatus,
   Page,
@@ -56,3 +58,10 @@ export const changeMemberRole = (id: number, role: Role) => api.patch<AdminMembe
 export const fetchShippingAreas = () => api.get<ShippingArea[]>('/api/admin/shipping/areas')
 export const createShippingArea = (req: Omit<ShippingArea, 'id'>) => api.post<ShippingArea>('/api/admin/shipping/areas', req)
 export const deleteShippingArea = (id: number) => api.delete<void>(`/api/admin/shipping/areas/${id}`)
+
+// 공지사항
+export const fetchAdminNotices = (page: number) => api.get<Page<Notice>>(`/api/admin/notices${qs({ page, size: 20 })}`)
+export const fetchAdminNotice = (id: number) => api.get<Notice>(`/api/admin/notices/${id}`)
+export const createNotice = (req: NoticeRequest) => api.post<Notice>('/api/admin/notices', req)
+export const updateNotice = (id: number, req: NoticeRequest) => api.put<Notice>(`/api/admin/notices/${id}`, req)
+export const deleteNotice = (id: number) => api.delete<void>(`/api/admin/notices/${id}`)

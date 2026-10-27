@@ -12,6 +12,7 @@ import LegalPage from './pages/LegalPage'
 import LoginPage from './pages/LoginPage'
 import MyPage from './pages/MyPage'
 import NotFoundPage from './pages/NotFoundPage'
+import { NoticeDetailPage, NoticeListPage } from './pages/NoticePages'
 import OrderDetailPage from './pages/OrderDetailPage'
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordPages'
 // 관리자 화면은 손님이 받을 필요가 없어서 따로 나눠 받는다 (lazy)
@@ -25,6 +26,8 @@ import {
   AdminMembersPage,
   AdminMemberDetailPage,
   AdminShippingPage,
+  AdminNoticesPage,
+  AdminNoticeEditPage,
 } from './pages/admin/lazy'
 import PortoneRedirectPage from './pages/PortoneRedirectPage'
 import ProductDetailPage from './pages/ProductDetailPage'
@@ -39,6 +42,8 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'products/:id', element: <ProductDetailPage /> },
       { path: 'lineup/:slug', element: <ComingSoonPage /> },
+      { path: 'notices', element: <NoticeListPage /> },
+      { path: 'notices/:id', element: <NoticeDetailPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'signup', element: <SignupPage /> },
       { path: 'password/forgot', element: <ForgotPasswordPage /> },
@@ -71,6 +76,8 @@ export const router = createBrowserRouter([
       { path: 'members', element: wait(<AdminMembersPage />) },
       { path: 'members/:id', element: wait(<AdminMemberDetailPage />) },
       { path: 'shipping', element: wait(<AdminShippingPage />) },
+      { path: 'notices', element: wait(<AdminNoticesPage />) },
+      { path: 'notices/:id', element: wait(<AdminNoticeEditPage />) },
     ],
   },
 ])

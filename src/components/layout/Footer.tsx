@@ -10,6 +10,9 @@ export default function Footer({ dark = false }: { dark?: boolean }) {
     <footer className={dark ? 'border-t border-cream/10 bg-ink' : 'mt-20 border-t border-neutral-200 bg-neutral-50'}>
       <div className={`mx-auto max-w-6xl space-y-1 px-4 py-10 text-xs leading-relaxed ${dark ? 'text-cream/40' : 'text-neutral-500'}`}>
         <nav className="mb-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          <Link to="/notices" className={link}>
+            공지사항
+          </Link>
           <Link to="/terms" className={link}>
             이용약관
           </Link>

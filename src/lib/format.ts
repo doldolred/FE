@@ -6,6 +6,11 @@ const dateFormat = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeS
 
 export const formatDate = (iso: string) => dateFormat.format(new Date(iso))
 
+const dayFormat = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium' })
+
+/** 날짜만 (예: 2026. 10. 27.) */
+export const formatDay = (iso: string) => dayFormat.format(new Date(iso))
+
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING_PAYMENT: '결제 대기',
   PAID: '결제 완료',
