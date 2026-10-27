@@ -288,3 +288,23 @@ export interface Notice {
 }
 
 export type NoticeRequest = Pick<Notice, 'title' | 'content' | 'pinned' | 'published'>
+
+// ── 띠배너 ───────────────────────────────────────────
+
+/** RED = 포인트 #E4002B, BLACK, WHITE */
+export type BannerTheme = 'RED' | 'BLACK' | 'WHITE'
+
+export interface Banner {
+  id: number
+  message: string
+  /** 사이트 안 경로(/products/1) 또는 https 주소. null 이면 글만 */
+  linkUrl: string | null
+  theme: BannerTheme
+  /** 비어 있으면 기간 제한 없음 */
+  startsAt: string | null
+  endsAt: string | null
+  active: boolean
+  sortOrder: number
+}
+
+export type BannerRequest = Omit<Banner, 'id'>

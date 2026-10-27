@@ -26,6 +26,7 @@ import {
   AdminMembersPage,
   AdminMemberDetailPage,
   AdminShippingPage,
+  AdminBannersPage,
   AdminNoticesPage,
   AdminNoticeEditPage,
 } from './pages/admin/lazy'
@@ -76,6 +77,7 @@ export const router = createBrowserRouter([
       { path: 'members', element: wait(<AdminMembersPage />) },
       { path: 'members/:id', element: wait(<AdminMemberDetailPage />) },
       { path: 'shipping', element: wait(<AdminShippingPage />) },
+      { path: 'banners', element: wait(<AdminBannersPage />) },
       { path: 'notices', element: wait(<AdminNoticesPage />) },
       { path: 'notices/:id', element: wait(<AdminNoticeEditPage />) },
     ],

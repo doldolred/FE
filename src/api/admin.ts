@@ -6,6 +6,8 @@ import type {
   AdminOrderSummary,
   AdminProduct,
   AdminProductRequest,
+  Banner,
+  BannerRequest,
   Notice,
   NoticeRequest,
   ChangeOrderStatusRequest,
@@ -65,3 +67,9 @@ export const fetchAdminNotice = (id: number) => api.get<Notice>(`/api/admin/noti
 export const createNotice = (req: NoticeRequest) => api.post<Notice>('/api/admin/notices', req)
 export const updateNotice = (id: number, req: NoticeRequest) => api.put<Notice>(`/api/admin/notices/${id}`, req)
 export const deleteNotice = (id: number) => api.delete<void>(`/api/admin/notices/${id}`)
+
+// 띠배너
+export const fetchAdminBanners = () => api.get<Banner[]>('/api/admin/banners')
+export const createBanner = (req: BannerRequest) => api.post<Banner>('/api/admin/banners', req)
+export const updateBanner = (id: number, req: BannerRequest) => api.put<Banner>(`/api/admin/banners/${id}`, req)
+export const deleteBanner = (id: number) => api.delete<void>(`/api/admin/banners/${id}`)

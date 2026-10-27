@@ -24,6 +24,14 @@
   font-size: 19px;
 }
 
+/* 띠배너 — 바뀔 때 아래에서 올라온다 */
+@keyframes dd-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+}
+
 /* ── 흐름 ─────────────────────────────── */
 .dd-flow {
   position: relative;
@@ -71,7 +79,7 @@
 .dd-s0 .kicker,
 .dd-s0 .count {
   position: absolute;
-  top: 84px;
+  top: calc(84px + var(--dd-banner, 0px)); /* 헤더 + 띠배너 아래 */
   margin: 0;
   font-weight: 900;
   font-size: 13px;
@@ -728,7 +736,7 @@
 @media (max-width: 860px) {
   .dd-s0 .kicker,
   .dd-s0 .count {
-    top: 72px;
+    top: calc(72px + var(--dd-banner, 0px));
     font-size: 11px;
   }
   .dd-lp {
@@ -761,7 +769,7 @@
     width: 96px;
   }
   .dd-s2 .big {
-    top: 88px; /* 헤더(60px) 아래 */
+    top: calc(88px + var(--dd-banner, 0px)); /* 헤더(60px) · 띠배너 아래 */
   }
   .dd-s2 .stickers {
     top: auto;

@@ -7,6 +7,7 @@ const MENU = [
   { to: '/admin/products', label: '상품' },
   { to: '/admin/members', label: '회원' },
   { to: '/admin/shipping', label: '배송 지역' },
+  { to: '/admin/banners', label: '띠배너' },
   { to: '/admin/notices', label: '공지사항' },
 ]
 

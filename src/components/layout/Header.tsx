@@ -4,12 +4,13 @@ import { logoutRequest } from '../../api/auth'
 import { fetchCart } from '../../api/cart'
 import { queryKeys } from '../../api/queryKeys'
 import { useAuthStore, useIsAdmin, useIsLoggedIn } from '../../stores/authStore'
+import TopBanner from './TopBanner'
 
 const nav = ({ isActive }: { isActive: boolean }) =>
   `whitespace-nowrap transition-opacity hover:opacity-60 ${isActive ? 'underline underline-offset-4' : ''}`
 
 /**
- * 프로토타입 v4 헤더 — 양쪽 메뉴 · 가운데 로고.
+ * 프로토타입 v4 헤더 — 양쪽 메뉴 · 가운데 로고. 맨 위에 띠배너(관리자 > 띠배너)가 붙는다.
  * overHero(메인): 장면 위에 투명하게 뜬다. 글자색은 지금 장면 바탕에 맞춰 메인이 정한다(--dd-head · --dd-head-em).
  */
 export default function Header({ overHero = false }: { overHero?: boolean }) {
@@ -35,6 +36,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
 
   return (
     <header className={headerClass}>
+      <TopBanner />
       <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-4 text-[11px] font-extrabold tracking-[0.12em] sm:px-[clamp(16px,3vw,40px)]">
         <nav className="hidden gap-[clamp(16px,3vw,44px)] md:flex" aria-label="둘러보기">
           <Link to={{ pathname: '/', hash: '#lineup' }} className="hover:opacity-60">
