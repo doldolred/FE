@@ -10,6 +10,7 @@ const MENU = [
   { to: '/admin/members', label: '회원' },
   { to: '/admin/inquiries', label: '문의함' },
   { to: '/admin/reviews', label: '후기' },
+  { to: '/admin/coupons', label: '할인코드' },
   { to: '/admin/shipping', label: '배송 지역' },
   { to: '/admin/banners', label: '띠배너' },
   { to: '/admin/notices', label: '공지사항' },

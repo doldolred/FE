@@ -103,6 +103,12 @@ export default function OrderDetailPage() {
             <dt>상품 금액</dt>
             <dd>{formatPrice(order.itemsPrice)}</dd>
           </div>
+          {order.discountAmount > 0 && (
+            <div className="flex justify-between text-beet-700">
+              <dt>할인{order.couponCode ? ` (${order.couponCode})` : ''}</dt>
+              <dd>−{formatPrice(order.discountAmount)}</dd>
+            </div>
+          )}
           <div className="flex justify-between">
             <dt>배송비</dt>
             <dd>{order.shippingFee === 0 ? '무료' : formatPrice(order.shippingFee)}</dd>

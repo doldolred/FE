@@ -6,7 +6,9 @@ import type {
   AdminOrderSummary,
   AdminProduct,
   AdminInquiry,
+  AdminCoupon,
   AdminProductRequest,
+  CouponRequest,
   AdminReviewFilter,
   AdminReviewUpdate,
   Review,
@@ -90,3 +92,9 @@ export const answerInquiry = (id: number, answer: string) => api.put<AdminInquir
 export const fetchAdminReviews = (filter: AdminReviewFilter, page: number) =>
   api.get<Page<Review>>(`/api/admin/reviews${qs({ filter, page, size: 20 })}`)
 export const updateReview = (id: number, req: AdminReviewUpdate) => api.patch<Review>(`/api/admin/reviews/${id}`, req)
+
+// 할인코드
+export const fetchAdminCoupons = () => api.get<AdminCoupon[]>('/api/admin/coupons')
+export const createCoupon = (req: CouponRequest) => api.post<AdminCoupon>('/api/admin/coupons', req)
+export const updateCoupon = (id: number, req: CouponRequest) => api.put<AdminCoupon>(`/api/admin/coupons/${id}`, req)
+export const deleteCoupon = (id: number) => api.delete<void>(`/api/admin/coupons/${id}`)

@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { fetchCart, fetchShippingQuote } from '../api/cart'
+import { checkCoupon } from '../api/coupons'
 import { createOrder } from '../api/orders'
 import { queryKeys } from '../api/queryKeys'
-import type { CreateOrderRequest } from '../api/types'
+import type { CouponCheck, CreateOrderRequest } from '../api/types'
 import OrderSummaryBox from '../components/order/OrderSummaryBox'
 import PayMethodPicker from '../components/order/PayMethodPicker'
 import Button from '../components/ui/Button'
@@ -31,6 +32,10 @@ export default function CheckoutPage() {
     memo: '',
   })
   const [payMethod, setPayMethod] = useState<PayMethod>('card')
+  // 할인코드 — 미리보기로 확인한 것만 주문에 실어 보낸다 (주문할 때 서버가 다시 계산)
+  const [couponInput, setCouponInput] = useState('')
+  const [coupon, setCoupon] = useState<CouponCheck | null>(null)
+  const couponMutation = useMutation({ mutationFn: checkCoupon, onSuccess: setCoupon })
   const [addressError, setAddressError] = useState<string | null>(null)
   const { pay, paying } = usePayment()
   const set = (key: keyof CreateOrderRequest) => (e: { target: { value: string } }) =>
@@ -46,7 +51,8 @@ export default function CheckoutPage() {
     enabled: !!cart && cart.items.length > 0 && validZip,
   })
   const shippingFee = validZip && quote.data ? quote.data.fee : (cart?.shippingFee ?? 0)
-  const totalPrice = (cart?.itemsPrice ?? 0) + shippingFee
+  const discountAmount = coupon?.discountAmount ?? 0
+  const totalPrice = (cart?.itemsPrice ?? 0) - discountAmount + shippingFee
 
   const handleSearchAddress = async () => {
     setAddressError(null)
@@ -79,7 +85,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    orderMutation.mutate(form)
+    orderMutation.mutate({ ...form, couponCode: coupon?.code })
   }
 
   return (
@@ -148,6 +154,54 @@ export default function CheckoutPage() {
           </ul>
         </section>
 
+        <section>
+          <h2 className="mb-3 text-lg font-semibold">할인코드</h2>
+          {coupon ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border-2 border-beet-700 bg-beet-50 px-4 py-3">
+              <p className="text-sm">
+                <b className="font-mono">{coupon.code}</b> · {coupon.name}
+                <span className="ml-2 font-bold text-beet-700">−{formatPrice(coupon.discountAmount)}</span>
+              </p>
+              <button
+                type="button"
+                className="text-sm text-neutral-500 underline"
+                onClick={() => {
+                  setCoupon(null)
+                  setCouponInput('')
+                  couponMutation.reset()
+                }}
+              >
+                취소
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                className="h-11 min-w-0 flex-1 rounded-lg border border-neutral-300 px-3 font-mono uppercase outline-none focus:border-beet-700"
+                placeholder="코드를 입력하세요"
+                maxLength={30}
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value)}
+                onKeyDown={(e) => {
+                  // 입력칸에서 엔터를 눌러도 주문이 넘어가지 않고 코드만 확인
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    if (couponInput.trim()) couponMutation.mutate(couponInput.trim())
+                  }
+                }}
+              />
+              <Button
+                variant="secondary"
+                disabled={!couponInput.trim() || couponMutation.isPending}
+                onClick={() => couponMutation.mutate(couponInput.trim())}
+              >
+                적용
+              </Button>
+            </div>
+          )}
+          {couponMutation.error && <p className="mt-2 text-sm text-red-600">{getErrorMessage(couponMutation.error)}</p>}
+        </section>
+
         {PAYMENT_ENABLED && (
           <section>
             <PayMethodPicker value={payMethod} onChange={setPayMethod} disabled={orderMutation.isPending || paying} />
@@ -158,6 +212,8 @@ export default function CheckoutPage() {
       <OrderSummaryBox
         itemsPrice={cart.itemsPrice}
         shippingFee={shippingFee}
+        discountAmount={discountAmount}
+        couponCode={coupon?.code}
         areaName={validZip ? quote.data?.areaName : null}
         freeThreshold={cart.freeShippingThreshold}
       >

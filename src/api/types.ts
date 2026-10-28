@@ -116,6 +116,8 @@ export interface CreateOrderRequest {
   address1: string
   address2?: string
   memo?: string
+  /** 할인코드 (선택) — 서버가 다시 계산해 적용 */
+  couponCode?: string
 }
 
 export interface OrderSummary {
@@ -151,8 +153,11 @@ export interface OrderDetail {
   orderNumber: string
   status: OrderStatus
   itemsPrice: number
+  /** 할인코드로 깎은 금액 (없으면 0) */
+  discountAmount: number
+  couponCode: string | null
   shippingFee: number
-  /** = itemsPrice + shippingFee */
+  /** = itemsPrice - discountAmount + shippingFee */
   totalPrice: number
   receiverName: string
   receiverPhone: string
@@ -398,3 +403,37 @@ export interface AdminReviewUpdate {
   /** 빈 글이면 답글 삭제 */
   reply?: string
 }
+
+// ── 할인코드 ─────────────────────────────────────────
+
+/** 주문서 미리보기 — 지금 장바구니에 쓰면 얼마 깎이는지 */
+export interface CouponCheck {
+  code: string
+  name: string
+  itemsPrice: number
+  discountAmount: number
+}
+
+export type DiscountType = 'AMOUNT' | 'PERCENT'
+
+export interface AdminCoupon {
+  id: number
+  code: string
+  name: string
+  discountType: DiscountType
+  /** AMOUNT 면 원, PERCENT 면 % */
+  discountValue: number
+  /** PERCENT 일 때 최대 할인 (원), 없으면 상한 없음 */
+  maxDiscount: number | null
+  minOrderAmount: number
+  startsAt: string | null
+  endsAt: string | null
+  /** 전체 수량, null 이면 무제한 */
+  usageLimit: number | null
+  perMemberLimit: number
+  usedCount: number
+  active: boolean
+  createdAt: string
+}
+
+export type CouponRequest = Omit<AdminCoupon, 'id' | 'usedCount' | 'createdAt'>
