@@ -6,6 +6,7 @@ import { fetchProduct } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import { MoreFromDoldol, Points, ProductPage, SpinPouch, Stage } from '../components/lineup/Stage'
 import ProductImage from '../components/product/ProductImage'
+import ProductReviews from '../components/review/ProductReviews'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { MAIN_PRODUCT_ID, SELLING } from '../data/lineup'
 import { formatPrice } from '../lib/format'
@@ -161,6 +162,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </section>
+
+      <ProductReviews productId={product.id} />
 
       <MoreFromDoldol exceptProductId={product.id} />
     </ProductPage>

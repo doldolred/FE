@@ -12,6 +12,7 @@ export const AdminMemberDetailPage = lazy(() => import('./AdminMembersPage').the
 export const AdminShippingPage = lazy(() => import('./AdminShippingPage'))
 export const AdminInquiriesPage = lazy(() => import('./AdminInquiriesPage').then((m) => ({ default: m.AdminInquiriesPage })))
 export const AdminInquiryDetailPage = lazy(() => import('./AdminInquiriesPage').then((m) => ({ default: m.AdminInquiryDetailPage })))
+export const AdminReviewsPage = lazy(() => import('./AdminReviewsPage'))
 export const AdminBannersPage = lazy(() => import('./AdminBannersPage'))
 export const AdminNoticesPage = lazy(() => import('./AdminNoticesPage').then((m) => ({ default: m.AdminNoticesPage })))
 export const AdminNoticeEditPage = lazy(() => import('./AdminNoticesPage').then((m) => ({ default: m.AdminNoticeEditPage })))

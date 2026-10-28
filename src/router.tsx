@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage'
 import MyPage from './pages/MyPage'
 import NotFoundPage from './pages/NotFoundPage'
 import { InquiryDetailPage, InquiryListPage, InquiryNewPage } from './pages/InquiryPages'
+import { MyReviewsPage, ReviewNewPage } from './pages/ReviewPages'
 import { NoticeDetailPage, NoticeListPage } from './pages/NoticePages'
 import OrderDetailPage from './pages/OrderDetailPage'
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordPages'
@@ -28,6 +29,7 @@ import {
   AdminMemberDetailPage,
   AdminShippingPage,
   AdminBannersPage,
+  AdminReviewsPage,
   AdminInquiriesPage,
   AdminInquiryDetailPage,
   AdminNoticesPage,
@@ -63,6 +65,8 @@ export const router = createBrowserRouter([
           { path: 'payment/portone/redirect', element: <PortoneRedirectPage /> },
           { path: 'mypage', element: <MyPage /> },
           { path: 'mypage/orders/:orderNumber', element: <OrderDetailPage /> },
+          { path: 'mypage/reviews', element: <MyReviewsPage /> },
+          { path: 'mypage/reviews/new', element: <ReviewNewPage /> },
           { path: 'mypage/inquiries', element: <InquiryListPage /> },
           { path: 'mypage/inquiries/new', element: <InquiryNewPage /> },
           { path: 'mypage/inquiries/:id', element: <InquiryDetailPage /> },
@@ -85,6 +89,7 @@ export const router = createBrowserRouter([
       { path: 'shipping', element: wait(<AdminShippingPage />) },
       { path: 'inquiries', element: wait(<AdminInquiriesPage />) },
       { path: 'inquiries/:id', element: wait(<AdminInquiryDetailPage />) },
+      { path: 'reviews', element: wait(<AdminReviewsPage />) },
       { path: 'banners', element: wait(<AdminBannersPage />) },
       { path: 'notices', element: wait(<AdminNoticesPage />) },
       { path: 'notices/:id', element: wait(<AdminNoticeEditPage />) },

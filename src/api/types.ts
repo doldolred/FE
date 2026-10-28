@@ -340,3 +340,61 @@ export interface AdminInquiry extends Inquiry {
   memberEmail: string
   memberName: string
 }
+
+// ── 상품 후기 ────────────────────────────────────────
+
+export interface Review {
+  id: number
+  productId: number
+  productName: string
+  /** 산 옵션 (예: 30포) */
+  optionName: string
+  rating: number
+  content: string
+  imageUrls: string[]
+  /** 손님 · 회원 화면은 가린 이름(홍*동), 관리자는 그대로 */
+  author: string
+  best: boolean
+  hidden: boolean
+  reply: string | null
+  repliedAt: string | null
+  createdAt: string
+  /** 관리자 화면에만 */
+  memberId: number | null
+  memberEmail: string | null
+}
+
+export interface ReviewSummary {
+  total: number
+  average: number
+  /** 5점 → 1점 순서 */
+  counts: number[]
+}
+
+export type ReviewSort = 'latest' | 'best' | 'rating_high' | 'rating_low'
+
+/** 후기를 쓸 수 있는 주문 상품 (배송 완료 · 아직 안 씀) */
+export interface WritableItem {
+  orderItemId: number
+  orderNumber: string
+  productId: number
+  productName: string
+  optionName: string
+  deliveredAt: string | null
+}
+
+export interface CreateReviewRequest {
+  orderItemId: number
+  rating: number
+  content: string
+  imageUrls: string[]
+}
+
+export type AdminReviewFilter = 'ALL' | 'HIDDEN' | 'BEST' | 'NO_REPLY'
+
+export interface AdminReviewUpdate {
+  hidden?: boolean
+  best?: boolean
+  /** 빈 글이면 답글 삭제 */
+  reply?: string
+}

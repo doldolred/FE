@@ -971,6 +971,224 @@
   opacity: 0.8;
 }
 
+/* ── 후기 (상품 상세 아래 · 내 후기) ───────── */
+.dd-stars {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: rgba(22, 23, 61, 0.18);
+}
+.dd-stars .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--dd-beet);
+}
+.dd-reviews {
+  padding: clamp(40px, 7vw, 80px) clamp(16px, 4vw, 48px);
+  border-top: 2px dashed currentColor;
+}
+.dd-reviews .inner {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+.dd-reviews h2 {
+  margin: 0 0 24px;
+  font-family: var(--dd-font-display);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 56px);
+}
+.dd-reviews h2 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.dd-reviews .summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 56px);
+  align-items: center;
+  max-width: 720px;
+  padding: 22px 26px;
+  border-radius: 22px;
+  background: #fff;
+  color: var(--dd-navy);
+  border: 2px solid var(--dd-navy);
+  box-shadow: 6px 6px 0 var(--dd-navy);
+}
+.dd-reviews .avg {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+.dd-reviews .avg b {
+  font-family: var(--dd-font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 1;
+}
+.dd-reviews .avg span:last-child {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+.dd-reviews .bars {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 800;
+}
+.dd-reviews .bars li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 10px;
+}
+.dd-reviews .bars i {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--dd-beet) var(--w), rgba(22, 23, 61, 0.1) var(--w));
+}
+.dd-reviews .controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 28px 0 18px;
+}
+.dd-reviews .sorts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dd-reviews .sorts button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0.6;
+  cursor: pointer;
+}
+.dd-reviews .sorts button[aria-selected='true'] {
+  opacity: 1;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--dd-navy);
+}
+.dd-reviews .photo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.dd-reviews .empty {
+  padding: 40px 0;
+  text-align: center;
+  opacity: 0.7;
+}
+.dd-reviews .list,
+.dd-review-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dd-reviews .pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  font-weight: 800;
+  font-size: 14px;
+}
+.dd-reviews .pager button:disabled {
+  opacity: 0.3;
+}
+.dd-review {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--dd-navy);
+  border: 2px solid var(--dd-navy);
+  box-shadow: 4px 4px 0 var(--dd-navy);
+}
+.dd-review .head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.dd-review .best {
+  background: var(--dd-lime);
+  color: var(--dd-navy);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--dd-navy);
+}
+.dd-review .meta {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+.dd-review .product {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 900;
+}
+.dd-review .content {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+.dd-review .photos {
+  display: flex;
+  gap: 8px;
+}
+.dd-review .photos img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1.5px solid rgba(22, 23, 61, 0.2);
+}
+.dd-review .reply {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f4f4f8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dd-review .reply b {
+  font-size: 12px;
+  font-weight: 900;
+}
+.dd-review .reply em {
+  font-style: normal;
+  color: var(--dd-beet);
+}
+.dd-review .reply p {
+  margin: 4px 0 0;
+  white-space: pre-line;
+}
+
 @media (max-width: 860px) {
   .dd-s0 .kicker,
   .dd-s0 .count {
@@ -1050,6 +1268,13 @@
     aspect-ratio: 1 / 0.95;
   }
   .dd-actions {
+    grid-template-columns: 1fr;
+  }
+  .dd-reviews .summary {
+    grid-template-columns: 1fr;
+  }
+  .dd-reviews .list,
+  .dd-review-list {
     grid-template-columns: 1fr;
   }
 }

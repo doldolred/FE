@@ -7,6 +7,9 @@ import type {
   AdminProduct,
   AdminInquiry,
   AdminProductRequest,
+  AdminReviewFilter,
+  AdminReviewUpdate,
+  Review,
   InquiryStatus,
   Banner,
   BannerRequest,
@@ -82,3 +85,8 @@ export const fetchAdminInquiries = (status: InquiryStatus | '', page: number) =>
 export const fetchWaitingInquiryCount = () => api.get<{ count: number }>('/api/admin/inquiries/waiting-count')
 export const fetchAdminInquiry = (id: number) => api.get<AdminInquiry>(`/api/admin/inquiries/${id}`)
 export const answerInquiry = (id: number, answer: string) => api.put<AdminInquiry>(`/api/admin/inquiries/${id}/answer`, { answer })
+
+// 후기관리
+export const fetchAdminReviews = (filter: AdminReviewFilter, page: number) =>
+  api.get<Page<Review>>(`/api/admin/reviews${qs({ filter, page, size: 20 })}`)
+export const updateReview = (id: number, req: AdminReviewUpdate) => api.patch<Review>(`/api/admin/reviews/${id}`, req)

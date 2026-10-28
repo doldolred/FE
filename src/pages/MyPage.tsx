@@ -99,6 +99,16 @@ export default function MyPage() {
       </section>
 
       <section>
+        <h2 className="mb-4 text-xl font-bold">후기</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-neutral-50 p-6">
+          <p className="text-sm text-neutral-600">배송이 끝난 상품에 후기를 남겨 주세요. 사진도 3장까지 올릴 수 있어요.</p>
+          <Link to="/mypage/reviews" className={buttonClass('primary')}>
+            후기 쓰기 · 내 후기
+          </Link>
+        </div>
+      </section>
+
+      <section>
         <h2 className="mb-4 text-xl font-bold">1:1 문의</h2>
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-neutral-50 p-6">
           <p className="text-sm text-neutral-600">주문 · 배송 · 상품 무엇이든 물어보세요. 답변이 달리면 이메일로 알려 드려요.</p>

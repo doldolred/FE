@@ -154,6 +154,11 @@ export default function OrderDetailPage() {
           ← 주문 내역
         </Link>
         <div className="flex gap-2">
+          {order.status === 'DELIVERED' && (
+            <Link to="/mypage/reviews" className={buttonClass('secondary')}>
+              후기 쓰기
+            </Link>
+          )}
           <Link to={`/mypage/inquiries/new?order=${order.orderNumber}`} className={buttonClass('ghost')}>
             이 주문 문의하기
           </Link>
