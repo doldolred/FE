@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { fetchWaitingInquiryCount } from '../../api/admin'
+import { fetchRequestedClaimCount, fetchWaitingInquiryCount } from '../../api/admin'
 import { useIsAdmin, useIsLoggedIn } from '../../stores/authStore'
 
 const MENU = [
   { to: '/admin', label: '매출', end: true },
   { to: '/admin/orders', label: '주문' },
+  { to: '/admin/claims', label: '취소·반품·교환' },
   { to: '/admin/products', label: '상품' },
   { to: '/admin/members', label: '회원' },
   { to: '/admin/inquiries', label: '문의함' },
@@ -28,6 +29,14 @@ export default function AdminLayout() {
     enabled: loggedIn && isAdmin,
     refetchInterval: 60_000,
   })
+  // 새로 접수된 취소 · 반품 · 교환 수
+  const claims = useQuery({
+    queryKey: ['admin', 'claims-requested'],
+    queryFn: fetchRequestedClaimCount,
+    enabled: loggedIn && isAdmin,
+    refetchInterval: 60_000,
+  })
+  const badge: Record<string, number> = { '/admin/inquiries': waiting.data?.count ?? 0, '/admin/claims': claims.data?.count ?? 0 }
 
   if (!loggedIn) return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />
   if (!isAdmin) return <Navigate to="/" replace />
@@ -50,8 +59,8 @@ export default function AdminLayout() {
                 }
               >
                 {m.label}
-                {m.to === '/admin/inquiries' && (waiting.data?.count ?? 0) > 0 && (
-                  <span className="ml-1 rounded-full bg-beet-700 px-1.5 py-0.5 text-[11px] font-bold text-white tabular-nums">{waiting.data!.count}</span>
+                {(badge[m.to] ?? 0) > 0 && (
+                  <span className="ml-1 rounded-full bg-beet-700 px-1.5 py-0.5 text-[11px] font-bold text-white tabular-nums">{badge[m.to]}</span>
                 )}
               </NavLink>
             ))}

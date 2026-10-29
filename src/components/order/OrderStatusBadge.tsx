@@ -8,6 +8,7 @@ const colors: Record<OrderStatus, string> = {
   SHIPPING: 'bg-sky-50 text-sky-700',
   DELIVERED: 'bg-emerald-50 text-emerald-700',
   CANCELLED: 'bg-neutral-100 text-neutral-500',
+  RETURNED: 'bg-neutral-100 text-neutral-500',
 }
 
 export default function OrderStatusBadge({ status }: { status: OrderStatus }) {

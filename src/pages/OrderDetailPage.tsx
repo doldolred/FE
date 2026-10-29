@@ -7,6 +7,7 @@ import OrderStatusBadge from '../components/order/OrderStatusBadge'
 import PayMethodPicker from '../components/order/PayMethodPicker'
 import Button from '../components/ui/Button'
 import { buttonClass } from '../components/ui/buttonStyles'
+import { OrderClaimsSection } from './ClaimPages'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { usePayment } from '../hooks/usePayment'
 import { CANCELLABLE_STATUSES, formatDate, formatPrice } from '../lib/format'
@@ -127,8 +128,11 @@ export default function OrderDetailPage() {
             <Row label="결제 수단" value={methodLabel(payment.method)} />
             <Row label="결제 금액" value={formatPrice(payment.amount)} />
             <Row label="결제 일시" value={formatDate(payment.approvedAt)} />
-            {payment.status === 'CANCELLED' && payment.cancelledAt && (
-              <Row label="환불 일시" value={formatDate(payment.cancelledAt)} />
+            {payment.status !== 'PAID' && payment.cancelledAt && (
+              <>
+                <Row label="환불 금액" value={formatPrice(payment.cancelledAmount)} />
+                <Row label="환불 일시" value={formatDate(payment.cancelledAt)} />
+              </>
             )}
             {payment.receiptUrl && (
               <div className="flex gap-4">
@@ -143,6 +147,8 @@ export default function OrderDetailPage() {
           </dl>
         </section>
       )}
+
+      <OrderClaimsSection order={order} />
 
       <section>
         <h2 className="mb-3 font-bold">배송지</h2>

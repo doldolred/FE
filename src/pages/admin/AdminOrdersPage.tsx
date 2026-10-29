@@ -16,8 +16,10 @@ const NEXT: Record<OrderStatus, OrderStatus[]> = {
   PAID: ['PREPARING', 'CANCELLED'],
   PREPARING: ['SHIPPING', 'CANCELLED'],
   SHIPPING: ['DELIVERED'],
+  // 반품 완료는 취소 · 반품 · 교환 화면에서만
   DELIVERED: [],
   CANCELLED: [],
+  RETURNED: [],
 }
 const STATUSES = Object.keys(ORDER_STATUS_LABEL) as OrderStatus[]
 /** 상태를 바꾸는 버튼 이름 */
@@ -202,11 +204,11 @@ export function AdminOrderDetailPage() {
           {o.payment && (
             <Panel title="결제">
               <dl className="space-y-1 text-sm">
-                <Row label="상태" value={o.payment.status === 'CANCELLED' ? '환불됨' : '결제 완료'} />
+                <Row label="상태" value={o.payment.status === 'CANCELLED' ? '환불됨' : o.payment.status === 'PARTIAL_CANCELLED' ? '일부 환불' : '결제 완료'} />
                 <Row label="수단" value={o.payment.method ?? '-'} />
                 <Row label="금액" value={formatPrice(o.payment.amount)} />
                 <Row label="승인" value={formatDate(o.payment.approvedAt)} />
-                {o.payment.cancelledAt && <Row label="환불" value={formatDate(o.payment.cancelledAt)} />}
+                {o.payment.cancelledAt && <Row label="환불" value={`${formatPrice(o.payment.cancelledAmount)} · ${formatDate(o.payment.cancelledAt)}`} />}
               </dl>
             </Panel>
           )}

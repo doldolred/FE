@@ -107,7 +107,8 @@ export interface ShippingQuote {
   freeThreshold: number
 }
 
-export type OrderStatus = 'PENDING_PAYMENT' | 'PAID' | 'PREPARING' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED'
+/** RETURNED = 반품 완료 (반품 신청 완료로만) */
+export type OrderStatus = 'PENDING_PAYMENT' | 'PAID' | 'PREPARING' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED' | 'RETURNED'
 
 export interface CreateOrderRequest {
   receiverName: string
@@ -140,10 +141,12 @@ export interface OrderItem {
 
 export interface PaymentInfo {
   provider: 'NICEPAY' | 'PORTONE'
-  /** CANCELLED = 주문 취소로 환불됨 */
-  status: 'PAID' | 'CANCELLED'
+  /** CANCELLED = 전액 환불, PARTIAL_CANCELLED = 일부 환불 (반품 배송비 차감) */
+  status: 'PAID' | 'CANCELLED' | 'PARTIAL_CANCELLED'
   method: string | null
   amount: number
+  /** 환불한 금액 */
+  cancelledAmount: number
   approvedAt: string
   cancelledAt: string | null
   receiptUrl: string | null
@@ -437,3 +440,42 @@ export interface AdminCoupon {
 }
 
 export type CouponRequest = Omit<AdminCoupon, 'id' | 'usedCount' | 'createdAt'>
+
+// ── 취소 · 반품 · 교환 ───────────────────────────────
+
+export type ClaimType = 'CANCEL' | 'RETURN' | 'EXCHANGE'
+export type ClaimReason = 'CHANGE_OF_MIND' | 'DEFECTIVE' | 'WRONG_ITEM' | 'DELAYED' | 'OTHER'
+export type ClaimStatus = 'REQUESTED' | 'APPROVED' | 'COMPLETED' | 'REJECTED' | 'WITHDRAWN'
+
+export interface Claim {
+  id: number
+  orderNumber: string
+  orderStatus: OrderStatus
+  orderTotalPrice: number
+  type: ClaimType
+  reason: ClaimReason
+  detail: string
+  imageUrls: string[]
+  status: ClaimStatus
+  /** 단순 변심 반품의 왕복 배송비 (환불에서 뺌) */
+  returnShippingFee: number
+  /** 환불할 금액 (교환은 0) */
+  refundAmount: number
+  rejectReason: string | null
+  exchangeCourier: string | null
+  exchangeTrackingNumber: string | null
+  approvedAt: string | null
+  completedAt: string | null
+  createdAt: string
+  /** 관리자 화면에만 */
+  memberId: number | null
+  memberName: string | null
+  memberEmail: string | null
+}
+
+export interface CreateClaimRequest {
+  type: ClaimType
+  reason: ClaimReason
+  detail: string
+  imageUrls: string[]
+}

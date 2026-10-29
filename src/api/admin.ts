@@ -7,6 +7,9 @@ import type {
   AdminProduct,
   AdminInquiry,
   AdminCoupon,
+  Claim,
+  ClaimStatus,
+  ClaimType,
   AdminProductRequest,
   CouponRequest,
   AdminReviewFilter,
@@ -98,3 +101,13 @@ export const fetchAdminCoupons = () => api.get<AdminCoupon[]>('/api/admin/coupon
 export const createCoupon = (req: CouponRequest) => api.post<AdminCoupon>('/api/admin/coupons', req)
 export const updateCoupon = (id: number, req: CouponRequest) => api.put<AdminCoupon>(`/api/admin/coupons/${id}`, req)
 export const deleteCoupon = (id: number) => api.delete<void>(`/api/admin/coupons/${id}`)
+
+// 취소 · 반품 · 교환
+export const fetchAdminClaims = (status: ClaimStatus | '', type: ClaimType | '', page: number) =>
+  api.get<Page<Claim>>(`/api/admin/claims${qs({ status, type, page, size: 20 })}`)
+export const fetchRequestedClaimCount = () => api.get<{ count: number }>('/api/admin/claims/requested-count')
+export const fetchAdminClaim = (id: number) => api.get<Claim>(`/api/admin/claims/${id}`)
+export const approveClaim = (id: number) => api.post<Claim>(`/api/admin/claims/${id}/approve`)
+export const rejectClaim = (id: number, reason: string) => api.post<Claim>(`/api/admin/claims/${id}/reject`, { reason })
+export const completeClaim = (id: number, body?: { courier: string; trackingNumber: string }) =>
+  api.post<Claim>(`/api/admin/claims/${id}/complete`, body ?? {})

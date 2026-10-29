@@ -99,6 +99,15 @@ export default function MyPage() {
       </section>
 
       <section>
+        <div className="flex items-center justify-between gap-4 rounded-2xl border border-neutral-200 px-6 py-4 text-sm">
+          <span className="text-neutral-600">취소 · 반품 · 교환은 주문 상세에서 신청할 수 있어요.</span>
+          <Link to="/mypage/claims" className="font-semibold underline">
+            신청 내역
+          </Link>
+        </div>
+      </section>
+
+      <section>
         <h2 className="mb-4 text-xl font-bold">후기</h2>
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-neutral-50 p-6">
           <p className="text-sm text-neutral-600">배송이 끝난 상품에 후기를 남겨 주세요. 사진도 3장까지 올릴 수 있어요.</p>

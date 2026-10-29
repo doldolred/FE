@@ -1,4 +1,4 @@
-import type { InquiryCategory, InquiryStatus, OrderStatus } from '../api/types'
+import type { ClaimReason, ClaimStatus, ClaimType, InquiryCategory, InquiryStatus, OrderStatus } from '../api/types'
 
 export const formatPrice = (value: number) => `${value.toLocaleString('ko-KR')}원`
 
@@ -18,6 +18,7 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   SHIPPING: '배송중',
   DELIVERED: '배송 완료',
   CANCELLED: '주문 취소',
+  RETURNED: '반품 완료',
 }
 
 export const CANCELLABLE_STATUSES: OrderStatus[] = ['PENDING_PAYMENT', 'PAID']
@@ -34,4 +35,26 @@ export const INQUIRY_CATEGORY_LABEL: Record<InquiryCategory, string> = {
 export const INQUIRY_STATUS_LABEL: Record<InquiryStatus, string> = {
   WAITING: '답변 대기',
   ANSWERED: '답변 완료',
+}
+
+export const CLAIM_TYPE_LABEL: Record<ClaimType, string> = {
+  CANCEL: '취소 요청',
+  RETURN: '반품',
+  EXCHANGE: '교환',
+}
+
+export const CLAIM_REASON_LABEL: Record<ClaimReason, string> = {
+  CHANGE_OF_MIND: '단순 변심',
+  DEFECTIVE: '상품 불량 · 파손',
+  WRONG_ITEM: '다른 상품이 옴',
+  DELAYED: '배송 지연',
+  OTHER: '기타',
+}
+
+export const CLAIM_STATUS_LABEL: Record<ClaimStatus, string> = {
+  REQUESTED: '접수',
+  APPROVED: '처리 중',
+  COMPLETED: '완료',
+  REJECTED: '거절',
+  WITHDRAWN: '철회',
 }
