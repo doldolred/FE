@@ -108,7 +108,7 @@ export default function OrderDetailPage() {
         <section className="dd-box" data-tone="navy">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="dd-kicker text-xs tracking-[0.1em] text-[#e6f05a]">ORDER · {order.orderNumber}</p>
+              <p className="dd-kicker text-xs tracking-[0.1em] text-[#f6d4cf]">ORDER · {order.orderNumber}</p>
               <h1 className="dd-display-ko mt-1 text-3xl">주문 상세</h1>
               <p className="mt-1 text-sm opacity-70">{formatDate(order.createdAt)} 주문</p>
             </div>
@@ -125,10 +125,10 @@ export default function OrderDetailPage() {
               {FLOW.map((f, i) => (
                 <li key={f.status} aria-current={i === step ? 'step' : undefined}>
                   <span
-                    className={`mx-auto mb-2 block h-3 rounded-full border-2 border-white ${i <= step ? 'bg-[#e6f05a]' : 'bg-transparent opacity-40'}`}
+                    className={`mx-auto mb-2 block h-3 rounded-full border-2 border-white ${i <= step ? 'bg-[#f6d4cf]' : 'bg-transparent opacity-40'}`}
                     aria-hidden="true"
                   />
-                  <span className={i === step ? 'text-[#e6f05a]' : i < step ? '' : 'opacity-50'}>{f.label}</span>
+                  <span className={i === step ? 'text-[#f6d4cf]' : i < step ? '' : 'opacity-50'}>{f.label}</span>
                 </li>
               ))}
             </ol>
@@ -150,13 +150,13 @@ export default function OrderDetailPage() {
               </li>
             ))}
           </ul>
-          <dl className="mt-4 space-y-1.5 border-t-2 border-dashed border-[#16173d]/25 pt-4 text-sm">
+          <dl className="mt-4 space-y-1.5 border-t-2 border-dashed border-[#222021]/25 pt-4 text-sm">
             <div className="flex justify-between">
               <dt className="text-neutral-500">상품 금액</dt>
               <dd className="font-bold">{formatPrice(order.itemsPrice)}</dd>
             </div>
             {order.discountAmount > 0 && (
-              <div className="flex justify-between font-bold text-[#d42a68]">
+              <div className="flex justify-between font-bold text-[#da1f2e]">
                 <dt>할인{order.couponCode ? ` (${order.couponCode})` : ''}</dt>
                 <dd>−{formatPrice(order.discountAmount)}</dd>
               </div>

@@ -40,7 +40,7 @@ const FRONT = `
   <rect x="44" y="244" width="52" height="16" rx="8" fill="none" stroke="#fff" stroke-opacity=".7"/>
   <text x="70" y="255.5" text-anchor="middle" font-family="Pretendard Variable, Pretendard" font-weight="700" font-size="8.5" fill="#fff">비트 100%</text>
   <rect x="104" y="244" width="52" height="16" rx="8" fill="#fff" fill-opacity=".9"/>
-  <text x="130" y="255.5" text-anchor="middle" font-family="Pretendard Variable, Pretendard" font-weight="800" font-size="8.5" fill="#8e1b4a">120ml</text>
+  <text x="130" y="255.5" text-anchor="middle" font-family="Pretendard Variable, Pretendard" font-weight="800" font-size="8.5" fill="#a3141f">120ml</text>
   <text x="100" y="284" text-anchor="middle" font-family="Pretendard Variable, Pretendard" font-weight="600" font-size="7" fill="#fff" opacity=".65">제주산 비트 착즙 · 무첨가</text>
 </svg>`
 

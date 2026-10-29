@@ -7,7 +7,7 @@ import { formatPrice } from '../lib/format'
  * 무엇을 어떤 순서로 보여 줄지(판매중 · 출시 예정 · 비공개, 영문 이름, 스티커 문구, 색, 그림, 파우치 도안)는
  * 관리자 상품 화면에서 정하고 서버(/api/products)가 준다. 여기는 색 묶음 · 그림 종류만.
  *
- * 색은 v4-shared.js 그대로: bg = 상세 페이지 바탕, stage = 제품 그림 뒤 판, dark = 바탕이 어두워 글자를 희게.
+ * 색은 제품 패키지 색(빨강 · 먹색 · 흰색)에 맞춘 묶음: bg = 상세 페이지 바탕, stage = 제품 그림 뒤 판, dark = 바탕이 어두워 글자를 희게.
  * 효능 · 건강 주장 문구는 넣지 않는다 (식품).
  */
 
@@ -18,9 +18,10 @@ export interface ProductColors {
 }
 
 export const THEMES: Record<LineupTheme, ProductColors & { label: string }> = {
-  NAVY: { label: '네이비 · 라임', bg: '#16173d', stage: '#e6f05a', dark: true },
-  PINK: { label: '핑크 · 크림', bg: '#f6c3d4', stage: '#fff7f0', dark: false },
-  LIME: { label: '라임 · 핑크', bg: '#e6f05a', stage: '#f6c3d4', dark: false },
+  // 키 이름은 DB 값이라 그대로 두고, 색은 패키지(빨강 #da1f2e · 먹색 #222021 · 흰색)에 맞춘 묶음
+  NAVY: { label: '먹색 · 블러시', bg: '#222021', stage: '#f6d4cf', dark: true },
+  PINK: { label: '블러시 · 화이트', bg: '#f6d4cf', stage: '#ffffff', dark: false },
+  LIME: { label: '종이 · 블러시', bg: '#f3eee8', stage: '#f6d4cf', dark: false },
 }
 
 export const themeColors = (theme: LineupTheme | null | undefined): ProductColors => THEMES[theme ?? 'NAVY'] ?? THEMES.NAVY
@@ -51,9 +52,10 @@ export function statusLine(p: Product) {
 export function pageColors(c: ProductColors) {
   return {
     '--bg': c.bg,
-    '--fg': c.dark ? '#fff' : '#16173d',
+    '--fg': c.dark ? '#fff' : '#222021',
     '--stage': c.stage,
-    '--accent': c.dark ? '#e6f05a' : '#d42a68',
+    '--accent': c.dark ? '#f6d4cf' : '#da1f2e',
+    '--accent-fg': c.dark ? '#222021' : '#fff',
   }
 }
 

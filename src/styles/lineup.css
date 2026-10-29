@@ -1,15 +1,17 @@
 /*
- * 프로토타입 v4 원본 (protohtml/v4.html · v4-product.html) 그대로 — 메인 · 상품 상세 · 출시 예정.
- * 남색 · 라임 · 핑크 · 비트색, Anton · Black Han Sans · Archivo(로고) 글꼴, 3D 그림 파우치.
+ * 프로토타입 v4 (protohtml/v4.html · v4-product.html) 구성 그대로 — 메인 · 상품 상세 · 출시 예정.
+ * 색은 제품 패키지에 맞췄다: 빨강 #da1f2e · 먹색 #222021 · 흰색 + 보조 블러시 #f6d4cf · 종이 #f3eee8.
+ * 변수 이름(--dd-navy · --dd-lime · --dd-pink)은 v4 때 이름 그대로 — navy = 먹색, lime = 블러시, pink = 종이.
+ * Anton · Black Han Sans · Archivo(로고) 글꼴, 3D 파우치(실제 인쇄 도안).
  * 글꼴은 index.html 의 Google Fonts.
  */
 :root {
-  --dd-navy: #16173d;
-  --dd-lime: #e6f05a;
-  --dd-pink: #f6c3d4;
-  --dd-beet: #d42a68;
-  --dd-beet-deep: #8e1b4a;
-  --dd-ink: #16173d;
+  --dd-navy: #222021;
+  --dd-lime: #f6d4cf;
+  --dd-pink: #f3eee8;
+  --dd-beet: #da1f2e;
+  --dd-beet-deep: #a3141f;
+  --dd-ink: #222021;
   --dd-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dd-font-display: 'Anton', 'Black Han Sans', sans-serif;
   --dd-font-display-ko: 'Black Han Sans', 'Anton', sans-serif;
@@ -98,7 +100,7 @@
   line-height: 0.85;
   white-space: nowrap;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(22, 23, 61, 0.16);
+  -webkit-text-stroke: 2px rgba(34, 32, 33, 0.16);
 }
 .dd-s0 .kicker {
   position: absolute;
@@ -180,7 +182,7 @@
   height: 100%;
   width: auto;
   display: block;
-  filter: drop-shadow(0 26px 22px rgba(22, 23, 61, 0.3));
+  filter: drop-shadow(0 26px 22px rgba(34, 32, 33, 0.3));
   transition: transform 350ms var(--dd-ease);
 }
 .dd-lp[data-art='jar'] .art svg {
@@ -249,7 +251,7 @@
   font-size: clamp(80px, 17.5vw, 290px);
   line-height: 0.9;
   letter-spacing: -0.01em;
-  color: var(--dd-lime);
+  color: var(--dd-beet);
   white-space: nowrap;
   text-transform: uppercase;
   animation: dd-rise 900ms var(--dd-ease) both;
@@ -271,8 +273,8 @@
   right: clamp(16px, 4vw, 56px);
   bottom: 22%;
   z-index: 4;
-  background: var(--dd-lime);
-  color: var(--dd-navy);
+  background: var(--dd-beet);
+  color: #fff;
   font-weight: 900;
   font-size: 13px;
   border: 0;
@@ -438,7 +440,7 @@
   width: clamp(120px, 13vw, 200px);
   aspect-ratio: 0.8;
   border-radius: 6px;
-  background: linear-gradient(160deg, #ff4f8b, #a81852);
+  background: linear-gradient(160deg, #f3eee8, #d9d2ca);
   box-shadow:
     inset -16px 0 0 rgba(0, 0, 0, 0.18),
     0 20px 30px rgba(0, 0, 0, 0.25);
@@ -452,7 +454,7 @@
   font-style: italic;
   font-weight: 900;
   font-variation-settings: 'wdth' 125;
-  color: #1a0610;
+  color: var(--dd-beet);
   font-size: clamp(18px, 2vw, 30px);
   line-height: 0.92;
 }
@@ -460,7 +462,7 @@
   margin-top: 8px;
   font-size: 11px;
   font-weight: 800;
-  color: #fff;
+  color: var(--dd-navy);
   white-space: nowrap;
 }
 .dd-props .beet-a {
@@ -514,6 +516,10 @@
   height: 100svh;
   display: grid;
   place-items: center;
+}
+/* 흐르는 파우치는 화면 높이에도 맞춘다 — 낮은 화면에서 글자를 덮지 않게 */
+.dd-traveler .dd-pouch {
+  --w: clamp(140px, min(19vw, 27svh), 290px);
 }
 
 /* 3D 그림 파우치 (SvgPouch) — v1 ~ v4 와 같은 그림 */
@@ -674,7 +680,7 @@
   font-size: clamp(56px, 9vw, 130px);
   line-height: 0.9;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(22, 23, 61, 0.18);
+  -webkit-text-stroke: 2px rgba(34, 32, 33, 0.18);
   white-space: nowrap;
   pointer-events: none;
 }
@@ -710,7 +716,7 @@
   height: 100%;
   width: auto;
   display: block;
-  filter: drop-shadow(0 30px 26px rgba(22, 23, 61, 0.3));
+  filter: drop-shadow(0 30px 26px rgba(34, 32, 33, 0.3));
 }
 .dd-stage .art[data-art='jar'] {
   height: 50%;
@@ -869,7 +875,7 @@
   opacity: 1;
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--dd-navy);
+  color: var(--accent-fg, var(--dd-navy));
 }
 .dd-option:disabled {
   opacity: 0.3;
@@ -895,7 +901,8 @@
     box-shadow 200ms;
 }
 .dd-btn[data-primary] {
-  background: var(--accent, var(--dd-lime));
+  background: var(--accent, var(--dd-beet));
+  color: var(--accent-fg, #fff);
 }
 .dd-btn:hover:not(:disabled) {
   transform: translateY(-2px);
@@ -962,7 +969,7 @@
 .dd-card .pic svg {
   height: 78%;
   width: auto;
-  filter: drop-shadow(0 16px 14px rgba(22, 23, 61, 0.28));
+  filter: drop-shadow(0 16px 14px rgba(34, 32, 33, 0.28));
 }
 .dd-card .pic[data-art='jar'] svg {
   height: 56%;
@@ -1111,7 +1118,7 @@
   display: inline-block;
   line-height: 1;
   letter-spacing: 0.06em;
-  color: rgba(22, 23, 61, 0.18);
+  color: rgba(34, 32, 33, 0.18);
 }
 .dd-stars .fill {
   position: absolute;
@@ -1185,7 +1192,7 @@
 .dd-reviews .bars i {
   height: 8px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--dd-beet) var(--w), rgba(22, 23, 61, 0.1) var(--w));
+  background: linear-gradient(90deg, var(--dd-beet) var(--w), rgba(34, 32, 33, 0.1) var(--w));
 }
 .dd-reviews .controls {
   display: flex;
@@ -1301,7 +1308,7 @@
   height: 84px;
   object-fit: cover;
   border-radius: 12px;
-  border: 1.5px solid rgba(22, 23, 61, 0.2);
+  border: 1.5px solid rgba(34, 32, 33, 0.2);
 }
 .dd-review .reply {
   padding: 12px 14px;
@@ -1359,7 +1366,10 @@
     width: 96px;
   }
   .dd-s2 .big {
-    top: calc(88px + var(--dd-banner, 0px)); /* 헤더 · 띠배너 아래 */
+    top: calc(86px + var(--dd-banner, 0px)); /* 헤더 · 띠배너 아래 */
+    left: 20px;
+    right: 20px;
+    font-size: clamp(38px, 11.5vw, 60px);
   }
   .dd-s2 .stickers {
     top: auto;

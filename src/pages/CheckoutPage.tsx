@@ -216,7 +216,7 @@ export default function CheckoutPage() {
           <section className="dd-box">
             <h2>할인코드</h2>
             {coupon ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#16173d] bg-[#e6f05a] px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#222021] bg-[#f6d4cf] px-4 py-3">
                 <p className="text-sm">
                   <b className="font-mono">{coupon.code}</b> · {coupon.name}
                   <span className="ml-2 font-bold text-beet-700">

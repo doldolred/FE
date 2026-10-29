@@ -35,9 +35,9 @@ export default function MyPage() {
     <div>
       <MyNav />
       <section className="dd-box mb-6" data-tone="navy">
-        <p className="dd-kicker text-xs tracking-[0.1em] text-[#e6f05a]">DOLDOL · MY PAGE</p>
+        <p className="dd-kicker text-xs tracking-[0.1em] text-[#f6d4cf]">DOLDOL · MY PAGE</p>
         <h1 className="dd-display-ko mt-2 text-3xl break-keep md:text-4xl">
-          {name}님, <span className="text-[#e6f05a]">오늘도 붉게!</span>
+          {name}님, <span className="text-[#f6d4cf]">오늘도 붉게!</span>
         </h1>
         <p className="mt-2 text-sm opacity-70">주문 · 배송 · 후기 · 문의를 여기서 한 번에 볼 수 있어요.</p>
       </section>
@@ -210,10 +210,10 @@ export function MyProfilePage() {
                 <InfoRow label="이메일" value={me.data.email} />
                 <InfoRow label="휴대폰" value={me.data.phone ?? '-'} />
               </dl>
-              <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-[#16173d] bg-[#fff7f0] px-4 py-3 text-sm font-bold">
+              <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] px-4 py-3 text-sm font-bold">
                 <input
                   type="checkbox"
-                  className="h-5 w-5 accent-[#d42a68]"
+                  className="h-5 w-5 accent-[#da1f2e]"
                   checked={me.data.marketingAgreed}
                   disabled={marketingMutation.isPending}
                   onChange={(e) => marketingMutation.mutate(e.target.checked)}
@@ -301,7 +301,7 @@ function ChangePasswordSection() {
         />
         {mutation.error && <ErrorMessage error={mutation.error} />}
         {mutation.isSuccess && (
-          <p className="rounded-2xl border-2 border-[#16173d] bg-[#e6f05a] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
+          <p className="rounded-2xl border-2 border-[#222021] bg-[#f6d4cf] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
         )}
         <Button type="submit" variant="secondary" disabled={mutation.isPending || mismatch}>
           비밀번호 바꾸기

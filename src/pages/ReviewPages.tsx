@@ -49,7 +49,7 @@ export function MyReviewsPage() {
         ) : writable.data.length === 0 ? (
           <Empty>지금 후기를 쓸 상품이 없어요.</Empty>
         ) : (
-          <ul className="divide-y divide-neutral-200 border-y-2 border-[#16173d]">
+          <ul className="divide-y divide-neutral-200 border-y-2 border-[#222021]">
             {writable.data.map((w) => (
               <li key={w.orderItemId} className="flex flex-wrap items-center justify-between gap-3 py-4">
                 <div>
@@ -196,7 +196,7 @@ export function ReviewNewPage() {
         {item.productName} <span className="font-normal text-neutral-500">· {item.optionName}</span>
       </p>
 
-      <form onSubmit={submit} className="mt-8 space-y-7 border-t-2 border-[#16173d] pt-8">
+      <form onSubmit={submit} className="mt-8 space-y-7 border-t-2 border-[#222021] pt-8">
         <div>
           <p className="mb-2 text-sm font-extrabold">별점</p>
           <StarPicker value={rating} onChange={setRating} />
@@ -208,7 +208,7 @@ export function ReviewNewPage() {
             후기 <span className="font-normal text-neutral-400 tabular-nums">{content.length} / 1,000</span>
           </span>
           <textarea
-            className="min-h-48 w-full rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-[15px] leading-relaxed outline-none focus:border-[#16173d]"
+            className="min-h-48 w-full rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-[15px] leading-relaxed outline-none focus:border-[#222021]"
             required
             minLength={10}
             maxLength={1000}
@@ -226,19 +226,19 @@ export function ReviewNewPage() {
           <div className="flex flex-wrap gap-3">
             {photos.map((u) => (
               <div key={u} className="relative">
-                <img src={u} alt="올린 사진" className="h-24 w-24 rounded-xl border-2 border-[#16173d] object-cover" />
+                <img src={u} alt="올린 사진" className="h-24 w-24 rounded-xl border-2 border-[#222021] object-cover" />
                 <button
                   type="button"
                   aria-label="사진 빼기"
                   onClick={() => setPhotos((p) => p.filter((x) => x !== u))}
-                  className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#16173d] text-sm font-black text-white"
+                  className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#222021] text-sm font-black text-white"
                 >
                   ×
                 </button>
               </div>
             ))}
             {photos.length < MAX_PHOTOS && (
-              <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-400 text-xs font-bold text-neutral-500 hover:border-[#16173d]">
+              <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-400 text-xs font-bold text-neutral-500 hover:border-[#222021]">
                 <span className="text-2xl leading-none">+</span>
                 {uploading ? '올리는 중…' : '사진 추가'}
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="sr-only" disabled={uploading} onChange={onFiles} />

@@ -105,7 +105,7 @@ export default function SignupPage() {
           error={fieldErrors.phone}
         />
 
-        <fieldset className="rounded-2xl border-2 border-[#16173d] bg-[#fff7f0] p-4">
+        <fieldset className="rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] p-4">
           <legend className="sr-only">약관 동의</legend>
           <Check checked={allChecked} onChange={toggleAll} strong>
             전체 동의

@@ -38,8 +38,24 @@ interface Key {
   sc: number
 }
 
-/** s = 흐름 맨 위에서 내려온 정도 (0 ~ 1 = 0번 장면, 1 = 1번 …). x · y 는 화면 비율, ry 는 몸을 도는 각도 */
-function buildKeys(d: number): Key[] {
+/**
+ * s = 흐름 맨 위에서 내려온 정도 (0 ~ 1 = 0번 장면, 1 = 1번 …). x · y 는 화면 비율, ry 는 몸을 도는 각도.
+ * narrow(휴대폰): 글자가 위 · 아래로 쌓이니 파우치는 가운데 빈 띠에 작게 — 제목 · 스티커와 겹치지 않게.
+ */
+function buildKeys(d: number, narrow: boolean): Key[] {
+  if (narrow) {
+    return [
+      { s: 0.0, x: 0, y: -0.6, rz: -22, ry: -70, sc: d },
+      { s: 0.2, x: 0, y: 0, rz: -3, ry: -14, sc: d },
+      { s: 0.42, x: 0, y: 0, rz: 2, ry: 8, sc: d },
+      { s: PIN_END, x: 0, y: 0.05, rz: 6, ry: 60, sc: 0.8 },
+      { s: 1.0, x: 0.06, y: 0.1, rz: 14, ry: 338, sc: 0.85 },
+      { s: 1.45, x: 0, y: 0.12, rz: -10, ry: 510, sc: 0.8 },
+      { s: 2.0, x: 0.04, y: 0.0, rz: -14, ry: 696, sc: 0.8 },
+      { s: 2.5, x: 0, y: 0.16, rz: 8, ry: 840, sc: 0.8 },
+      { s: 3.05, x: 0.0, y: 0.13, rz: 0, ry: 1060, sc: 0.78 },
+    ]
+  }
   return [
     // 0 LINEUP — 위에서 돌며 내려와 가운데 멈춤 → 다른 제품이 빠지면 1번으로
     { s: 0.0, x: 0, y: -0.6, rz: -22, ry: -70, sc: d },
@@ -47,9 +63,9 @@ function buildKeys(d: number): Key[] {
     { s: 0.42, x: 0, y: 0, rz: 2, ry: 8, sc: d },
     { s: PIN_END, x: 0, y: 0.05, rz: 6, ry: 60, sc: 0.95 },
     // 1 ~ 3 — v3 와 같은 길 (한 바퀴 더 돈 각도)
-    { s: 1.0, x: -0.02, y: 0.02, rz: 16, ry: 338, sc: 1.0 },
+    { s: 1.0, x: -0.02, y: 0.12, rz: 16, ry: 338, sc: 1.0 },
     { s: 1.45, x: -0.1, y: 0.18, rz: -12, ry: 510, sc: 1.05 },
-    { s: 2.0, x: 0.16, y: 0.06, rz: -24, ry: 696, sc: 1.18 },
+    { s: 2.0, x: 0.2, y: 0.06, rz: -20, ry: 696, sc: 1.15 },
     { s: 2.5, x: 0.04, y: 0.2, rz: 8, ry: 840, sc: 1.05 },
     { s: 3.05, x: 0.0, y: 0.13, rz: 0, ry: 1060, sc: 0.86 },
   ]
@@ -137,12 +153,13 @@ export default function HomePage() {
     const secs = [...flow.querySelectorAll<HTMLElement>('.dd-sec')]
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let d = 0.85
-    let keys = buildKeys(d)
+    let keys = buildKeys(d, window.innerWidth < 700)
 
     /** 라인업 칸 크기 — 그림 칸 높이를 라인업 때 파우치 높이에 맞춘다 */
     const size = () => {
-      d = window.innerWidth < 700 ? 0.7 : 0.85
-      keys = buildKeys(d)
+      const narrow = window.innerWidth < 700
+      d = narrow ? 0.7 : 0.85
+      keys = buildKeys(d, narrow)
       lineupRef.current?.style.setProperty('--ah', `${(pouch.offsetHeight * d).toFixed(0)}px`)
       if (mainArtRef.current) mainArtRef.current.style.width = `${(pouch.offsetWidth * d).toFixed(0)}px`
     }
@@ -262,7 +279,7 @@ export default function HomePage() {
               제품을 눌러 자세히 보세요
             </p>
           </div>
-          <TornEdge seed={3} color="#16173d" />
+          <TornEdge seed={3} color="#222021" />
         </section>
 
         {/* 1 UNBEETABLE */}
@@ -279,7 +296,7 @@ export default function HomePage() {
           <button className="try" type="button" onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}>
             맛보기 →
           </button>
-          <TornEdge seed={7} color="#f6c3d4" />
+          <TornEdge seed={7} color="#f3eee8" />
         </section>
 
         {/* 2 비트만 */}
@@ -301,7 +318,7 @@ export default function HomePage() {
             </span>
           </div>
           <p className="note">제주산 비트를 통째로 씻어 착즙했어요. 뜯어서 바로, 하루 한 포.</p>
-          <TornEdge seed={23} color="#d42a68" />
+          <TornEdge seed={23} color="#da1f2e" />
         </section>
 
         {/* 3 + DAILY RED */}

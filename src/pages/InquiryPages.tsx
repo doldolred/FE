@@ -230,7 +230,7 @@ export function InquiryDetailPage() {
       <article>
         <header className="border-b-2 border-neutral-900 pb-5">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-black tracking-[0.1em] text-[#e4002b]">{INQUIRY_CATEGORY_LABEL[data.category]}</p>
+            <p className="text-xs font-black tracking-[0.1em] text-[#da1f2e]">{INQUIRY_CATEGORY_LABEL[data.category]}</p>
             <InquiryStatusBadge status={data.status} />
           </div>
           <h1 className="mt-2 text-2xl leading-snug font-black tracking-[-0.02em] break-keep md:text-3xl">{data.title}</h1>
@@ -254,7 +254,7 @@ export function InquiryDetailPage() {
           <>
             <p className="flex items-center justify-between text-sm font-black">
               <span>
-                돌돌 <span className="text-[#e4002b]">답변</span>
+                돌돌 <span className="text-[#da1f2e]">답변</span>
               </span>
               {data.answeredAt && <span className="text-xs font-normal text-neutral-500">{formatDate(data.answeredAt)}</span>}
             </p>

@@ -93,7 +93,7 @@ export default function CartPage() {
                       type="button"
                       disabled={busy}
                       onClick={() => removeMutation.mutate(item.id)}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-[#16173d] bg-white text-sm font-black hover:bg-[#f6c3d4]"
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-[#222021] bg-white text-sm font-black hover:bg-[#f3eee8]"
                       aria-label={`${item.productName} 삭제`}
                       title="삭제"
                     >

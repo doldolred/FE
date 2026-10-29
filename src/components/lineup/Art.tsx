@@ -13,11 +13,11 @@ function Bottle() {
         <linearGradient id="bt-glass" x1="0" x2="1">
           <stop offset="0" stopColor="#2a0613" />
           <stop offset=".3" stopColor="#6a0c2f" />
-          <stop offset=".55" stopColor="#8e1b4a" />
+          <stop offset=".55" stopColor="#a3141f" />
           <stop offset="1" stopColor="#240511" />
         </linearGradient>
       </defs>
-      <rect x="42" y="4" width="36" height="30" rx="5" fill="#16173d" />
+      <rect x="42" y="4" width="36" height="30" rx="5" fill="#222021" />
       {Array.from({ length: 7 }, (_, i) => (
         <rect key={i} x={45 + i * 4.6} y="8" width="1.4" height="22" fill="#fff" opacity=".18" />
       ))}
@@ -27,16 +27,16 @@ function Bottle() {
       />
       <path d="M24 120 v150" stroke="#fff" strokeWidth="4" strokeLinecap="round" opacity=".22" />
       <rect x="14" y="150" width="92" height="96" fill="#f6eee9" />
-      <text x="60" y="176" textAnchor="middle" fontFamily="Archivo" fontStyle="italic" fontWeight="900" fontSize="9" letterSpacing="2" fill="#8e1b4a">
+      <text x="60" y="176" textAnchor="middle" fontFamily="Archivo" fontStyle="italic" fontWeight="900" fontSize="9" letterSpacing="2" fill="#a3141f">
         DOLDOL
       </text>
-      <text x="60" y="200" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="18" fill="#16173d">
+      <text x="60" y="200" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="18" fill="#222021">
         BEET
       </text>
-      <text x="60" y="218" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="14" fill="#16173d">
+      <text x="60" y="218" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="14" fill="#222021">
         EXTRACT
       </text>
-      <text x="60" y="236" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="800" fontSize="8.5" fill="#8e1b4a">
+      <text x="60" y="236" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="800" fontSize="8.5" fill="#a3141f">
         비트 농축액 · 500ml
       </text>
     </svg>
@@ -58,20 +58,20 @@ function Jar() {
           <stop offset="1" stopColor="#9e1548" />
         </linearGradient>
       </defs>
-      <rect x="26" y="6" width="148" height="34" rx="8" fill="#16173d" />
+      <rect x="26" y="6" width="148" height="34" rx="8" fill="#222021" />
       {Array.from({ length: 18 }, (_, i) => (
         <rect key={i} x={32 + i * 8} y="10" width="2" height="26" fill="#fff" opacity=".14" />
       ))}
       <rect x="18" y="40" width="164" height="172" rx="22" fill="url(#jr-glass)" />
       <path d="M24 92 q76 -16 152 0 V190 q0 16 -16 16 H40 q-16 0 -16 -16 z" fill="url(#jr-powder)" />
       <rect x="34" y="100" width="132" height="76" rx="6" fill="#fff" />
-      <text x="100" y="122" textAnchor="middle" fontFamily="Archivo" fontStyle="italic" fontWeight="900" fontSize="10" letterSpacing="2" fill="#16173d">
+      <text x="100" y="122" textAnchor="middle" fontFamily="Archivo" fontStyle="italic" fontWeight="900" fontSize="10" letterSpacing="2" fill="#222021">
         DOLDOL
       </text>
-      <text x="100" y="148" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="24" fill="#16173d">
+      <text x="100" y="148" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="24" fill="#222021">
         BEET POWDER
       </text>
-      <text x="100" y="166" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="800" fontSize="10" fill="#8e1b4a">
+      <text x="100" y="166" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="800" fontSize="10" fill="#a3141f">
         비트 파우더 · 150g
       </text>
       <path d="M34 54 v128" stroke="#fff" strokeWidth="5" strokeLinecap="round" opacity=".5" />
@@ -87,7 +87,7 @@ export function Beetroot() {
       <path d="M60 62c-26 0-44 18-44 40 0 24 20 40 44 46" fill="#7a0f37" opacity=".45" />
       <path d="M42 90q8-6 18-6" stroke="#ff8db5" strokeWidth="3" fill="none" strokeLinecap="round" opacity=".7" />
       <path d="M60 148v2" stroke="#7a0f37" strokeWidth="3" />
-      <g stroke="#8e1b4a" strokeWidth="3" fill="none" strokeLinecap="round">
+      <g stroke="#a3141f" strokeWidth="3" fill="none" strokeLinecap="round">
         <path d="M58 64C54 46 44 34 30 24" />
         <path d="M60 62c0-20 4-36 12-50" />
         <path d="M62 64c6-14 16-24 30-30" />

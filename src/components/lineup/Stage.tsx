@@ -20,7 +20,7 @@ export function ProductPage({ colors, children }: { colors: ProductColors; child
   useEffect(() => {
     const root = document.documentElement.style
     root.setProperty('--dd-page-bg', bg)
-    root.setProperty('--dd-page-fg', dark ? '#fff' : '#16173d')
+    root.setProperty('--dd-page-fg', dark ? '#fff' : '#222021')
     root.setProperty('--dd-page-line', 'transparent')
     return () => {
       root.removeProperty('--dd-page-bg')
@@ -126,7 +126,7 @@ export function Points({ items }: { items: string[] }) {
 }
 
 const cardColors = (c: ProductColors) =>
-  ({ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#16173d', '--c-stage': c.stage }) as CSSProperties
+  ({ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage }) as CSSProperties
 
 /** MORE FROM DOLDOL — 지금 보는 것 말고 다른 제품 카드 (제품마다 제 색, 관리자 라인업 순서) */
 export function MoreFromDoldol({ exceptProductId }: { exceptProductId?: number }) {

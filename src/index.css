@@ -10,15 +10,15 @@
   --color-beet-100: #fce7ef;
   --color-beet-200: #f9cfe0;
   --color-beet-300: #f0729f; /* 어두운 바탕 위 강조 */
-  --color-beet-500: #d42a68;
+  --color-beet-500: #da1f2e;
   --color-beet-600: #c0265f;
-  --color-beet-700: #d42a68;
-  --color-beet-800: #8e1b4a;
+  --color-beet-700: #da1f2e;
+  --color-beet-800: #a3141f;
   --color-beet-900: #5c1231;
 
   /* v4 남색 · 라임 */
-  --color-ink: #16173d;
-  --color-lime: #e6f05a;
+  --color-ink: #222021;
+  --color-lime: #f6d4cf;
   --color-cream: #ffffff;
 
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);

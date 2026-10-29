@@ -10,7 +10,7 @@ import { useReducedMotion } from '../../lib/useScroll'
 export const BANNER_HEIGHT = 36
 
 const THEME: Record<BannerTheme, string> = {
-  RED: 'bg-[#e4002b] text-white',
+  RED: 'bg-[#da1f2e] text-white',
   BLACK: 'bg-neutral-950 text-white',
   WHITE: 'bg-white text-neutral-900 border-b border-neutral-200',
 }

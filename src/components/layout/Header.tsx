@@ -37,7 +37,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           </Link>
         </nav>
         <Link to="/" className="dd-logo col-start-2" aria-label="돌돌 홈">
-          DOL<em className={overHero ? 'text-[#e6f05a]' : 'text-[#d42a68]'}>DOL</em>
+          DOL<em className={overHero ? 'text-[#f6d4cf]' : 'text-[#da1f2e]'}>DOL</em>
         </Link>
         <nav className="flex items-center justify-end gap-3 sm:gap-[clamp(14px,2.4vw,32px)]" aria-label="내 메뉴">
           <NavLink to="/wishlist" className={(s) => `hidden sm:inline ${nav(s)}`}>
@@ -87,7 +87,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
     )
   }
   return (
-    <header className="sticky top-0 z-20 border-b-2 border-[var(--dd-page-line,#16173d)] bg-[var(--dd-page-bg,#fff)] text-[var(--dd-page-fg,#16173d)] transition-colors duration-300">
+    <header className="sticky top-0 z-20 border-b-2 border-[var(--dd-page-line,#222021)] bg-[var(--dd-page-bg,#fff)] text-[var(--dd-page-fg,#222021)] transition-colors duration-300">
       <TopBanner />
       {bar}
     </header>

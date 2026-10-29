@@ -7,7 +7,7 @@ export default function CheckoutSteps({ current }: { current: 0 | 1 | 2 }) {
       {STEPS.map((s, i) => (
         <li key={s} className="flex items-center gap-2" aria-current={i === current ? 'step' : undefined}>
           <span
-            className={`rounded-full border-2 border-[#16173d] px-3 py-1 ${i === current ? 'bg-[#16173d] text-white' : i < current ? 'bg-[#e6f05a]' : 'bg-white opacity-60'}`}
+            className={`rounded-full border-2 border-[#222021] px-3 py-1 ${i === current ? 'bg-[#222021] text-white' : i < current ? 'bg-[#f6d4cf]' : 'bg-white opacity-60'}`}
           >
             {i + 1}. {s}
           </span>

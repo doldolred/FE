@@ -23,7 +23,7 @@ export function StarPicker({ value, onChange }: { value: number; onChange: (v: n
           aria-checked={value === n}
           aria-label={`${n}점`}
           onClick={() => onChange(n)}
-          className={`text-4xl leading-none transition-transform hover:scale-110 ${n <= value ? 'text-[#d42a68]' : 'text-neutral-300'}`}
+          className={`text-4xl leading-none transition-transform hover:scale-110 ${n <= value ? 'text-[#da1f2e]' : 'text-neutral-300'}`}
         >
           ★
         </button>

@@ -22,10 +22,10 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
     <aside className="dd-box h-fit lg:sticky lg:top-28">
       <h2>결제 금액</h2>
       {freeThreshold ? (
-        <div className="mb-5 rounded-2xl border-2 border-[#16173d] bg-[#fff7f0] p-3 text-xs font-bold">
+        <div className="mb-5 rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] p-3 text-xs font-bold">
           <p>{remaining > 0 ? `${formatPrice(remaining)} 더 담으면 기본 배송비 무료` : '기본 배송비 무료예요'}</p>
-          <div className="mt-2 h-2.5 overflow-hidden rounded-full border-2 border-[#16173d] bg-white" aria-hidden="true">
-            <div className="h-full bg-[#d42a68] transition-[width] duration-500" style={{ width: `${progress}%` }} />
+          <div className="mt-2 h-2.5 overflow-hidden rounded-full border-2 border-[#222021] bg-white" aria-hidden="true">
+            <div className="h-full bg-[#da1f2e] transition-[width] duration-500" style={{ width: `${progress}%` }} />
           </div>
         </div>
       ) : null}
@@ -35,7 +35,7 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
           <dd className="font-bold">{formatPrice(itemsPrice)}</dd>
         </div>
         {discountAmount > 0 && (
-          <div className="flex justify-between font-bold text-[#d42a68]">
+          <div className="flex justify-between font-bold text-[#da1f2e]">
             <dt>할인{couponCode ? ` (${couponCode})` : ''}</dt>
             <dd>−{formatPrice(discountAmount)}</dd>
           </div>
@@ -45,7 +45,7 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
           <dd className="font-bold">{shippingFee === 0 ? '무료' : formatPrice(shippingFee)}</dd>
         </div>
       </dl>
-      <div className="mt-4 flex items-end justify-between border-t-2 border-dashed border-[#16173d]/30 pt-4">
+      <div className="mt-4 flex items-end justify-between border-t-2 border-dashed border-[#222021]/30 pt-4">
         <span className="font-black">총 결제 금액</span>
         <span className="dd-price-big">{formatPrice(itemsPrice - discountAmount + shippingFee)}</span>
       </div>

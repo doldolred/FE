@@ -5,7 +5,7 @@ export function NoticeArticle({ title, content, pinned, date }: { title: string;
   return (
     <article>
       <header className="border-b-2 border-neutral-900 pb-5">
-        {pinned && <p className="mb-2 text-xs font-black tracking-[0.1em] text-[#e4002b]">공지</p>}
+        {pinned && <p className="mb-2 text-xs font-black tracking-[0.1em] text-[#da1f2e]">공지</p>}
         <h1 className="text-2xl leading-snug font-black tracking-[-0.02em] break-keep md:text-3xl">{title}</h1>
         <p className="mt-2 text-sm text-neutral-500">{formatDate(date)}</p>
       </header>

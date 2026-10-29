@@ -29,7 +29,7 @@ export function NoticeListPage() {
             {data.content.map((n) => (
               <li key={n.id}>
                 <Link to={`/notices/${n.id}`} className="flex items-baseline gap-3 py-5 transition-colors hover:bg-neutral-50 md:px-2">
-                  {n.pinned && <span className="shrink-0 text-xs font-black text-[#e4002b]">공지</span>}
+                  {n.pinned && <span className="shrink-0 text-xs font-black text-[#da1f2e]">공지</span>}
                   <span className="flex-1 font-bold break-keep">{n.title}</span>
                   <span className="shrink-0 text-xs text-neutral-500 tabular-nums">{formatDay(n.createdAt)}</span>
                 </Link>
