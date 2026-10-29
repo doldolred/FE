@@ -1,3 +1,4 @@
+import PageHead from '../components/store/PageHead'
 import { COOKIES, EFFECTIVE_DATE, PRIVACY, REFUND, TERMS, type LegalSection } from '../data/legal'
 
 export type LegalDoc = 'terms' | 'privacy' | 'cookies' | 'refund'
@@ -14,9 +15,8 @@ export default function LegalPage({ doc }: { doc: LegalDoc }) {
   const { title, sections } = DOCS[doc]
   return (
     <article className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="mt-2 text-sm text-neutral-500">시행일 {EFFECTIVE_DATE}</p>
-      <div className="mt-10 space-y-8 text-sm leading-relaxed text-neutral-700">
+      <PageHead kicker="POLICY" title={title} sub={`시행일 ${EFFECTIVE_DATE}`} />
+      <div className="dd-box space-y-8 text-sm leading-relaxed text-neutral-700">
         {sections.map((s) => (
           <section key={s.title}>
             <h2 className="mb-2 font-bold text-neutral-900">{s.title}</h2>

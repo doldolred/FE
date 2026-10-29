@@ -6,6 +6,7 @@ import { fetchProduct } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import { MoreFromDoldol, Points, ProductFigure, ProductPage, SpinPouch, Stage } from '../components/lineup/Stage'
 import ProductReviews from '../components/review/ProductReviews'
+import WishButton from '../components/store/WishButton'
 import { FaqList, ProductGuide } from '../components/product/ProductGuide'
 import { SHIPPING_CUTOFF } from '../data/productInfo'
 import { ErrorMessage, Loading } from '../components/ui/Status'
@@ -156,6 +157,7 @@ export default function ProductDetailPage() {
             )}
 
             <div className="dd-actions">
+              <WishButton productId={product.id} name={product.name} />
               <button type="button" className="dd-btn" disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(false)}>
                 장바구니
               </button>

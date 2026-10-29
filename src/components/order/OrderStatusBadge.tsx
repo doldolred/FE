@@ -13,7 +13,7 @@ const colors: Record<OrderStatus, string> = {
 
 export default function OrderStatusBadge({ status }: { status: OrderStatus }) {
   return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${colors[status]}`}>
+    <span className={`ui-badge rounded-full px-2.5 py-1 text-xs font-semibold ${colors[status]}`}>
       {ORDER_STATUS_LABEL[status]}
     </span>
   )

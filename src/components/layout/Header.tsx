@@ -1,9 +1,9 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { logoutRequest } from '../../api/auth'
+import { useQuery } from '@tanstack/react-query'
+import { Link, NavLink } from 'react-router-dom'
 import { fetchCart } from '../../api/cart'
 import { queryKeys } from '../../api/queryKeys'
-import { useAuthStore, useIsAdmin, useIsLoggedIn } from '../../stores/authStore'
+import { useIsAdmin, useIsLoggedIn } from '../../stores/authStore'
+import { useWishStore } from '../../stores/wishStore'
 import TopBanner from './TopBanner'
 
 const nav = ({ isActive }: { isActive: boolean }) =>
@@ -18,19 +18,10 @@ const nav = ({ isActive }: { isActive: boolean }) =>
 export default function Header({ overHero = false }: { overHero?: boolean }) {
   const loggedIn = useIsLoggedIn()
   const isAdmin = useIsAdmin()
-  const logout = useAuthStore((s) => s.logout)
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const wishCount = useWishStore((s) => s.ids.length)
 
   const { data: cart } = useQuery({ queryKey: queryKeys.cart, queryFn: fetchCart, enabled: loggedIn })
   const cartCount = cart?.items.length ?? 0
-
-  const handleLogout = async () => {
-    await logoutRequest().catch(() => undefined) // 리프레시 쿠키 지우기 — 실패해도 화면은 로그아웃
-    logout()
-    queryClient.clear()
-    navigate('/')
-  }
 
   const bar = (
       <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-4 text-[11px] font-extrabold tracking-[0.12em] sm:px-[clamp(16px,3vw,40px)]">
@@ -49,6 +40,9 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           DOL<em className={overHero ? 'text-[#e6f05a]' : 'text-[#d42a68]'}>DOL</em>
         </Link>
         <nav className="flex items-center justify-end gap-3 sm:gap-[clamp(14px,2.4vw,32px)]" aria-label="내 메뉴">
+          <NavLink to="/wishlist" className={(s) => `hidden sm:inline ${nav(s)}`}>
+            위시{wishCount > 0 && ` ${wishCount}`}
+          </NavLink>
           <NavLink to="/cart" className={nav}>
             장바구니{cartCount > 0 && ` ${cartCount}`}
           </NavLink>
@@ -62,9 +56,9 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
               <NavLink to="/mypage" className={nav}>
                 MY
               </NavLink>
-              <button type="button" onClick={handleLogout} className="hidden whitespace-nowrap tracking-[0.12em] hover:opacity-60 sm:inline">
+              <NavLink to="/logout" className={(s) => `hidden sm:inline ${nav(s)}`}>
                 로그아웃
-              </button>
+              </NavLink>
             </>
           ) : (
             <>

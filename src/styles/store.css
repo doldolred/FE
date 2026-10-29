@@ -1,0 +1,433 @@
+/*
+ * 손님 화면 (메인 · 상세 말고 나머지) — 프로토타입 v4 의 말투로 맞춘다.
+ * 크림 바탕 · 남색 글자 · 남색 2px 테두리 + 비껴 그림자 카드 · 둥근 알약 버튼 · 큰 한글 표제(Black Han Sans).
+ *
+ * .dd-sub 안에서만 적용된다 (Layout 이 메인 · 상세 말고 모든 손님 화면을 감싼다). 관리자 화면은 그대로.
+ * 레이어 없는 CSS 라서 Tailwind 유틸리티(@layer utilities)보다 우선한다 — 공용 부품(ui-*)의 모양을 여기서 바꾼다.
+ */
+.dd-sub {
+  --dd-cream: #fff7f0;
+  --dd-line: #16173d;
+  background: var(--dd-cream);
+  color: var(--dd-navy);
+}
+
+/* ── 머리말 ─────────────────────────────── */
+.dd-head {
+  margin-bottom: clamp(24px, 4vw, 40px);
+}
+.dd-head .kicker {
+  font-family: var(--dd-font-logo);
+  font-style: italic;
+  font-weight: 900;
+  font-variation-settings: 'wdth' 125;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--dd-beet);
+}
+.dd-head h1 {
+  margin-top: 6px;
+  font-family: var(--dd-font-display-ko);
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+.dd-head p.sub {
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.7;
+  word-break: keep-all;
+}
+.dd-head[data-center] {
+  text-align: center;
+}
+
+/* ── 카드 ──────────────────────────────── */
+.dd-box {
+  background: #fff;
+  border: 2px solid var(--dd-line);
+  border-radius: 24px;
+  box-shadow: 6px 6px 0 var(--dd-line);
+  padding: clamp(18px, 3vw, 28px);
+}
+.dd-box[data-tone='navy'] {
+  background: var(--dd-navy);
+  color: #fff;
+}
+.dd-box[data-tone='lime'] {
+  background: var(--dd-lime);
+}
+.dd-box[data-tone='pink'] {
+  background: var(--dd-pink);
+}
+.dd-box > h2,
+.dd-box-title {
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+.dd-box-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dd-box-title a {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+.dd-box-title a:hover {
+  opacity: 1;
+}
+
+/* 목록 줄 — 카드 안 구분선 */
+.dd-rows > * + * {
+  border-top: 1.5px dashed rgba(22, 23, 61, 0.25);
+}
+
+/* ── 공용 부품 모양 (components/ui) ─────────── */
+.dd-sub .ui-btn {
+  border-radius: 999px;
+  border: 2px solid var(--dd-navy);
+  font-weight: 900;
+  padding: 12px 22px;
+  box-shadow: 0 4px 0 var(--dd-navy);
+  transition:
+    transform 180ms,
+    box-shadow 180ms,
+    background 180ms;
+}
+.dd-sub .ui-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--dd-navy);
+}
+.dd-sub .ui-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--dd-navy);
+}
+.dd-sub .ui-btn-primary {
+  background: var(--dd-beet);
+  color: #fff;
+}
+.dd-sub .ui-btn-primary:hover:not(:disabled) {
+  background: var(--dd-beet);
+}
+.dd-sub .ui-btn-secondary {
+  background: #fff;
+  color: var(--dd-navy);
+}
+.dd-sub .ui-btn-secondary:hover:not(:disabled) {
+  background: var(--dd-lime);
+}
+.dd-sub .ui-btn-ghost {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  color: var(--dd-navy);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.dd-sub .ui-btn-ghost:hover:not(:disabled) {
+  box-shadow: none;
+  background: transparent;
+}
+.dd-sub .ui-btn-lime {
+  background: var(--dd-lime);
+  color: var(--dd-navy);
+}
+
+.dd-sub .ui-label {
+  color: var(--dd-navy);
+  font-weight: 800;
+  font-size: 13px;
+}
+.dd-sub input.ui-input,
+.dd-sub input.ui-field {
+  border: 2px solid var(--dd-navy);
+  border-radius: 14px;
+  background: #fff;
+  padding: 12px 14px;
+  font-size: 15px;
+}
+.dd-sub input.ui-input:focus,
+.dd-sub input.ui-field:focus {
+  border-color: var(--dd-beet);
+  box-shadow: 0 0 0 4px rgba(212, 42, 104, 0.15);
+}
+.dd-sub input.ui-input[aria-invalid='true'] {
+  border-color: #dc2626;
+}
+
+.dd-sub .ui-qty {
+  border: 2px solid var(--dd-navy);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+}
+.dd-sub .ui-qty button {
+  color: var(--dd-navy);
+  font-weight: 900;
+}
+.dd-sub .ui-qty span {
+  font-weight: 900;
+}
+
+.dd-sub .ui-alert {
+  border: 2px solid #b91c1c;
+  border-radius: 14px;
+  background: #fff1f2;
+  font-weight: 700;
+}
+.dd-sub .ui-empty {
+  border: 2px dashed rgba(22, 23, 61, 0.35);
+  border-radius: 24px;
+  color: var(--dd-navy);
+  font-weight: 700;
+}
+
+.dd-sub .ui-badge {
+  border: 1.5px solid currentColor;
+  font-weight: 900;
+}
+
+/* 선택 칸 (결제 수단 · 신청 종류 등) */
+.dd-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px solid var(--dd-navy);
+  border-radius: 16px;
+  background: #fff;
+  padding: 14px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 180ms;
+}
+.dd-choice:hover {
+  background: #fffbe0;
+}
+.dd-choice[data-on] {
+  background: var(--dd-lime);
+  box-shadow: 4px 4px 0 var(--dd-navy);
+}
+.dd-choice:has(:focus-visible) {
+  outline: 3px solid var(--dd-beet);
+  outline-offset: 2px;
+}
+
+/* ── 상품 썸네일 (장바구니 · 위시리스트 · 주문) ─ */
+.dd-thumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid var(--dd-navy);
+  border-radius: 18px;
+  background: var(--c-stage, var(--dd-lime));
+  aspect-ratio: 1;
+}
+.dd-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dd-thumb .dd-pouch {
+  --w: 54%;
+}
+.dd-thumb > svg {
+  height: 70%;
+  width: auto;
+}
+.dd-thumb[data-art='jar'] > svg {
+  height: 50%;
+}
+
+/* ── 마이페이지 탭 ────────────────────────── */
+.dd-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 4px 10px;
+  margin: 0 -4px clamp(20px, 3vw, 32px);
+  scrollbar-width: none;
+}
+.dd-tabs::-webkit-scrollbar {
+  display: none;
+}
+.dd-tabs a {
+  flex: none;
+  border: 2px solid var(--dd-navy);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 800;
+  background: #fff;
+  white-space: nowrap;
+  transition: background 180ms;
+}
+.dd-tabs a:hover {
+  background: #fffbe0;
+}
+.dd-tabs a[aria-current='page'] {
+  background: var(--dd-navy);
+  color: #fff;
+}
+
+/* ── 숫자 카드 (마이페이지 주문 현황) ─────────── */
+.dd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.dd-stats a {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  border: 2px solid var(--dd-navy);
+  border-radius: 18px;
+  padding: 14px 6px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+.dd-stats b {
+  font-family: var(--dd-font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1;
+}
+.dd-stats a[data-hot] {
+  background: var(--dd-lime);
+}
+
+/* 큰 상태 화면 (주문 완료 · 결제 실패 · 로그아웃 · 404) */
+.dd-hero-note {
+  text-align: center;
+  padding: clamp(32px, 6vw, 64px) 0;
+}
+.dd-hero-note .big {
+  font-family: var(--dd-font-display);
+  font-size: clamp(64px, 12vw, 132px);
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: var(--dd-beet);
+}
+.dd-hero-note h1 {
+  margin-top: 16px;
+  font-family: var(--dd-font-display-ko);
+  font-size: clamp(28px, 4vw, 40px);
+  word-break: keep-all;
+}
+.dd-hero-note p {
+  margin-top: 10px;
+  opacity: 0.75;
+  word-break: keep-all;
+}
+
+/* 하트 (위시리스트) */
+.dd-heart {
+  display: inline-grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  flex: none;
+  border-radius: 999px;
+  border: 2px solid var(--dd-navy);
+  background: #fff;
+  color: var(--dd-beet);
+  box-shadow: 0 5px 0 var(--dd-navy);
+  cursor: pointer;
+  transition:
+    transform 200ms,
+    box-shadow 200ms;
+}
+.dd-heart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--dd-navy);
+}
+.dd-heart svg {
+  width: 24px;
+  height: 24px;
+}
+.dd-heart[aria-pressed='true'] svg {
+  animation: dd-pop 380ms var(--dd-ease);
+}
+.dd-heart[data-size='sm'] {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0 3px 0 var(--dd-navy);
+}
+.dd-heart[data-size='sm'] svg {
+  width: 18px;
+  height: 18px;
+}
+@keyframes dd-pop {
+  40% {
+    transform: scale(1.35);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dd-heart[aria-pressed='true'] svg {
+    animation: none;
+  }
+}
+
+/* 회색 글자 · 선은 남색 쪽으로 (크림 바탕 위에서 어울리게) */
+.dd-sub .text-neutral-400 {
+  color: rgba(22, 23, 61, 0.45);
+}
+.dd-sub .text-neutral-500 {
+  color: rgba(22, 23, 61, 0.6);
+}
+.dd-sub .text-neutral-600,
+.dd-sub .text-neutral-700 {
+  color: rgba(22, 23, 61, 0.78);
+}
+.dd-sub .border-neutral-200,
+.dd-sub .border-neutral-300 {
+  border-color: rgba(22, 23, 61, 0.22);
+}
+.dd-sub .bg-neutral-50 {
+  background-color: #fff;
+}
+
+/* 로그인 · 회원가입 · 비밀번호 카드 */
+.dd-auth {
+  max-width: 440px;
+  margin: 0 auto;
+}
+.dd-auth .dd-box {
+  padding: clamp(22px, 4vw, 36px);
+}
+.dd-auth-foot {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 2px solid var(--dd-navy);
+  border-radius: 18px;
+  background: var(--dd-lime);
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 800;
+}
+.dd-auth-foot a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* 큰 금액 (Anton) */
+.dd-price-big {
+  font-family: var(--dd-font-display);
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--dd-beet);
+}

@@ -16,11 +16,14 @@ export default function Layout() {
           <Outlet />
         </main>
       ) : (
-        <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
-          <Outlet />
+        // 나머지 손님 화면 — v4 크림 바탕 (styles/store.css .dd-sub)
+        <main id="main" className="dd-sub flex-1">
+          <div className="mx-auto w-full max-w-6xl px-4 py-10 md:py-14">
+            <Outlet />
+          </div>
         </main>
       )}
-      <Footer dark={fullBleed} />
+      <Footer dark />
     </div>
   )
 }

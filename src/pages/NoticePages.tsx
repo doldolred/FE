@@ -6,6 +6,7 @@ import { queryKeys } from '../api/queryKeys'
 import { NoticeArticle } from '../components/NoticeArticle'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { formatDay } from '../lib/format'
+import PageHead from '../components/store/PageHead'
 
 /** /notices — 공지사항 목록 (고정 먼저 → 최신순) */
 export function NoticeListPage() {
@@ -14,8 +15,7 @@ export function NoticeListPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <p className="text-sm font-black tracking-[0.1em] text-[#e4002b] italic">DOLDOL · NOTICE</p>
-      <h1 className="dd-display mt-2 text-5xl md:text-6xl">공지사항</h1>
+      <PageHead kicker="NOTICE" title="공지사항" sub="배송 · 이벤트 · 운영 소식을 알려 드려요." />
 
       <div className="mt-8 border-t-2 border-neutral-900">
         {isPending ? (

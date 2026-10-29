@@ -9,7 +9,7 @@ interface Props {
 export default function QuantityStepper({ value, onChange, min = 1, max = 99, disabled }: Props) {
   const btn = 'h-9 w-9 text-lg text-neutral-600 hover:bg-neutral-100 disabled:opacity-40'
   return (
-    <div className="inline-flex items-center rounded-lg border border-neutral-300">
+    <div className="ui-qty inline-flex items-center rounded-lg border border-neutral-300">
       <button
         type="button"
         className={btn}

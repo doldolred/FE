@@ -8,15 +8,16 @@ import { StarPicker } from '../components/review/Stars'
 import { Empty, ErrorMessage, Loading } from '../components/ui/Status'
 import { getErrorMessage, getFieldErrors } from '../lib/errors'
 import { formatDay } from '../lib/format'
+import MyNav from '../components/store/MyNav'
 
 const MAX_PHOTOS = 3
 
 function Heading({ children }: { children: string }) {
   return (
-    <>
-      <p className="dd-kicker text-sm tracking-[0.1em] text-[#d42a68]">DOLDOL · REVIEW</p>
-      <h1 className="dd-display-ko mt-2 text-4xl md:text-5xl">{children}</h1>
-    </>
+    <div className="dd-head mb-0!">
+      <p className="kicker">DOLDOL · REVIEW</p>
+      <h1>{children}</h1>
+    </div>
   )
 }
 
@@ -34,6 +35,7 @@ export function MyReviewsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-12">
       <div>
+        <MyNav />
         <Heading>내 후기</Heading>
         <p className="mt-3 text-sm text-neutral-600">배송이 끝난 상품에 후기를 남길 수 있어요.</p>
       </div>

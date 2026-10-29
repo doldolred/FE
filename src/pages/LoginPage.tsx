@@ -34,7 +34,16 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthCard title="로그인">
+    <AuthCard
+      title="다시 만나 반가워요"
+      kicker="LOGIN"
+      foot={
+        <>
+          <span>처음 오셨나요?</span>
+          <Link to={`/signup?redirect=${encodeURIComponent(redirect)}`}>회원가입 →</Link>
+        </>
+      }
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="이메일" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input
@@ -55,12 +64,6 @@ export default function LoginPage() {
           </Link>
         </p>
       </form>
-      <p className="mt-6 text-center text-sm text-neutral-500">
-        아직 회원이 아니신가요?{' '}
-        <Link to={`/signup?redirect=${encodeURIComponent(redirect)}`} className="font-semibold text-beet-800 hover:underline">
-          회원가입
-        </Link>
-      </p>
     </AuthCard>
   )
 }

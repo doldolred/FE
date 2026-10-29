@@ -10,7 +10,9 @@ import HomePage from './pages/HomePage'
 import FaqPage from './pages/FaqPage'
 import LegalPage from './pages/LegalPage'
 import LoginPage from './pages/LoginPage'
-import MyPage from './pages/MyPage'
+import MyPage, { MyOrdersPage, MyProfilePage } from './pages/MyPage'
+import LogoutPage from './pages/LogoutPage'
+import WishlistPage from './pages/WishlistPage'
 import NotFoundPage from './pages/NotFoundPage'
 import { ClaimNewPage, MyClaimsPage } from './pages/ClaimPages'
 import { InquiryDetailPage, InquiryListPage, InquiryNewPage } from './pages/InquiryPages'
@@ -62,6 +64,8 @@ export const router = createBrowserRouter([
       { path: 'cookies', element: <LegalPage doc="cookies" /> },
       { path: 'refund-policy', element: <LegalPage doc="refund" /> },
       { path: 'faq', element: <FaqPage /> },
+      { path: 'logout', element: <LogoutPage /> },
+      { path: 'wishlist', element: <WishlistPage /> },
       {
         element: <RequireAuth />,
         children: [
@@ -70,6 +74,8 @@ export const router = createBrowserRouter([
           { path: 'checkout/fail', element: <CheckoutFailPage /> },
           { path: 'payment/portone/redirect', element: <PortoneRedirectPage /> },
           { path: 'mypage', element: <MyPage /> },
+          { path: 'mypage/orders', element: <MyOrdersPage /> },
+          { path: 'mypage/profile', element: <MyProfilePage /> },
           { path: 'mypage/orders/:orderNumber', element: <OrderDetailPage /> },
           { path: 'mypage/orders/:orderNumber/claim', element: <ClaimNewPage /> },
           { path: 'mypage/claims', element: <MyClaimsPage /> },

@@ -60,7 +60,17 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthCard title="회원가입">
+    <AuthCard
+      title="돌돌 회원가입"
+      kicker="JOIN"
+      sub="가입하면 주문 내역 · 후기 · 1:1 문의를 한곳에서 볼 수 있어요."
+      foot={
+        <>
+          <span>이미 회원이신가요?</span>
+          <Link to={`/login?redirect=${encodeURIComponent(redirect)}`}>로그인 →</Link>
+        </>
+      }
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="이메일" type="email" autoComplete="email" required value={form.email} onChange={set('email')} error={fieldErrors.email} />
         <Input
@@ -95,7 +105,7 @@ export default function SignupPage() {
           error={fieldErrors.phone}
         />
 
-        <fieldset className="rounded-xl border border-neutral-200 p-4">
+        <fieldset className="rounded-2xl border-2 border-[#16173d] bg-[#fff7f0] p-4">
           <legend className="sr-only">약관 동의</legend>
           <Check checked={allChecked} onChange={toggleAll} strong>
             전체 동의
@@ -122,12 +132,6 @@ export default function SignupPage() {
           가입하기
         </Button>
       </form>
-      <p className="mt-6 text-center text-sm text-neutral-500">
-        이미 회원이신가요?{' '}
-        <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="font-semibold text-beet-800 hover:underline">
-          로그인
-        </Link>
-      </p>
     </AuthCard>
   )
 }

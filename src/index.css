@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './styles/lineup.css';
+@import './styles/store.css';
 
 @theme {
   --font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;

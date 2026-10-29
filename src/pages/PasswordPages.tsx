@@ -21,7 +21,7 @@ export function ForgotPasswordPage() {
 
   if (mutation.isSuccess) {
     return (
-      <AuthCard title="메일을 확인해 주세요">
+      <AuthCard kicker="PASSWORD" title="메일을 확인해 주세요">
         <p className="text-center text-sm leading-relaxed text-neutral-600">
           가입된 이메일이라면 <b>{email}</b> 으로
           <br />
@@ -36,7 +36,7 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <AuthCard title="비밀번호 찾기">
+    <AuthCard kicker="PASSWORD" title="비밀번호 찾기">
       <form onSubmit={handleSubmit} className="space-y-4">
         <p className="text-sm text-neutral-600">가입한 이메일을 적으면 비밀번호를 새로 정할 수 있는 링크를 보내 드려요.</p>
         <Input label="이메일" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -71,7 +71,7 @@ export function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <AuthCard title="링크가 올바르지 않아요">
+      <AuthCard kicker="PASSWORD" title="링크가 올바르지 않아요">
         <Link to="/password/forgot" className={buttonClass('primary', 'w-full')}>
           비밀번호 찾기 다시 하기
         </Link>
@@ -81,7 +81,7 @@ export function ResetPasswordPage() {
 
   if (mutation.isSuccess) {
     return (
-      <AuthCard title="비밀번호를 바꿨어요">
+      <AuthCard kicker="PASSWORD" title="비밀번호를 바꿨어요">
         <p className="text-center text-sm text-neutral-600">새 비밀번호로 로그인해 주세요. 다른 기기에서는 로그아웃됐어요.</p>
         <Link to="/login" className={buttonClass('primary', 'mt-8 w-full')}>
           로그인
@@ -91,7 +91,7 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <AuthCard title="새 비밀번호 정하기">
+    <AuthCard kicker="PASSWORD" title="새 비밀번호 정하기">
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="새 비밀번호"

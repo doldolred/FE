@@ -4,6 +4,7 @@ import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import type { Product } from '../api/types'
 import { MoreFromDoldol, Points, ProductFigure, ProductPage, SpinPouch, Stage } from '../components/lineup/Stage'
+import WishButton from '../components/store/WishButton'
 import { artKind, mainProductOf, shortName, themeColors } from '../data/lineup'
 
 /**
@@ -37,12 +38,15 @@ export default function ComingSoonPage({ product }: { product: Product }) {
           {product.points.length > 0 && <Points items={product.points} />}
           <div className="dd-buy">
             <span className="price">COMING SOON</span>
-            <p className="mt-3 text-sm opacity-70">출시되면 이 페이지에서 가장 먼저 알려 드릴게요.</p>
-            {main && (
-              <Link to={`/products/${main.id}`} className="dd-btn mt-5" data-primary="">
-                지금 파는 제품 보기
-              </Link>
-            )}
+            <p className="mt-3 text-sm opacity-70">출시되면 이 페이지에서 가장 먼저 알려 드릴게요. 하트를 눌러 위시리스트에 담아 두세요.</p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <WishButton productId={product.id} name={product.name} />
+              {main && (
+                <Link to={`/products/${main.id}`} className="dd-btn" data-primary="">
+                  지금 파는 제품 보기
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </section>

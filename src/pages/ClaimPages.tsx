@@ -1,3 +1,5 @@
+import MyNav from '../components/store/MyNav'
+import PageHead from '../components/store/PageHead'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -183,10 +185,11 @@ export function ClaimNewPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="text-2xl font-bold">{CLAIM_TYPE_LABEL[current]} 신청</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        주문 {order.orderNumber} · {order.items.map((i) => `${i.productName} ${i.optionName} × ${i.quantity}`).join(', ')}
-      </p>
+      <PageHead
+        kicker="CLAIM"
+        title={`${CLAIM_TYPE_LABEL[current]} 신청`}
+        sub={`주문 ${order.orderNumber} · ${order.items.map((i) => `${i.productName} ${i.optionName} × ${i.quantity}`).join(', ')}`}
+      />
 
       {types.length > 1 && (
         <div className="mt-6 flex gap-2" role="tablist">
@@ -327,8 +330,8 @@ export function MyClaimsPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-bold">취소 · 반품 · 교환 내역</h1>
-      <p className="mt-1 text-sm text-neutral-500">신청은 주문 상세에서 할 수 있어요.</p>
+      <MyNav />
+      <PageHead kicker="CLAIMS" title="취소 · 반품 · 교환 내역" sub="신청은 주문 상세에서 할 수 있어요." />
       <div className="mt-6">
         {isPending ? (
           <Loading />

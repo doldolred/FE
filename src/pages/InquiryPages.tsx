@@ -11,6 +11,7 @@ import { Empty, ErrorMessage, Loading } from '../components/ui/Status'
 import { COMPANY } from '../data/company'
 import { getFieldErrors } from '../lib/errors'
 import { formatDate, formatDay, INQUIRY_CATEGORY_LABEL, INQUIRY_STATUS_LABEL } from '../lib/format'
+import MyNav from '../components/store/MyNav'
 
 const fieldClass =
   'w-full rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-neutral-900'
@@ -29,10 +30,10 @@ export function InquiryStatusBadge({ status }: { status: InquiryStatus }) {
 
 function Heading({ children }: { children: string }) {
   return (
-    <>
-      <p className="text-sm font-black tracking-[0.1em] text-[#e4002b] italic">DOLDOL · 1:1 INQUIRY</p>
-      <h1 className="dd-display mt-2 text-4xl md:text-5xl">{children}</h1>
-    </>
+    <div className="dd-head mb-0!">
+      <p className="kicker">DOLDOL · 1:1 INQUIRY</p>
+      <h1>{children}</h1>
+    </div>
   )
 }
 
@@ -43,6 +44,7 @@ export function InquiryListPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
+      <MyNav />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Heading>1:1 문의</Heading>
