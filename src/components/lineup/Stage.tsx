@@ -3,8 +3,8 @@ import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchProducts } from '../../api/products'
 import { queryKeys } from '../../api/queryKeys'
-import { SELLING, UPCOMING, pageColors, type ProductColors } from '../../data/lineup'
-import { formatPrice } from '../../lib/format'
+import type { Product } from '../../api/types'
+import { artKind, pageColors, statusLine, themeColors, type ProductColors } from '../../data/lineup'
 import { posePouch } from '../../lib/pouch'
 import { useReducedMotion } from '../../lib/useScroll'
 import { ProductArt } from './Art'
@@ -49,7 +49,7 @@ export function Stage({ badge, word, children }: { badge: string; word: string; 
 }
 
 /** 무대 위 파우치 — 끌어서 돌리고, 놓으면 관성 → 천천히 혼자 돈다 (v4-product 원본과 같은 움직임) */
-export function SpinPouch({ label }: { label: string }) {
+export function SpinPouch({ label, front, back }: { label: string; front?: string | null; back?: string | null }) {
   const ref = useRef<HTMLDivElement>(null)
   const pouchRef = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
@@ -104,7 +104,7 @@ export function SpinPouch({ label }: { label: string }) {
     <>
       <span className="spin-hint">← 끌어서 돌려 보세요 →</span>
       <div className="art" data-art="pouch" ref={ref}>
-        <SvgPouch ref={pouchRef} label={label} />
+        <SvgPouch ref={pouchRef} label={label} front={front} back={back} />
       </div>
     </>
   )
@@ -128,11 +128,11 @@ export function Points({ items }: { items: string[] }) {
 const cardColors = (c: ProductColors) =>
   ({ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#16173d', '--c-stage': c.stage }) as CSSProperties
 
-/** MORE FROM DOLDOL — 지금 보는 것 말고 다른 제품 카드 (제품마다 제 색) */
-export function MoreFromDoldol({ exceptProductId, exceptSlug }: { exceptProductId?: number; exceptSlug?: string }) {
+/** MORE FROM DOLDOL — 지금 보는 것 말고 다른 제품 카드 (제품마다 제 색, 관리자 라인업 순서) */
+export function MoreFromDoldol({ exceptProductId }: { exceptProductId?: number }) {
   const { data: products } = useQuery({ queryKey: queryKeys.products, queryFn: fetchProducts })
-  const selling = (products ?? []).filter((p) => p.id !== exceptProductId && SELLING[p.id])
-  const upcoming = UPCOMING.filter((p) => p.slug !== exceptSlug)
+  const others = (products ?? []).filter((p) => p.id !== exceptProductId)
+  if (others.length === 0) return null
 
   return (
     <section className="dd-more" aria-label="다른 제품">
@@ -141,30 +141,14 @@ export function MoreFromDoldol({ exceptProductId, exceptSlug }: { exceptProductI
           MORE FROM <em>DOLDOL</em>
         </h2>
         <div className="dd-cards">
-          {selling.map((p) => {
-            const info = SELLING[p.id]
-            return (
-              <Link key={p.id} to={`/products/${p.id}`} className="dd-card" style={cardColors(info)}>
-                <div className="pic">
-                  <CardPouch />
-                </div>
-                <div className="meta">
-                  <b>{p.name}</b>
-                  <span>
-                    {p.soldOut ? '품절' : `${formatPrice(p.minPrice)}~`} · {info.spec}
-                  </span>
-                </div>
-              </Link>
-            )
-          })}
-          {upcoming.map((p) => (
-            <Link key={p.slug} to={`/lineup/${p.slug}`} className="dd-card" style={cardColors(p)}>
-              <div className="pic" data-art={p.art}>
-                <ProductArt kind={p.art} />
+          {others.map((p) => (
+            <Link key={p.id} to={`/products/${p.id}`} className="dd-card" style={cardColors(themeColors(p.theme))}>
+              <div className="pic" data-art={artKind(p.art)}>
+                <ProductFigure product={p} />
               </div>
               <div className="meta">
                 <b>{p.name}</b>
-                <span>출시 예정 · {p.spec}</span>
+                <span>{statusLine(p)}</span>
               </div>
             </Link>
           ))}
@@ -174,11 +158,17 @@ export function MoreFromDoldol({ exceptProductId, exceptSlug }: { exceptProductI
   )
 }
 
-/** 카드 속 작은 파우치 — 살짝 비스듬히 멈춰 있다 */
-function CardPouch() {
+/** 멈춰 있는 제품 그림 — 파우치는 살짝 비스듬히 (도안이 있으면 도안), 병 · 유리병은 SVG */
+export function ProductFigure({ product }: { product: Product }) {
+  const kind = artKind(product.art)
+  if (kind !== 'pouch') return <ProductArt kind={kind} />
+  return <StillPouch front={product.artFrontUrl} back={product.artBackUrl} />
+}
+
+function StillPouch({ front, back }: { front: string | null; back: string | null }) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     posePouch(ref.current, { rz: -6, ry: -18 })
   }, [])
-  return <SvgPouch ref={ref} />
+  return <SvgPouch ref={ref} front={front} back={back} />
 }

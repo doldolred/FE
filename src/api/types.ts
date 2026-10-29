@@ -58,14 +58,38 @@ export interface ProductOption {
   soldOut: boolean
 }
 
-export interface Product {
+/** 판매중 · 출시 예정 · 비공개 (손님 화면에는 앞의 둘만) */
+export type ProductStatus = 'SELLING' | 'COMING_SOON' | 'HIDDEN'
+/** 라인업 색 — 바탕 · 무대 색 묶음 (data/lineup.ts THEMES) */
+export type LineupTheme = 'NAVY' | 'PINK' | 'LIME'
+/** 라인업 그림 — 3D 파우치 · 병 · 유리병 */
+export type LineupArt = 'POUCH' | 'BOTTLE' | 'JAR'
+
+/** 메인 라인업 · 상세 연출 항목 (관리자 상품 화면에서 고친다) */
+export interface LineupFields {
+  /** 무대 뒤 영문 이름 — 예: RED BEET */
+  enName: string | null
+  /** 구성 — 예: 120ml × 30포 / 60포 */
+  spec: string | null
+  /** 스티커 문구 */
+  points: string[]
+  theme: LineupTheme
+  art: LineupArt
+  /** 파우치 도안 앞 · 뒤 (없으면 기본 그림) */
+  artFrontUrl: string | null
+  artBackUrl: string | null
+}
+
+export interface Product extends LineupFields {
   id: number
   name: string
   description: string | null
   imageUrl: string | null
-  /** 품절 아닌 옵션 중 최저가 — "38,000원~" */
+  status: Exclude<ProductStatus, 'HIDDEN'>
+  /** 품절 아닌 옵션 중 최저가 — "38,000원~" (출시 예정은 0) */
   minPrice: number
   soldOut: boolean
+  /** 출시 예정이면 빈 배열 */
   options: ProductOption[]
 }
 
@@ -236,13 +260,15 @@ export interface AdminProductOption {
   active: boolean
 }
 
-export interface AdminProduct {
+export interface AdminProduct extends LineupFields {
   id: number
   name: string
   description: string | null
   imageUrl: string | null
-  active: boolean
+  status: ProductStatus
   options: AdminProductOption[]
+  /** 작을수록 앞 — 맨 앞 판매중 상품이 메인 */
+  lineupOrder: number
   createdAt: string
   updatedAt: string
 }
@@ -251,7 +277,15 @@ export interface AdminProductRequest {
   name: string
   description: string
   imageUrl: string
-  active: boolean
+  status: ProductStatus
+  enName: string
+  spec: string
+  points: string[]
+  theme: LineupTheme
+  art: LineupArt
+  artFrontUrl: string
+  artBackUrl: string
+  lineupOrder: number
   /** id 가 있으면 수정, 없으면 추가, 빠진 옵션은 판매중지 */
   options: { id?: number; name: string; listPrice: number; price: number; stock: number; active: boolean }[]
 }

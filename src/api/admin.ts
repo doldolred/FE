@@ -23,6 +23,7 @@ import type {
   ChangeOrderStatusRequest,
   OrderStatus,
   Page,
+  ProductStatus,
   Role,
   SalesSummary,
   ShippingArea,
@@ -52,8 +53,8 @@ export const fetchAdminProducts = () => api.get<AdminProduct[]>('/api/admin/prod
 export const fetchAdminProduct = (id: number) => api.get<AdminProduct>(`/api/admin/products/${id}`)
 export const createProduct = (req: AdminProductRequest) => api.post<AdminProduct>('/api/admin/products', req)
 export const updateProduct = (id: number, req: AdminProductRequest) => api.put<AdminProduct>(`/api/admin/products/${id}`, req)
-export const changeProductActive = (id: number, active: boolean) =>
-  api.patch<AdminProduct>(`/api/admin/products/${id}/active`, { active })
+export const changeProductStatus = (id: number, status: ProductStatus) =>
+  api.patch<AdminProduct>(`/api/admin/products/${id}/status`, { status })
 export const uploadImage = (file: File) => {
   const form = new FormData()
   form.append('file', file)

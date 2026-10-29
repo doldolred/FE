@@ -4,15 +4,15 @@ import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'reac
 import { addCartItem } from '../api/cart'
 import { fetchProduct } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
-import { MoreFromDoldol, Points, ProductPage, SpinPouch, Stage } from '../components/lineup/Stage'
-import ProductImage from '../components/product/ProductImage'
+import { MoreFromDoldol, Points, ProductFigure, ProductPage, SpinPouch, Stage } from '../components/lineup/Stage'
 import ProductReviews from '../components/review/ProductReviews'
 import { FaqList, ProductGuide } from '../components/product/ProductGuide'
 import { SHIPPING_CUTOFF } from '../data/productInfo'
 import { ErrorMessage, Loading } from '../components/ui/Status'
-import { MAIN_PRODUCT_ID, SELLING } from '../data/lineup'
+import { artKind, shortName, themeColors } from '../data/lineup'
 import { formatPrice } from '../lib/format'
 import { useIsLoggedIn } from '../stores/authStore'
+import ComingSoonPage from './ComingSoonPage'
 
 export default function ProductDetailPage() {
   const id = Number(useParams().id)
@@ -47,6 +47,7 @@ export default function ProductDetailPage() {
   if (!Number.isInteger(id)) return <ErrorMessage error={new Error('잘못된 상품 주소입니다.')} />
   if (isPending) return <Loading />
   if (error) return <ErrorMessage error={error} />
+  if (product.status === 'COMING_SOON') return <ComingSoonPage product={product} />
 
   const soldOut = !option || option.soldOut
 
@@ -65,28 +66,29 @@ export default function ProductDetailPage() {
   }
 
   // 프로토타입 v4 상세 (v4-product.html) — 제품 색 바탕, 왼쪽 무대(3D 파우치를 끌어서 돌린다), 오른쪽 정보 · 옵션 · 구매
-  const info = SELLING[product.id] ?? SELLING[MAIN_PRODUCT_ID]
+  // 색 · 영문 이름 · 스티커 · 그림은 관리자 상품 화면의 라인업 항목
+  const kind = artKind(product.art)
   const maxQty = Math.max(1, Math.min(99, option?.stock ?? 1))
 
   return (
-    <ProductPage colors={info}>
+    <ProductPage colors={themeColors(product.theme)}>
       <section className="dd-hero">
-        {SELLING[product.id] ? (
-          <Stage badge={product.soldOut ? '일시품절' : '판매중'} word={info.en}>
-            <SpinPouch label={product.name} />
-          </Stage>
-        ) : (
-          <div className="overflow-hidden rounded-[28px] border-2 border-[#16173d] shadow-[8px_8px_0_#16173d]">
-            <ProductImage src={product.imageUrl} alt={product.name} />
-          </div>
-        )}
+        <Stage badge={product.soldOut ? '일시품절' : '판매중'} word={product.enName ?? shortName(product.name)}>
+          {kind === 'pouch' ? (
+            <SpinPouch label={product.name} front={product.artFrontUrl} back={product.artBackUrl} />
+          ) : (
+            <div className="art" data-art={kind}>
+              <ProductFigure product={product} />
+            </div>
+          )}
+        </Stage>
 
         <div className="dd-info">
-          <p className="en dd-kicker">DOLDOL · {info.en}</p>
+          {product.enName && <p className="en dd-kicker">DOLDOL · {product.enName}</p>}
           <h1>{product.name}</h1>
-          <p className="spec">{info.spec}</p>
+          {product.spec && <p className="spec">{product.spec}</p>}
           {product.description && <p className="desc">{product.description}</p>}
-          <Points items={info.points} />
+          {product.points.length > 0 && <Points items={product.points} />}
 
           <div className="dd-buy">
             <div className="flex flex-wrap items-center justify-between gap-4">

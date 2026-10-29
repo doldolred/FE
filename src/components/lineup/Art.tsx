@@ -1,7 +1,7 @@
 import type { ArtKind } from '../../data/lineup'
 
-/** 출시 예정 제품 그림 (프로토타입 v4 원본 SVG). 실제 제품 사진이 생기면 사진으로 바꾼다 */
-export function ProductArt({ kind }: { kind: ArtKind }) {
+/** 병 · 유리병 그림 (프로토타입 v4 원본 SVG). 파우치는 SvgPouch */
+export function ProductArt({ kind }: { kind: Exclude<ArtKind, 'pouch'> }) {
   return kind === 'bottle' ? <Bottle /> : <Jar />
 }
 

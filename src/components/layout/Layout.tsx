@@ -3,11 +3,10 @@ import Footer from './Footer'
 import Header from './Header'
 
 export default function Layout() {
-  // 메인 · 상품 상세 · 출시 예정은 풀블리드 (프로토타입 v4) — 본문 폭 제한 없이 화면 전체에 제 바탕색을 깐다
+  // 메인 · 상품 상세(출시 예정 포함)는 풀블리드 (프로토타입 v4) — 본문 폭 제한 없이 화면 전체에 제 바탕색을 깐다
   const isHome = useMatch('/') !== null
   const isProduct = useMatch('/products/:id') !== null
-  const isLineup = useMatch('/lineup/:slug') !== null
-  const fullBleed = isHome || isProduct || isLineup
+  const fullBleed = isHome || isProduct
 
   return (
     <div className="flex min-h-screen flex-col">

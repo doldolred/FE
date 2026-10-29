@@ -4,6 +4,9 @@ import type { CSSProperties, Ref } from 'react'
  * 3D 그림 파우치 — 프로토타입 v4(protohtml/v4-shared.js)와 같은 그림.
  * 앞면 · 뒷면 SVG 사이에 얇은 실루엣 6장을 겹쳐 두께를 낸다. 움직임은 lib/pouch.ts 의 posePouch 로 직접 바꾼다.
  * 라벨 글자만 실제 제품에 맞췄다 (120ml · 제주산).
+ *
+ * 관리자가 파우치 도안(펼친 앞 · 뒤 PNG, 배경 투명 · 2:3)을 올리면 그림 대신 그 도안을 쓴다 (front · back).
+ * 두께 실루엣도 앞 도안을 어둡게 겹쳐 모양을 맞춘다.
  */
 
 const BODY = 'M36 44 Q100 33 164 44 C169 118 175 196 178 262 Q179 294 151 297 L49 297 Q21 294 22 262 C25 196 31 118 36 44 Z'
@@ -60,9 +63,12 @@ interface Props {
   style?: CSSProperties
   /** 화면 읽기용 이름. 없으면 장식으로 숨긴다 */
   label?: string
+  /** 파우치 도안 앞 · 뒤 (없으면 기본 그림) */
+  front?: string | null
+  back?: string | null
 }
 
-export default function SvgPouch({ ref, className = '', style, label }: Props) {
+export default function SvgPouch({ ref, className = '', style, label, front, back }: Props) {
   return (
     <div
       ref={ref}
@@ -73,15 +79,37 @@ export default function SvgPouch({ ref, className = '', style, label }: Props) {
       aria-hidden={label ? undefined : true}
     >
       <div className="dd-pouch-body">
-        {LAYERS.map((k) => (
-          <div key={k} className="layer" style={{ transform: `translateZ(${-k * 1.3}px)` }} dangerouslySetInnerHTML={{ __html: SIL }} />
-        ))}
+        {LAYERS.map((k) =>
+          front ? (
+            <div key={k} className="layer" style={{ transform: `translateZ(${-k * 1.3}px)` }}>
+              <img src={front} alt="" className="dd-pouch-art silhouette" draggable={false} />
+            </div>
+          ) : (
+            <div key={k} className="layer" style={{ transform: `translateZ(${-k * 1.3}px)` }} dangerouslySetInnerHTML={{ __html: SIL }} />
+          ),
+        )}
         <div className="face front">
-          <div className="h-full w-full" dangerouslySetInnerHTML={{ __html: FRONT }} />
-          <div className="sheen" />
+          {front ? (
+            <img src={front} alt="" className="dd-pouch-art" draggable={false} />
+          ) : (
+            <div className="h-full w-full" dangerouslySetInnerHTML={{ __html: FRONT }} />
+          )}
+          {/* 도안이 있으면 빛 띠도 도안 모양 안에서만 */}
+          <div className="sheen" style={front ? artMask(front) : undefined} />
         </div>
-        <div className="face back" dangerouslySetInnerHTML={{ __html: BACK }} />
+        {back || front ? (
+          <div className="face back">
+            <img src={back ?? front!} alt="" className="dd-pouch-art" draggable={false} />
+          </div>
+        ) : (
+          <div className="face back" dangerouslySetInnerHTML={{ __html: BACK }} />
+        )}
       </div>
     </div>
   )
+}
+
+const artMask = (src: string): CSSProperties => {
+  const mask = `url("${src}") center / contain no-repeat`
+  return { inset: 0, borderRadius: 0, mask, WebkitMask: mask }
 }

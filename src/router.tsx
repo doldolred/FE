@@ -6,7 +6,6 @@ import { Loading } from './components/ui/Status'
 import CartPage from './pages/CartPage'
 import CheckoutFailPage from './pages/CheckoutFailPage'
 import CheckoutPage from './pages/CheckoutPage'
-import ComingSoonPage from './pages/ComingSoonPage'
 import HomePage from './pages/HomePage'
 import FaqPage from './pages/FaqPage'
 import LegalPage from './pages/LegalPage'
@@ -52,7 +51,6 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'products/:id', element: <ProductDetailPage /> },
-      { path: 'lineup/:slug', element: <ComingSoonPage /> },
       { path: 'notices', element: <NoticeListPage /> },
       { path: 'notices/:id', element: <NoticeDetailPage /> },
       { path: 'login', element: <LoginPage /> },

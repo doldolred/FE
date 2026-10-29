@@ -4,17 +4,19 @@ import { Link, useLocation } from 'react-router-dom'
 import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import type { Product } from '../api/types'
-import { Beetroot, BeetShape, BeetSlice, ProductArt, TornEdge } from '../components/lineup/Art'
+import { Beetroot, BeetShape, BeetSlice, TornEdge } from '../components/lineup/Art'
+import { ProductFigure } from '../components/lineup/Stage'
 import SvgPouch from '../components/lineup/SvgPouch'
-import { SELLING, UPCOMING, type UpcomingProduct } from '../data/lineup'
+import { artKind, mainProductOf, shortName } from '../data/lineup'
 import { formatPrice } from '../lib/format'
 import { posePouch } from '../lib/pouch'
 
 /**
  * 메인 — 프로토타입 v4 (protohtml/v4.html) 그대로의 흐름.
  *
- *   0 LINEUP      화면이 붙잡힌 채, 비트즙 파우치는 위에서 내려오고 출시 예정 제품은 아래에서 올라와 가운데서 만난다.
+ *   0 LINEUP      화면이 붙잡힌 채, 비트즙 파우치는 위에서 내려오고 다른 제품은 아래에서 올라와 가운데서 만난다.
  *                 멈춰 있는 동안 제품을 누르면 상세(판매중) · 미리 보기(출시 예정)로. 더 내리면 다른 제품은 위로 빠진다
+ *                 어떤 제품을 어떤 순서로 둘지는 관리자 상품 화면(상태 · 라인업 순서). 가운데 = 맨 앞 판매중 상품
  *   1 UNBEETABLE  통비트가 떨어진다
  *   2 비트만      스티커
  *   3 DAILY RED   파우치가 받침대 위에 내려앉는다
@@ -88,8 +90,9 @@ const slotOf = (i: number) => (i % 2 === 0 ? -1 : 1) * (Math.floor(i / 2) + 1)
 
 export default function HomePage() {
   const { data: products } = useQuery({ queryKey: queryKeys.products, queryFn: fetchProducts })
-  // 라인업 맨 앞 = 사진이 준비된 판매중 상품 (지금은 레드비트즙 하나)
-  const main: Product | undefined = products?.find((p) => SELLING[p.id]) ?? products?.[0]
+  // 가운데 = 맨 앞 판매중 상품, 양옆 = 나머지 (판매중 · 출시 예정, 관리자 라인업 순서)
+  const main: Product | undefined = mainProductOf(products)
+  const sides = (products ?? []).filter((p) => p !== main)
   const location = useLocation()
 
   const flowRef = useRef<HTMLDivElement>(null)
@@ -214,7 +217,7 @@ export default function HomePage() {
   }, [])
 
   const mainHref = main ? `/products/${main.id}` : '#buy'
-  const itemCount = 1 + UPCOMING.length
+  const itemCount = (main ? 1 : 0) + sides.length
   const buyable = main?.options.filter((o) => !o.soldOut) ?? []
 
   return (
@@ -234,16 +237,17 @@ export default function HomePage() {
                 <div className="art" ref={mainArtRef} />
                 <span className="dd-tag">
                   <b>
-                    <span className="opt">돌돌 </span>레드비트즙
+                    <span className="opt">돌돌 </span>
+                    {main ? shortName(main.name) : '레드비트즙'}
                   </b>
                   <i>
                     판매중<span className="opt"> · 보러 가기</span> →
                   </i>
                 </span>
               </Link>
-              {UPCOMING.map((p, i) => (
-                <UpcomingItem
-                  key={p.slug}
+              {sides.map((p, i) => (
+                <LineupItem
+                  key={p.id}
                   product={p}
                   ref={(el) => {
                     upcomingRefs.current[i] = el
@@ -338,7 +342,7 @@ export default function HomePage() {
         {/* 네 장면 위를 내내 따라가는 비트즙 파우치 */}
         <div className="dd-track" aria-hidden="true">
           <div className="dd-traveler">
-            <SvgPouch ref={pouchRef} />
+            <SvgPouch ref={pouchRef} front={main?.artFrontUrl} back={main?.artBackUrl} />
           </div>
         </div>
       </div>
@@ -366,19 +370,22 @@ export default function HomePage() {
   )
 }
 
-function UpcomingItem({ product, ref }: { product: UpcomingProduct; ref: (el: HTMLAnchorElement | null) => void }) {
+/** 양옆 제품 한 칸 — 판매중이면 "보러 가기", 출시 예정이면 "미리 보기" */
+function LineupItem({ product, ref }: { product: Product; ref: (el: HTMLAnchorElement | null) => void }) {
+  const soon = product.status === 'COMING_SOON'
   return (
-    <Link to={`/lineup/${product.slug}`} ref={ref} className="dd-lp" data-art={product.art} aria-label={`${product.name} 미리 보기`}>
+    <Link to={`/products/${product.id}`} ref={ref} className="dd-lp" data-art={artKind(product.art)} aria-label={`${product.name} ${soon ? '미리 보기' : '자세히 보기'}`}>
       <div className="art">
-        <ProductArt kind={product.art} />
+        <ProductFigure product={product} />
       </div>
       <span className="dd-tag">
         <b>
           <span className="opt">돌돌 </span>
-          {product.name.replace(/^돌돌 /, '')}
+          {shortName(product.name)}
         </b>
         <i>
-          출시 예정<span className="opt"> · 미리 보기</span> →
+          {soon ? '출시 예정' : '판매중'}
+          <span className="opt"> · {soon ? '미리 보기' : '보러 가기'}</span> →
         </i>
       </span>
     </Link>

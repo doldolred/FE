@@ -186,6 +186,13 @@
 .dd-lp[data-art='jar'] .art svg {
   height: 60%;
 }
+/* 양옆 칸이 파우치면 (판매중 상품이 둘 이상) 가운데 파우치와 같은 높이로 */
+.dd-lp[data-art='pouch'] .art .dd-pouch {
+  --w: calc(var(--ah, 300px) / 1.5);
+}
+.dd-lp[data-art='pouch'] .art .dd-pouch svg {
+  filter: none;
+}
 .dd-lp:hover .art svg,
 .dd-lp:focus-visible .art svg {
   transform: translateY(-8px) scale(1.05);
@@ -544,6 +551,17 @@
 .dd-pouch .back {
   transform: translateZ(-9px) rotateY(180deg);
   filter: brightness(var(--lb, 1));
+}
+.dd-pouch-art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.dd-pouch-art.silhouette {
+  filter: brightness(0.35);
 }
 .dd-pouch .sheen {
   position: absolute;
