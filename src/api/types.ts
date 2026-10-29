@@ -91,6 +91,8 @@ export interface Product extends LineupFields {
   soldOut: boolean
   /** 출시 예정이면 빈 배열 */
   options: ProductOption[]
+  /** 서버에 닿지 못해 미리보기 값을 보여 주는 중 — 담기 · 구매 불가 (data/previewCatalog.ts) */
+  preview?: boolean
 }
 
 export interface CartItem {

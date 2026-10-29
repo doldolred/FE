@@ -142,6 +142,11 @@ export default function ProductDetailPage() {
             </div>
             <p className="mt-3 text-sm opacity-70">{SHIPPING_CUTOFF} 이전 주문은 당일 발송 · 배송비 3,000원 · 5만원 이상 무료배송 (제주 +3,000원 · 도서산간 +5,000원)</p>
 
+            {product.preview && (
+              <p className="mt-4 rounded-2xl border-2 border-current px-4 py-3 text-sm font-bold">
+                지금은 미리보기 화면이에요. 주문은 쇼핑몰 오픈 후에 할 수 있어요.
+              </p>
+            )}
             {addMutation.error && (
               <div className="mt-4 rounded-2xl bg-white p-1">
                 <ErrorMessage error={addMutation.error} />
@@ -158,10 +163,10 @@ export default function ProductDetailPage() {
 
             <div className="dd-actions">
               <WishButton productId={product.id} name={product.name} />
-              <button type="button" className="dd-btn" disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(false)}>
+              <button type="button" className="dd-btn" disabled={soldOut || product.preview || addMutation.isPending} onClick={() => handleAdd(false)}>
                 장바구니
               </button>
-              <button type="button" className="dd-btn" data-primary="" disabled={soldOut || addMutation.isPending} onClick={() => handleAdd(true)}>
+              <button type="button" className="dd-btn" data-primary="" disabled={soldOut || product.preview || addMutation.isPending} onClick={() => handleAdd(true)}>
                 {soldOut ? '품절' : '구매하기'}
               </button>
             </div>
