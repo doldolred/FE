@@ -7,6 +7,8 @@ import { queryKeys } from '../api/queryKeys'
 import { MoreFromDoldol, Points, ProductPage, SpinPouch, Stage } from '../components/lineup/Stage'
 import ProductImage from '../components/product/ProductImage'
 import ProductReviews from '../components/review/ProductReviews'
+import { FaqList, ProductGuide } from '../components/product/ProductGuide'
+import { SHIPPING_CUTOFF } from '../data/productInfo'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { MAIN_PRODUCT_ID, SELLING } from '../data/lineup'
 import { formatPrice } from '../lib/format'
@@ -135,7 +137,7 @@ export default function ProductDetailPage() {
                 합계 <b className="opacity-100">{formatPrice((option?.price ?? 0) * quantity)}</b>
               </p>
             </div>
-            <p className="mt-3 text-sm opacity-70">배송비 3,000원 · 5만원 이상 무료배송 (제주 +3,000원 · 도서산간 +5,000원)</p>
+            <p className="mt-3 text-sm opacity-70">{SHIPPING_CUTOFF} 이전 주문은 당일 발송 · 배송비 3,000원 · 5만원 이상 무료배송 (제주 +3,000원 · 도서산간 +5,000원)</p>
 
             {addMutation.error && (
               <div className="mt-4 rounded-2xl bg-white p-1">
@@ -162,6 +164,10 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </section>
+
+      <ProductGuide />
+
+      <FaqList />
 
       <ProductReviews productId={product.id} />
 

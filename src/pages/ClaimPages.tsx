@@ -127,6 +127,8 @@ export function ClaimNewPage() {
   const current: ClaimType | null = type ?? (asked && types.includes(asked) ? asked : (types[0] ?? null))
   const [reason, setReason] = useState<ClaimReason | ''>('')
   const [detail, setDetail] = useState('')
+  // 단순 변심 · 주문 실수 반품은 미개봉 상품만 (고객 정책)
+  const [unopened, setUnopened] = useState(false)
   const [photos, setPhotos] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
@@ -209,8 +211,9 @@ export function ClaimNewPage() {
       <div className="mt-6 rounded-xl bg-neutral-50 p-4 text-xs leading-relaxed text-neutral-600">
         {current === 'CANCEL' && '상품 준비 중이라 관리자가 확인한 뒤 취소돼요. 이미 발송됐다면 취소가 어려울 수 있어요. 승인되면 결제 금액 전부를 환불해 드려요.'}
         {current === 'RETURN' &&
-          `배송 완료 후 ${RETURN_DAYS}일 안에 신청할 수 있어요. 단순 변심 반품은 왕복 배송비 ${formatPrice(RETURN_SHIPPING_FEE)}을 빼고 환불돼요. 식품 특성상 개봉한 상품은 단순 변심 반품이 어려울 수 있어요.`}
-        {current === 'EXCHANGE' && `상품 불량 · 오배송일 때 같은 상품으로 바꿔 드려요. 배송 완료 후 ${RETURN_DAYS}일 안에 사진과 함께 신청해 주세요.`}
+          `제품 수령일로부터 ${RETURN_DAYS}일 안에 신청할 수 있어요. 단순 변심 · 주문 실수로 인한 반품은 미개봉 상품에 한하여 가능하며, 왕복 배송비 ${formatPrice(RETURN_SHIPPING_FEE)}을 빼고 환불돼요. 파손 · 하자 · 오배송은 사진을 함께 올려 주세요. 반송 전 반드시 먼저 접수해 주세요 (임의 반송 시 처리가 지연되거나 거부될 수 있어요).`}
+        {current === 'EXCHANGE' &&
+          `파손 · 하자 · 오배송일 때 같은 상품으로 바꿔 드려요. 제품 수령일로부터 ${RETURN_DAYS}일 안에 사진과 함께 신청해 주세요. 단순 변심 · 주문 실수로 인한 교환(미개봉, 회수 · 재배송 비용 구매자 부담)은 1:1 문의나 고객센터로 접수해 주세요.`}
       </div>
 
       <form onSubmit={submit} className="mt-6 space-y-6">
@@ -242,6 +245,15 @@ export function ClaimNewPage() {
           />
           {fe.detail && <p className="mt-1 text-sm text-red-600">{fe.detail}</p>}
         </label>
+
+        {current === 'RETURN' && reason === 'CHANGE_OF_MIND' && (
+          <label className="flex items-start gap-2 rounded-xl border border-beet-200 bg-beet-50 p-4 text-sm">
+            <input type="checkbox" className="mt-0.5" required checked={unopened} onChange={(e) => setUnopened(e.target.checked)} />
+            <span>
+              포장을 뜯지 않은 미개봉 상품이에요. <span className="text-neutral-500">(개봉 · 일부 섭취 · 구성품 누락 시 반품이 어려워요)</span>
+            </span>
+          </label>
+        )}
 
         {current !== 'CANCEL' && (
           <div>
@@ -296,7 +308,7 @@ export function ClaimNewPage() {
         {save.error && !Object.keys(fe).length && <ErrorMessage error={save.error} />}
 
         <div className="flex gap-2">
-          <Button type="submit" disabled={save.isPending || uploading || !reason}>
+          <Button type="submit" disabled={save.isPending || uploading || !reason || (current === 'RETURN' && reason === 'CHANGE_OF_MIND' && !unopened)}>
             신청하기
           </Button>
           <Link to={`/mypage/orders/${orderNumber}`} className={buttonClass('secondary')}>

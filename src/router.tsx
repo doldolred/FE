@@ -8,6 +8,7 @@ import CheckoutFailPage from './pages/CheckoutFailPage'
 import CheckoutPage from './pages/CheckoutPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HomePage from './pages/HomePage'
+import FaqPage from './pages/FaqPage'
 import LegalPage from './pages/LegalPage'
 import LoginPage from './pages/LoginPage'
 import MyPage from './pages/MyPage'
@@ -60,6 +61,9 @@ export const router = createBrowserRouter([
       { path: 'password/reset', element: <ResetPasswordPage /> },
       { path: 'terms', element: <LegalPage doc="terms" /> },
       { path: 'privacy', element: <LegalPage doc="privacy" /> },
+      { path: 'cookies', element: <LegalPage doc="cookies" /> },
+      { path: 'refund-policy', element: <LegalPage doc="refund" /> },
+      { path: 'faq', element: <FaqPage /> },
       {
         element: <RequireAuth />,
         children: [

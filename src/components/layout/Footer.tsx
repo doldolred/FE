@@ -13,6 +13,9 @@ export default function Footer({ dark = false }: { dark?: boolean }) {
           <Link to="/notices" className={link}>
             공지사항
           </Link>
+          <Link to="/faq" className={link}>
+            자주 묻는 질문
+          </Link>
           <Link to="/mypage/inquiries" className={link}>
             1:1 문의
           </Link>
@@ -22,19 +25,25 @@ export default function Footer({ dark = false }: { dark?: boolean }) {
           <Link to="/privacy" className={`font-bold ${link}`}>
             개인정보처리방침
           </Link>
+          <Link to="/cookies" className={link}>
+            쿠키 정책
+          </Link>
+          <Link to="/refund-policy" className={link}>
+            교환 · 반품 · 환불
+          </Link>
           <a href={BUSINESS_INFO_URL} target="_blank" rel="noreferrer" className={link}>
             사업자정보 확인
           </a>
         </nav>
         <p className={`mb-3 text-sm font-bold ${dark ? 'text-cream/80' : 'text-neutral-700'}`}>{COMPANY.storeName}</p>
         <p>
-          상호: {COMPANY.name} · 대표: {COMPANY.ceo} · 사업자등록번호: {COMPANY.businessNumber}
+          상호: {COMPANY.name} ({COMPANY.bizType}) · 대표: {COMPANY.ceo} · 사업자등록번호: {COMPANY.businessNumber}
         </p>
         <p>
           통신판매업 신고번호: {COMPANY.mailOrderNumber} · 주소: {COMPANY.address}
         </p>
         <p>
-          고객센터: {COMPANY.csPhone} ({COMPANY.csHours})
+          고객센터: {COMPANY.csPhone} ({COMPANY.csHours}) · 이메일: {COMPANY.privacyEmail}
         </p>
         <p>
           개인정보 보호책임자: {COMPANY.privacyOfficer} ({COMPANY.privacyEmail})

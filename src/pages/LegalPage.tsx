@@ -1,12 +1,16 @@
-import { EFFECTIVE_DATE, PRIVACY, TERMS, type LegalSection } from '../data/legal'
+import { COOKIES, EFFECTIVE_DATE, PRIVACY, REFUND, TERMS, type LegalSection } from '../data/legal'
 
-const DOCS: Record<'terms' | 'privacy', { title: string; sections: LegalSection[] }> = {
+export type LegalDoc = 'terms' | 'privacy' | 'cookies' | 'refund'
+
+const DOCS: Record<LegalDoc, { title: string; sections: LegalSection[] }> = {
   terms: { title: '이용약관', sections: TERMS },
   privacy: { title: '개인정보처리방침', sections: PRIVACY },
+  cookies: { title: '쿠키 정책', sections: COOKIES },
+  refund: { title: '교환 · 반품 · 환불 정책', sections: REFUND },
 }
 
-/** /terms · /privacy — 문구는 data/legal.ts */
-export default function LegalPage({ doc }: { doc: 'terms' | 'privacy' }) {
+/** /terms · /privacy · /cookies · /refund-policy — 문구는 data/legal.ts */
+export default function LegalPage({ doc }: { doc: LegalDoc }) {
   const { title, sections } = DOCS[doc]
   return (
     <article className="mx-auto max-w-3xl">

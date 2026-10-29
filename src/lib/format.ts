@@ -44,7 +44,7 @@ export const CLAIM_TYPE_LABEL: Record<ClaimType, string> = {
 }
 
 export const CLAIM_REASON_LABEL: Record<ClaimReason, string> = {
-  CHANGE_OF_MIND: '단순 변심',
+  CHANGE_OF_MIND: '단순 변심 · 주문 실수',
   DEFECTIVE: '상품 불량 · 파손',
   WRONG_ITEM: '다른 상품이 옴',
   DELAYED: '배송 지연',

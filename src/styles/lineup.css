@@ -971,6 +971,122 @@
   opacity: 0.8;
 }
 
+/* ── 섭취방법 및 유의사항 · 자주 묻는 질문 (상품 상세 아래) ── */
+.dd-guide,
+.dd-faq {
+  padding: clamp(40px, 7vw, 80px) clamp(16px, 4vw, 48px);
+  border-top: 2px dashed currentColor;
+}
+.dd-guide .inner,
+.dd-faq .inner {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+.dd-guide h2,
+.dd-faq h2 {
+  margin: 0 0 28px;
+  font-family: var(--dd-font-display-ko);
+  font-weight: 400;
+  font-size: clamp(28px, 3.2vw, 44px);
+}
+.dd-guide dl {
+  margin: 0;
+}
+.dd-guide .row {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 40px;
+  padding: 22px 0;
+}
+.dd-guide dt {
+  border-top: 1.5px solid currentColor;
+  padding-top: 18px;
+  font-weight: 800;
+  opacity: 0.85;
+}
+.dd-guide dd {
+  margin: 0;
+  border-top: 1.5px solid currentColor;
+  padding-top: 18px;
+}
+.dd-guide ul {
+  margin: 0;
+  padding-left: 1.1em;
+  display: grid;
+  gap: 8px;
+  line-height: 1.7;
+  font-size: 15px;
+}
+.dd-guide ol {
+  margin: 12px 0 0;
+  padding-left: 1.4em;
+  display: grid;
+  gap: 10px;
+  font-size: 15px;
+}
+.dd-guide ol small {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.6;
+}
+.dd-faq .list {
+  display: grid;
+  gap: 10px;
+  max-width: 900px;
+}
+.dd-faq details {
+  border-radius: 18px;
+  background: #fff;
+  color: var(--dd-navy);
+  border: 2px solid var(--dd-navy);
+}
+.dd-faq summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+.dd-faq summary::-webkit-details-marker {
+  display: none;
+}
+.dd-faq summary::after {
+  content: '+';
+  margin-left: auto;
+  font-size: 22px;
+  font-weight: 400;
+  transition: transform 200ms;
+}
+.dd-faq details[open] summary::after {
+  transform: rotate(45deg);
+}
+.dd-faq .q {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--dd-beet);
+  color: #fff;
+  font-family: var(--dd-font-display);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.dd-faq .a {
+  padding: 0 20px 18px 60px;
+  font-size: 15px;
+  line-height: 1.75;
+  display: grid;
+  gap: 6px;
+}
+.dd-faq .a p {
+  margin: 0;
+  word-break: keep-all;
+}
+
 /* ── 후기 (상품 상세 아래 · 내 후기) ───────── */
 .dd-stars {
   position: relative;
@@ -1272,6 +1388,17 @@
   }
   .dd-reviews .summary {
     grid-template-columns: 1fr;
+  }
+  .dd-guide .row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .dd-guide dd {
+    border-top: 0;
+    padding-top: 10px;
+  }
+  .dd-faq .a {
+    padding-left: 20px;
   }
   .dd-reviews .list,
   .dd-review-list {
