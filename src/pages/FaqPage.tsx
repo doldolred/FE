@@ -18,7 +18,10 @@ export default function FaqPage() {
         <Link to="/mypage/inquiries/new" className="font-semibold underline">
           1:1 문의
         </Link>
-        를 남기거나 고객센터({COMPANY.csPhone}, {COMPANY.csHours})로 연락해 주세요.
+        를 남기거나 고객센터({COMPANY.csPhone}, {COMPANY.csHours})로 연락해 주세요.{' '}
+        <Link to="/contact" className="font-semibold underline">
+          문의하기 안내
+        </Link>
       </p>
     </div>
   )

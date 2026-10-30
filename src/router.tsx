@@ -3,7 +3,9 @@ import { createBrowserRouter } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import RequireAuth from './components/RequireAuth'
 import { Loading } from './components/ui/Status'
+import AboutPage from './pages/AboutPage'
 import CartPage from './pages/CartPage'
+import ContactPage from './pages/ContactPage'
 import CheckoutFailPage from './pages/CheckoutFailPage'
 import CheckoutPage from './pages/CheckoutPage'
 import HomePage from './pages/HomePage'
@@ -43,6 +45,7 @@ import {
 } from './pages/admin/lazy'
 import PortoneRedirectPage from './pages/PortoneRedirectPage'
 import ProductDetailPage from './pages/ProductDetailPage'
+import ProductsPage from './pages/ProductsPage'
 import SignupPage from './pages/SignupPage'
 
 const wait = (node: ReactNode) => <Suspense fallback={<Loading />}>{node}</Suspense>
@@ -52,7 +55,10 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: 'products', element: <ProductsPage /> },
       { path: 'products/:id', element: <ProductDetailPage /> },
+      { path: 'about', element: <AboutPage /> },
+      { path: 'contact', element: <ContactPage /> },
       { path: 'notices', element: <NoticeListPage /> },
       { path: 'notices/:id', element: <NoticeDetailPage /> },
       { path: 'login', element: <LoginPage /> },

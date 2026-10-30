@@ -10,14 +10,20 @@ export default function Footer({ dark = false }: { dark?: boolean }) {
     <footer className={dark ? 'bg-[#161415]' : 'mt-20 border-t border-neutral-200 bg-neutral-50'}>
       <div className={`mx-auto max-w-6xl space-y-1 px-4 py-10 text-xs leading-relaxed ${dark ? 'text-cream/40' : 'text-neutral-500'}`}>
         <nav className="mb-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          <Link to="/about" className={link}>
+            회사 소개
+          </Link>
+          <Link to="/products" className={link}>
+            제품
+          </Link>
           <Link to="/notices" className={link}>
             공지사항
           </Link>
           <Link to="/faq" className={link}>
             자주 묻는 질문
           </Link>
-          <Link to="/mypage/inquiries" className={link}>
-            1:1 문의
+          <Link to="/contact" className={link}>
+            문의하기
           </Link>
           <Link to="/terms" className={link}>
             이용약관
