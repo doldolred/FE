@@ -5,10 +5,10 @@ const YEAR = new Date().getFullYear()
 
 /** 전자상거래법상 필수 표시 사항 (상호 · 대표 · 사업자번호 · 통신판매업 · 주소 · 연락처 · 개인정보 책임자) */
 export default function Footer({ dark = false }: { dark?: boolean }) {
-  const link = dark ? 'text-cream/70 hover:text-cream' : 'text-neutral-700 hover:text-neutral-900'
+  const link = dark ? 'text-cream/85 hover:text-cream' : 'text-neutral-700 hover:text-neutral-900'
   return (
     <footer className={dark ? 'bg-[#161415]' : 'mt-20 border-t border-neutral-200 bg-neutral-50'}>
-      <div className={`mx-auto max-w-6xl space-y-1 px-4 py-10 text-xs leading-relaxed ${dark ? 'text-cream/40' : 'text-neutral-500'}`}>
+      <div className={`mx-auto max-w-6xl space-y-1 px-4 py-10 text-xs leading-relaxed ${dark ? 'text-cream/70' : 'text-neutral-500'}`}>
         <nav className="mb-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <Link to="/about" className={link}>
             회사 소개

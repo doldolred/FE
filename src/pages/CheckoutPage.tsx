@@ -43,6 +43,8 @@ export default function CheckoutPage() {
     onSuccess: setCoupon,
   });
   const [addressError, setAddressError] = useState<string | null>(null);
+  // 전자상거래법: 주문 내용 · 배송을 위한 개인정보 처리 위탁 · 결제 진행에 동의해야 주문할 수 있다
+  const [agreed, setAgreed] = useState(false);
   const { pay, paying } = usePayment();
   const set =
     (key: keyof CreateOrderRequest) => (e: { target: { value: string } }) =>
@@ -101,6 +103,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (!agreed) return;
     orderMutation.mutate({ ...form, couponCode: coupon?.code });
   };
 
@@ -292,10 +295,29 @@ export default function CheckoutPage() {
               <ErrorMessage error={orderMutation.error} />
             </div>
           )}
+          <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] px-4 py-3 text-xs font-bold leading-relaxed">
+            <input
+              type="checkbox"
+              className="mt-0.5 h-5 w-5 shrink-0 accent-[#da1f2e]"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              required
+            />
+            <span>
+              [필수] 주문 상품 · 금액 · 배송비를 확인했고, 배송을 위해 받는 분 정보가 택배사(CJ대한통운) · 결제사(나이스페이먼츠)에 전달되는 것과 결제 진행에 동의합니다.{" "}
+              <Link to="/privacy" target="_blank" className="underline">
+                개인정보처리방침
+              </Link>{" "}
+              ·{" "}
+              <Link to="/refund-policy" target="_blank" className="underline">
+                교환 · 환불
+              </Link>
+            </span>
+          </label>
           <Button
             type="submit"
-            className="mt-6 w-full"
-            disabled={orderMutation.isPending || paying}
+            className="mt-4 w-full"
+            disabled={orderMutation.isPending || paying || !agreed}
           >
             {orderMutation.isPending || paying
               ? "결제 준비 중…"

@@ -151,7 +151,9 @@ function MobileMenu({ loggedIn, isAdmin, wishCount, onClose }: { loggedIn: boole
         <Link onClick={onClose} to="/" className="dd-logo" aria-label="돌돌 홈">
           DOL<em className="text-[#da1f2e]">DOL</em>
         </Link>
-        <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center text-2xl" aria-label="메뉴 닫기">
+        {/* 열리면 닫기 버튼에 초점 — 키보드로 바로 Esc · Tab 이동 */}
+        {/* oxlint-disable-next-line jsx-a11y/no-autofocus */}
+        <button type="button" autoFocus onClick={onClose} className="grid h-10 w-10 place-items-center text-2xl" aria-label="메뉴 닫기">
           ✕
         </button>
       </div>

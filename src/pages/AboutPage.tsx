@@ -11,8 +11,8 @@ const PROMISES = [
 ]
 
 const STEPS = [
-  { no: '01', title: '고르기', text: '제주에서 자란 비트를 골라요.' },
-  { no: '02', title: '씻기', text: '껍질째 깨끗이 씻어요.' },
+  { no: '01', title: '고르기', text: '제주산 비트를 준비해요.' },
+  { no: '02', title: '씻기', text: '비트를 통째로 깨끗이 씻어요.' },
   { no: '03', title: '착즙', text: '물 없이 비트만 착즙해요.' },
   { no: '04', title: '담기', text: '120ml 파우치에 한 포씩 담아요.' },
 ]
@@ -26,8 +26,8 @@ export default function AboutPage() {
       <section className="dd-box" data-tone="navy">
         <p className="dd-display text-[clamp(44px,9vw,110px)] leading-[0.9] text-[#da1f2e]">UNBEETABLE</p>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed break-keep">
-          좋은 습관은 어렵지 않아야 오래 갑니다. 돌돌은 아침에 한 포, 가방에 한 포 — 뜯어서 바로 마시는 비트즙으로 매일의 습관을 가볍게
-          만들고 싶었어요. 그래서 재료는 비트 하나, 방법은 착즙 하나로 정했습니다.
+          아침에 한 포, 가방에 한 포 — 돌돌은 뜯어서 바로 마시는 120ml 비트즙이에요. 재료는 제주산 비트 하나, 물도 설탕도 넣지 않고
+          착즙만 했어요.
         </p>
       </section>
 

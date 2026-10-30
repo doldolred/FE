@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
-import { changeMarketing, changePassword, fetchMe } from '../api/auth'
+import { Link, useNavigate } from 'react-router-dom'
+import { changeMarketing, changePassword, fetchMe, withdraw } from '../api/auth'
 import { fetchOrders } from '../api/orders'
 import { queryKeys } from '../api/queryKeys'
 import type { OrderStatus, OrderSummary } from '../api/types'
@@ -226,7 +226,7 @@ export function MyProfilePage() {
                 </div>
               )}
               <p className="mt-4 text-xs text-neutral-500">
-                이름 · 휴대폰 번호 변경이나 탈퇴는{' '}
+                이름 · 휴대폰 번호 변경은{' '}
                 <Link to="/mypage/inquiries/new" className="font-bold underline">
                   1:1 문의
                 </Link>
@@ -236,8 +236,75 @@ export function MyProfilePage() {
           )}
         </section>
         <ChangePasswordSection />
+        <WithdrawSection />
       </div>
     </div>
+  )
+}
+
+/** 회원 탈퇴 (개인정보 삭제 요청) — 비밀번호를 한 번 더 받고, 진행 중인 주문이 있으면 서버가 막는다 */
+function WithdrawSection() {
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const [password, setPassword] = useState('')
+  const [checked, setChecked] = useState(false)
+  const mutation = useMutation({
+    mutationFn: () => withdraw(password),
+    onSuccess: () => navigate('/logout?withdrawn=1', { replace: true }),
+  })
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    if (checked && window.confirm('정말 탈퇴할까요? 되돌릴 수 없어요.')) mutation.mutate()
+  }
+
+  return (
+    <section className="dd-box lg:col-span-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="mb-1!">회원 탈퇴</h2>
+          <p className="text-sm text-neutral-600">탈퇴하면 이름 · 이메일 · 휴대폰 번호를 바로 지우고 같은 계정으로 다시 로그인할 수 없어요.</p>
+        </div>
+        {!open && (
+          <Button variant="secondary" onClick={() => setOpen(true)}>
+            탈퇴하기
+          </Button>
+        )}
+      </div>
+      {open && (
+        <form onSubmit={handleSubmit} className="mt-5 grid gap-4">
+          <ul className="list-disc space-y-1 pl-5 text-sm text-neutral-600">
+            <li>결제 대기 · 결제 완료 · 상품 준비 · 배송중인 주문이 있으면 끝난 뒤에 탈퇴할 수 있어요.</li>
+            <li>주문 · 결제 기록은 전자상거래법에 따라 5년 동안 보관한 뒤 지워요. 작성한 후기 · 문의는 남아요.</li>
+            <li>장바구니와 로그인 정보는 바로 지워요.</li>
+          </ul>
+          <Input
+            label="비밀번호 확인"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => {
+              mutation.reset()
+              setPassword(e.target.value)
+            }}
+          />
+          <label className="flex cursor-pointer items-center gap-3 text-sm font-bold">
+            <input type="checkbox" className="h-5 w-5 accent-[#da1f2e]" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+            위 내용을 확인했고 탈퇴에 동의합니다.
+          </label>
+          {mutation.error && <ErrorMessage error={mutation.error} />}
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit" disabled={!checked || !password || mutation.isPending}>
+              {mutation.isPending ? '처리 중…' : '탈퇴하기'}
+            </Button>
+            <Button variant="ghost" onClick={() => setOpen(false)}>
+              취소
+            </Button>
+          </div>
+        </form>
+      )}
+    </section>
   )
 }
 

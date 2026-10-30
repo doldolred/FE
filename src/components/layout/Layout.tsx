@@ -1,4 +1,5 @@
 import { Outlet, useMatch } from 'react-router-dom'
+import CookieNotice from './CookieNotice'
 import Footer from './Footer'
 import Header from './Header'
 
@@ -10,6 +11,10 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* 키보드 · 화면낭독기: Tab 첫 번째로 본문 바로가기 */}
+      <a href="#main" className="dd-skip">
+        본문 바로가기
+      </a>
       <Header overHero={isHome} />
       {fullBleed ? (
         <main id="main" className="flex-1">
@@ -24,6 +29,7 @@ export default function Layout() {
         </main>
       )}
       <Footer dark />
+      <CookieNotice />
     </div>
   )
 }

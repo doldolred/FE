@@ -21,3 +21,6 @@ export const changePassword = (currentPassword: string, newPassword: string) =>
   api.patch<LoginResponse>('/api/members/me/password', { currentPassword, newPassword })
 
 export const changeMarketing = (agreed: boolean) => api.patch<Member>('/api/members/me/marketing', { agreed })
+
+/** 회원 탈퇴 — 개인정보를 지우고 이 기기의 로그인 쿠키도 지운다 (진행 중인 주문이 있으면 409) */
+export const withdraw = (password: string) => api.post<void>('/api/members/me/withdraw', { password })
