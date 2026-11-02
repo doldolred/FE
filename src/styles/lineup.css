@@ -238,7 +238,11 @@
 
 /* 1 UNBEETABLE — 화면에 들어오면(.in) 글자 · 통비트 연출 시작 */
 .dd-s1 {
-  background: var(--dd-navy);
+  /* 달빛 아래 제주 비트밭 — 위는 앞 섹션 먹색과 이어지고, 글자 자리는 어둡게 눌러 둔다 */
+  background:
+    linear-gradient(180deg, var(--dd-navy) 0%, rgba(34, 32, 33, 0.55) 16%, rgba(34, 32, 33, 0.2) 55%, rgba(34, 32, 33, 0.75) 100%),
+    url('/bg/night-field.webp') center 62% / cover no-repeat,
+    var(--dd-navy);
   color: #fff;
 }
 .dd-s1 .big {
@@ -380,7 +384,11 @@
 
 /* 3 + DAILY RED */
 .dd-s3 {
-  background: var(--dd-beet);
+  /* 어두운 헬스장의 촬영대 — 사진의 탁자 윗면에 파우치 · 상자가 놓인다 (아래 .dd-plinth 높이와 맞춘 값) */
+  background:
+    linear-gradient(180deg, #141213 0%, rgba(20, 18, 19, 0.45) 20%, transparent 45%),
+    url('/bg/gym-table.webp') center bottom / cover no-repeat,
+    #141213;
   color: #fff;
   min-height: 110svh;
 }
@@ -396,6 +404,7 @@
   white-space: nowrap;
   text-transform: uppercase;
 }
+/* 파우치가 내려앉는 선 — 보이지 않고 위치만 잡는다. 110svh 섹션에서 위로부터 약 80% (사진 탁자 윗면) */
 .dd-plinth {
   position: absolute;
   left: 50%;
@@ -403,31 +412,12 @@
   translate: -50% 0;
   z-index: 2;
   width: min(92vw, 1100px);
-  height: 30svh;
-}
-.dd-plinth .top {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 22%;
-  border-radius: 4px 4px 0 0;
-  background: linear-gradient(180deg, #e9e6e4, #c9c5c2);
-}
-.dd-plinth .face {
-  position: absolute;
-  inset: 22% 0 0 0;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0 2px, transparent 3px),
-    radial-gradient(circle at 70% 60%, rgba(0, 0, 0, 0.08) 0 3px, transparent 4px),
-    linear-gradient(180deg, #bdb8b4, #8f8a86);
-  background-size:
-    38px 38px,
-    52px 52px,
-    auto;
+  height: 22svh;
 }
 .dd-props {
   position: absolute;
   left: 50%;
-  bottom: calc(30svh - 6px);
+  bottom: calc(22svh - 6px);
   translate: -50% 0;
   z-index: 2;
   width: min(92vw, 1100px);
@@ -1434,6 +1424,20 @@
   .dd-reviews .list,
   .dd-review-list {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .dd-s1 {
+    background-image:
+      linear-gradient(180deg, var(--dd-navy) 0%, rgba(34, 32, 33, 0.55) 16%, rgba(34, 32, 33, 0.2) 55%, rgba(34, 32, 33, 0.75) 100%),
+      url('/bg/night-field-sm.webp');
+    background-position: center, 22% 62%;
+  }
+  .dd-s3 {
+    background-image:
+      linear-gradient(180deg, #141213 0%, rgba(20, 18, 19, 0.45) 20%, transparent 45%),
+      url('/bg/gym-table-sm.webp');
   }
 }
 

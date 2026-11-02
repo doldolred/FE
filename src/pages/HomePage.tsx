@@ -318,7 +318,7 @@ export default function HomePage() {
             </span>
           </div>
           <p className="note">제주산 비트를 통째로 씻어 착즙했어요. 뜯어서 바로, 하루 한 포.</p>
-          <TornEdge seed={23} color="#da1f2e" />
+          <TornEdge seed={23} color="#141213" />
         </section>
 
         {/* 3 + DAILY RED */}
@@ -331,10 +331,7 @@ export default function HomePage() {
             <br />
             120ml × 30포
           </p>
-          <div className="dd-plinth" ref={plinthRef} aria-hidden="true">
-            <div className="top" />
-            <div className="face" />
-          </div>
+          <div className="dd-plinth" ref={plinthRef} aria-hidden="true" />
           <div className="dd-props" aria-hidden="true">
             <div className="beet-a">
               <BeetShape />
