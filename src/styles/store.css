@@ -1,12 +1,12 @@
 /*
  * 손님 화면 (메인 · 상세 말고 나머지) — 프로토타입 v4 의 말투로 맞춘다.
- * 크림 바탕 · 남색 글자 · 남색 2px 테두리 + 비껴 그림자 카드 · 둥근 알약 버튼 · 큰 한글 표제(Black Han Sans).
+ * 흰 바탕 · 먹색 글자 · 테두리 없는 둥근 면(옅은 회색 · 비트 그라데이션 · 블러시) · 둥근 알약 버튼 · 굵은 Pretendard 표제.
  *
  * .dd-sub 안에서만 적용된다 (Layout 이 메인 · 상세 말고 모든 손님 화면을 감싼다). 관리자 화면은 그대로.
  * 레이어 없는 CSS 라서 Tailwind 유틸리티(@layer utilities)보다 우선한다 — 공용 부품(ui-*)의 모양을 여기서 바꾼다.
  */
 .dd-sub {
-  --dd-cream: #f7f3ee;
+  --dd-cream: #ffffff;
   --dd-line: #222021;
   background: var(--dd-cream);
   color: var(--dd-navy);
@@ -14,30 +14,32 @@
 
 /* ── 머리말 ─────────────────────────────── */
 .dd-head {
-  margin-bottom: clamp(24px, 4vw, 40px);
+  margin-bottom: clamp(28px, 5vw, 56px);
 }
 .dd-head .kicker {
-  font-family: var(--dd-font-logo);
-  font-style: italic;
-  font-weight: 900;
-  font-variation-settings: 'wdth' 125;
-  font-size: 13px;
-  letter-spacing: 0.1em;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
   color: var(--dd-beet);
+  background: rgba(218, 31, 46, 0.07);
+  border-radius: 999px;
+  padding: 6px 12px;
 }
 .dd-head h1 {
-  margin-top: 6px;
+  margin-top: 14px;
   font-family: var(--dd-font-display-ko);
-  font-weight: 400;
-  font-size: clamp(34px, 5vw, 52px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
   word-break: keep-all;
 }
 .dd-head p.sub {
-  margin-top: 10px;
-  font-size: 14px;
-  opacity: 0.7;
+  margin-top: 12px;
+  font-size: 15px;
+  opacity: 0.6;
   word-break: keep-all;
 }
 .dd-head[data-center] {
@@ -45,29 +47,36 @@
 }
 
 /* ── 카드 ──────────────────────────────── */
+/* 테두리 없이 둥근 면 — 흰 바탕 위에 옅은 회색 · 비트 그라데이션 · 블러시 패널 */
 .dd-box {
-  background: #fff;
-  border: 2px solid var(--dd-line);
-  border-radius: 24px;
-  box-shadow: 6px 6px 0 var(--dd-line);
-  padding: clamp(18px, 3vw, 28px);
+  position: relative;
+  overflow: hidden;
+  background: #f6f4f1;
+  border-radius: 28px;
+  padding: clamp(22px, 3.4vw, 36px);
+  isolation: isolate;
 }
 .dd-box[data-tone='navy'] {
-  background: var(--dd-navy);
+  background:
+    radial-gradient(120% 90% at 85% 0%, rgba(255, 120, 110, 0.45), transparent 55%),
+    radial-gradient(90% 80% at 0% 100%, rgba(90, 8, 18, 0.55), transparent 60%),
+    linear-gradient(140deg, #e3303b, #b8121f 60%, #8e0d18);
   color: #fff;
 }
 .dd-box[data-tone='lime'] {
-  background: var(--dd-lime);
+  background:
+    radial-gradient(90% 90% at 100% 0%, rgba(255, 255, 255, 0.7), transparent 60%),
+    linear-gradient(160deg, #fbe3df, #f4c9c3);
 }
 .dd-box[data-tone='pink'] {
-  background: var(--dd-pink);
+  background: #f6f1ec;
 }
 .dd-box > h2,
 .dd-box-title {
-  font-weight: 900;
-  font-size: 17px;
-  letter-spacing: -0.01em;
-  margin-bottom: 14px;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
 }
 .dd-box-title {
   display: flex;
@@ -77,8 +86,8 @@
 }
 .dd-box-title a {
   font-size: 13px;
-  font-weight: 700;
-  opacity: 0.6;
+  font-weight: 600;
+  opacity: 0.55;
 }
 .dd-box-title a:hover {
   opacity: 1;
@@ -86,42 +95,45 @@
 
 /* 목록 줄 — 카드 안 구분선 */
 .dd-rows > * + * {
-  border-top: 1.5px dashed rgba(34, 32, 33, 0.25);
+  border-top: 1px solid var(--dd-hair);
 }
 
 /* ── 공용 부품 모양 (components/ui) ─────────── */
 .dd-sub .ui-btn {
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
-  font-weight: 900;
-  padding: 12px 22px;
-  box-shadow: 0 4px 0 var(--dd-navy);
+  border: 1px solid transparent;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding: 13px 24px;
+  box-shadow: none;
   transition:
-    transform 180ms,
-    box-shadow 180ms,
-    background 180ms;
+    transform 400ms var(--dd-ease),
+    box-shadow 400ms var(--dd-ease),
+    background 300ms var(--dd-ease);
 }
 .dd-sub .ui-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 0 var(--dd-navy);
 }
 .dd-sub .ui-btn:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 var(--dd-navy);
+  transform: scale(0.98);
 }
 .dd-sub .ui-btn-primary {
   background: var(--dd-beet);
   color: #fff;
+  box-shadow: 0 12px 28px -12px rgba(218, 31, 46, 0.7);
 }
 .dd-sub .ui-btn-primary:hover:not(:disabled) {
-  background: var(--dd-beet);
+  background: #c81a28;
+  box-shadow: 0 18px 36px -14px rgba(218, 31, 46, 0.75);
 }
 .dd-sub .ui-btn-secondary {
   background: #fff;
+  border-color: var(--dd-hair);
   color: var(--dd-navy);
 }
 .dd-sub .ui-btn-secondary:hover:not(:disabled) {
-  background: var(--dd-lime);
+  background: #fff;
+  box-shadow: var(--dd-soft);
 }
 .dd-sub .ui-btn-ghost {
   border-color: transparent;
@@ -136,8 +148,11 @@
   background: transparent;
 }
 .dd-sub .ui-btn-lime {
-  background: var(--dd-lime);
+  background: #fff;
   color: var(--dd-navy);
+}
+.dd-sub .ui-btn-lime:hover:not(:disabled) {
+  box-shadow: 0 16px 32px -16px rgba(0, 0, 0, 0.45);
 }
 
 .dd-sub .ui-label {
@@ -147,7 +162,7 @@
 }
 .dd-sub input.ui-input,
 .dd-sub input.ui-field {
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 14px;
   background: #fff;
   padding: 12px 14px;
@@ -156,42 +171,43 @@
 .dd-sub input.ui-input:focus,
 .dd-sub input.ui-field:focus {
   border-color: var(--dd-beet);
-  box-shadow: 0 0 0 4px rgba(212, 42, 104, 0.15);
+  box-shadow: 0 0 0 4px rgba(218, 31, 46, 0.12);
 }
 .dd-sub input.ui-input[aria-invalid='true'] {
   border-color: #dc2626;
 }
 
 .dd-sub .ui-qty {
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 999px;
   overflow: hidden;
   background: #fff;
 }
 .dd-sub .ui-qty button {
   color: var(--dd-navy);
-  font-weight: 900;
+  font-weight: 800;
 }
 .dd-sub .ui-qty span {
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .dd-sub .ui-alert {
-  border: 2px solid #b91c1c;
-  border-radius: 14px;
+  border: 0;
+  border-radius: 16px;
   background: #fff1f2;
   font-weight: 700;
 }
 .dd-sub .ui-empty {
-  border: 2px dashed rgba(34, 32, 33, 0.35);
-  border-radius: 24px;
+  border: 0;
+  border-radius: 28px;
+  background: #f6f4f1;
   color: var(--dd-navy);
   font-weight: 700;
 }
 
 .dd-sub .ui-badge {
-  border: 1.5px solid currentColor;
-  font-weight: 900;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  font-weight: 800;
 }
 
 /* 선택 칸 (결제 수단 · 신청 종류 등) */
@@ -200,20 +216,21 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 16px;
   background: #fff;
   padding: 14px 16px;
   font-weight: 800;
   cursor: pointer;
-  transition: background 180ms;
+  transition: background 300ms var(--dd-ease), border-color 300ms var(--dd-ease);
 }
 .dd-choice:hover {
-  background: #fffbe0;
+  border-color: rgba(34, 32, 33, 0.25);
 }
 .dd-choice[data-on] {
-  background: var(--dd-lime);
-  box-shadow: 4px 4px 0 var(--dd-navy);
+  border-color: var(--dd-beet);
+  background: rgba(218, 31, 46, 0.05);
+  color: var(--dd-beet);
 }
 .dd-choice:has(:focus-visible) {
   outline: 3px solid var(--dd-beet);
@@ -226,7 +243,7 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 18px;
   background: var(--c-stage, var(--dd-lime));
   aspect-ratio: 1;
@@ -261,17 +278,17 @@
 }
 .dd-tabs a {
   flex: none;
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 800;
   background: #fff;
   white-space: nowrap;
-  transition: background 180ms;
+  transition: background 300ms var(--dd-ease), border-color 300ms var(--dd-ease);
 }
 .dd-tabs a:hover {
-  background: #fffbe0;
+  border-color: rgba(34, 32, 33, 0.3);
 }
 .dd-tabs a[aria-current='page'] {
   background: var(--dd-navy);
@@ -288,10 +305,10 @@
   display: grid;
   gap: 4px;
   justify-items: center;
-  border: 2px solid var(--dd-navy);
-  border-radius: 18px;
-  padding: 14px 6px;
-  background: #fff;
+  border: 0;
+  border-radius: 20px;
+  padding: 16px 6px;
+  background: #f6f4f1;
   font-size: 12px;
   font-weight: 800;
   text-align: center;
@@ -303,7 +320,8 @@
   line-height: 1;
 }
 .dd-stats a[data-hot] {
-  background: var(--dd-lime);
+  background: linear-gradient(160deg, #fbe3df, #f4c9c3);
+  color: var(--dd-beet-deep);
 }
 
 /* 큰 상태 화면 (주문 완료 · 결제 실패 · 로그아웃 · 404) */
@@ -321,6 +339,8 @@
 .dd-hero-note h1 {
   margin-top: 16px;
   font-family: var(--dd-font-display-ko);
+  font-weight: 800;
+  letter-spacing: -0.04em;
   font-size: clamp(28px, 4vw, 40px);
   word-break: keep-all;
 }
@@ -338,10 +358,10 @@
   height: 58px;
   flex: none;
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   background: #fff;
   color: var(--dd-beet);
-  box-shadow: 0 5px 0 var(--dd-navy);
+  box-shadow: none;
   cursor: pointer;
   transition:
     transform 200ms,
@@ -349,7 +369,7 @@
 }
 .dd-heart:hover {
   transform: translateY(-2px);
-  box-shadow: 0 7px 0 var(--dd-navy);
+  box-shadow: none;
 }
 .dd-heart svg {
   width: 24px;
@@ -361,7 +381,7 @@
 .dd-heart[data-size='sm'] {
   width: 40px;
   height: 40px;
-  box-shadow: 0 3px 0 var(--dd-navy);
+  box-shadow: none;
 }
 .dd-heart[data-size='sm'] svg {
   width: 18px;
@@ -411,10 +431,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 2px solid var(--dd-navy);
-  border-radius: 18px;
-  background: var(--dd-lime);
-  padding: 14px 18px;
+  border: 0;
+  border-radius: 20px;
+  background: #f6f4f1;
+  padding: 16px 20px;
   font-size: 14px;
   font-weight: 800;
 }
@@ -447,7 +467,7 @@
   border-radius: 999px;
   background: #222021;
   color: #fff;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 14px;
   transform: translateY(-200%);
 }

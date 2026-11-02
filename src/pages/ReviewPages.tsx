@@ -41,7 +41,7 @@ export function MyReviewsPage() {
       </div>
 
       <section>
-        <h2 className="mb-4 text-lg font-black">후기를 기다리는 상품</h2>
+        <h2 className="mb-4 text-lg font-extrabold">후기를 기다리는 상품</h2>
         {writable.isPending ? (
           <Loading />
         ) : writable.error ? (
@@ -70,7 +70,7 @@ export function MyReviewsPage() {
       </section>
 
       <section>
-        <h2 className="mb-4 text-lg font-black">내가 쓴 후기</h2>
+        <h2 className="mb-4 text-lg font-extrabold">내가 쓴 후기</h2>
         {mine.isPending ? (
           <Loading />
         ) : mine.error ? (
@@ -208,7 +208,7 @@ export function ReviewNewPage() {
             후기 <span className="font-normal text-neutral-400 tabular-nums">{content.length} / 1,000</span>
           </span>
           <textarea
-            className="min-h-48 w-full rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-[15px] leading-relaxed outline-none focus:border-[#222021]"
+            className="min-h-48 w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-[15px] leading-relaxed outline-none focus:border-[#222021]"
             required
             minLength={10}
             maxLength={1000}
@@ -226,19 +226,19 @@ export function ReviewNewPage() {
           <div className="flex flex-wrap gap-3">
             {photos.map((u) => (
               <div key={u} className="relative">
-                <img src={u} alt="올린 사진" className="h-24 w-24 rounded-xl border-2 border-[#222021] object-cover" />
+                <img src={u} alt="올린 사진" className="h-24 w-24 rounded-xl border border-[#222021]/15 object-cover" />
                 <button
                   type="button"
                   aria-label="사진 빼기"
                   onClick={() => setPhotos((p) => p.filter((x) => x !== u))}
-                  className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#222021] text-sm font-black text-white"
+                  className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#222021] text-sm font-extrabold text-white"
                 >
                   ×
                 </button>
               </div>
             ))}
             {photos.length < MAX_PHOTOS && (
-              <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-400 text-xs font-bold text-neutral-500 hover:border-[#222021]">
+              <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-neutral-400 text-xs font-bold text-neutral-500 hover:border-[#222021]">
                 <span className="text-2xl leading-none">+</span>
                 {uploading ? '올리는 중…' : '사진 추가'}
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="sr-only" disabled={uploading} onChange={onFiles} />

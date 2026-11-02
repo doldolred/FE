@@ -32,7 +32,7 @@ export default function CookieNotice() {
     <div
       role="region"
       aria-label="쿠키 안내"
-      className="fixed inset-x-3 bottom-3 z-[55] mx-auto flex max-w-2xl flex-wrap items-center gap-3 rounded-2xl border-2 border-[#222021] bg-white px-4 py-3 text-sm text-[#222021] shadow-[4px_4px_0_#222021] sm:flex-nowrap"
+      className="fixed inset-x-3 bottom-3 z-[55] mx-auto flex max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-[#222021]/10 bg-white px-4 py-3 text-sm text-[#222021] shadow-[0_18px_48px_-20px_rgba(34,32,33,0.3)] sm:flex-nowrap"
     >
       <p className="flex-1 break-keep">
         돌돌은 로그인 유지 등 꼭 필요한 쿠키만 쓰고, 광고 · 추적 쿠키는 쓰지 않아요.{' '}
@@ -40,7 +40,7 @@ export default function CookieNotice() {
           쿠키 정책
         </Link>
       </p>
-      <button type="button" onClick={close} className="shrink-0 rounded-full bg-[#222021] px-4 py-2 text-xs font-black text-white hover:bg-[#da1f2e]">
+      <button type="button" onClick={close} className="shrink-0 rounded-full bg-[#222021] px-4 py-2 text-xs font-extrabold text-white hover:bg-[#da1f2e]">
         확인
       </button>
     </div>

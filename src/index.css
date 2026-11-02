@@ -6,15 +6,15 @@
   --font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
 
   /* 브랜드 컬러 — 프로토타입 v4 의 비트색 (styles/lineup.css 의 남색 · 라임 · 핑크와 같이 쓴다) */
-  --color-beet-50: #fdf2f6;
-  --color-beet-100: #fce7ef;
-  --color-beet-200: #f9cfe0;
-  --color-beet-300: #f0729f; /* 어두운 바탕 위 강조 */
+  --color-beet-50: #fdf4f3;
+  --color-beet-100: #fbe7e5;
+  --color-beet-200: #f6d0cc;
+  --color-beet-300: #f28b8f; /* 어두운 바탕 위 강조 */
   --color-beet-500: #da1f2e;
-  --color-beet-600: #c0265f;
+  --color-beet-600: #c81a28;
   --color-beet-700: #da1f2e;
   --color-beet-800: #a3141f;
-  --color-beet-900: #5c1231;
+  --color-beet-900: #5a0d15;
 
   /* v4 남색 · 라임 */
   --color-ink: #222021;

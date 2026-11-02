@@ -69,7 +69,7 @@ export default function CartPage() {
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 sm:flex-row sm:items-center">
                   <div className="min-w-0">
-                    <Link to={`/products/${item.productId}?option=${item.optionId}`} className="font-black break-keep hover:underline">
+                    <Link to={`/products/${item.productId}?option=${item.optionId}`} className="font-extrabold break-keep hover:underline">
                       {item.productName}
                     </Link>
                     <p className="mt-1 text-sm text-neutral-500">
@@ -88,12 +88,12 @@ export default function CartPage() {
                       disabled={busy || !item.onSale}
                       onChange={(quantity) => updateMutation.mutate({ itemId: item.id, quantity })}
                     />
-                    <span className="w-24 text-right font-black">{formatPrice(item.lineTotal)}</span>
+                    <span className="w-24 text-right font-extrabold">{formatPrice(item.lineTotal)}</span>
                     <button
                       type="button"
                       disabled={busy}
                       onClick={() => removeMutation.mutate(item.id)}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-[#222021] bg-white text-sm font-black hover:bg-[#f3eee8]"
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#222021]/10 bg-white text-sm font-extrabold hover:bg-[#f3eee8]"
                       aria-label={`${item.productName} 삭제`}
                       title="삭제"
                     >

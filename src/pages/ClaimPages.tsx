@@ -203,7 +203,7 @@ export function ClaimNewPage() {
                 setType(t)
                 setReason('')
               }}
-              className={`rounded-full border-2 px-4 py-2 text-sm font-bold ${current === t ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-neutral-300'}`}
+              className={`rounded-full border px-4 py-2 text-sm font-bold ${current === t ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-neutral-300'}`}
             >
               {CLAIM_TYPE_LABEL[t]}
             </button>
@@ -278,7 +278,7 @@ export function ClaimNewPage() {
                 </div>
               ))}
               {photos.length < MAX_PHOTOS && (
-                <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 text-xs text-neutral-500 hover:border-neutral-900">
+                <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 text-xs text-neutral-500 hover:border-neutral-900">
                   <span className="text-xl leading-none">+</span>
                   {uploading ? '올리는 중…' : '사진'}
                   <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="sr-only" disabled={uploading} onChange={onFiles} />

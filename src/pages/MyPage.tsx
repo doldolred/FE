@@ -109,10 +109,10 @@ function Shortcut({ to, title, desc, tone }: { to: string; title: string; desc: 
   return (
     <Link to={to} className="dd-box group flex items-center justify-between gap-3 py-4! transition-transform hover:-translate-y-0.5" data-tone={tone}>
       <span>
-        <b className="block font-black">{title}</b>
+        <b className="block font-extrabold">{title}</b>
         <span className="mt-0.5 block text-xs font-bold opacity-70">{desc}</span>
       </span>
-      <span className="text-xl font-black transition-transform group-hover:translate-x-1" aria-hidden="true">
+      <span className="text-xl font-extrabold transition-transform group-hover:translate-x-1" aria-hidden="true">
         →
       </span>
     </Link>
@@ -130,11 +130,11 @@ function OrderRows({ orders }: { orders: OrderSummary[] }) {
               <p className="text-xs text-neutral-500">
                 {formatDate(o.createdAt)} · {o.orderNumber}
               </p>
-              <p className="mt-1 font-black break-keep group-hover:underline">{o.itemSummary}</p>
+              <p className="mt-1 font-extrabold break-keep group-hover:underline">{o.itemSummary}</p>
             </div>
             <div className="flex items-center gap-3">
               <OrderStatusBadge status={o.status} />
-              <span className="font-black">{formatPrice(o.totalPrice)}</span>
+              <span className="font-extrabold">{formatPrice(o.totalPrice)}</span>
             </div>
           </Link>
         </li>
@@ -210,7 +210,7 @@ export function MyProfilePage() {
                 <InfoRow label="이메일" value={me.data.email} />
                 <InfoRow label="휴대폰" value={me.data.phone ?? '-'} />
               </dl>
-              <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] px-4 py-3 text-sm font-bold">
+              <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl bg-[#f6f4f1] px-4 py-3 text-sm font-bold">
                 <input
                   type="checkbox"
                   className="h-5 w-5 accent-[#da1f2e]"
@@ -368,7 +368,7 @@ function ChangePasswordSection() {
         />
         {mutation.error && <ErrorMessage error={mutation.error} />}
         {mutation.isSuccess && (
-          <p className="rounded-2xl border-2 border-[#222021] bg-[#f6d4cf] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
+          <p className="rounded-2xl bg-[#fbe6e2] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
         )}
         <Button type="submit" variant="secondary" disabled={mutation.isPending || mismatch}>
           비밀번호 바꾸기

@@ -110,7 +110,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
   return (
     <>
       {menu}
-      <header className="sticky top-0 z-20 border-b-2 border-[var(--dd-page-line,#222021)] bg-[var(--dd-page-bg,#fff)] text-[var(--dd-page-fg,#222021)] transition-colors duration-300">
+      <header className="sticky top-0 z-20 border-b border-[var(--dd-page-line,rgba(34,32,33,0.08))] bg-[var(--dd-page-bg,rgba(255,255,255,0.85))] backdrop-blur-xl text-[var(--dd-page-fg,#222021)] transition-colors duration-300">
         <TopBanner />
         {bar}
       </header>

@@ -208,7 +208,7 @@ export default function CheckoutPage() {
                     <b>{item.productName}</b> {item.optionName}{" "}
                     <span className="text-neutral-500">× {item.quantity}</span>
                   </span>
-                  <span className="font-black">
+                  <span className="font-extrabold">
                     {formatPrice(item.lineTotal)}
                   </span>
                 </li>
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
           <section className="dd-box">
             <h2>할인코드</h2>
             {coupon ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#222021] bg-[#f6d4cf] px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#fbe6e2] px-4 py-3">
                 <p className="text-sm">
                   <b className="font-mono">{coupon.code}</b> · {coupon.name}
                   <span className="ml-2 font-bold text-beet-700">
@@ -295,7 +295,7 @@ export default function CheckoutPage() {
               <ErrorMessage error={orderMutation.error} />
             </div>
           )}
-          <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] px-4 py-3 text-xs font-bold leading-relaxed">
+          <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl bg-[#f6f4f1] px-4 py-3 text-xs font-bold leading-relaxed">
             <input
               type="checkbox"
               className="mt-0.5 h-5 w-5 shrink-0 accent-[#da1f2e]"

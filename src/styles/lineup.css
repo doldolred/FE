@@ -13,8 +13,12 @@
   --dd-beet-deep: #a3141f;
   --dd-ink: #222021;
   --dd-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --dd-font-display: 'Anton', 'Black Han Sans', sans-serif;
-  --dd-font-display-ko: 'Black Han Sans', 'Anton', sans-serif;
+  /* 부드러운 톤 — 굵은 테두리 · 비껴 그림자 대신 실선 한 줄과 번지는 그림자 */
+  --dd-hair: rgba(34, 32, 33, 0.1);
+  --dd-soft: 0 1px 2px rgba(34, 32, 33, 0.04), 0 18px 48px -20px rgba(34, 32, 33, 0.18);
+  --dd-glow: radial-gradient(closest-side, rgba(218, 31, 46, 0.32), rgba(246, 212, 207, 0.25) 55%, transparent);
+  --dd-font-display: 'Anton', 'Pretendard Variable', Pretendard, sans-serif;
+  --dd-font-display-ko: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
   --dd-font-logo: 'Archivo', sans-serif;
 }
 
@@ -27,8 +31,8 @@
 }
 .dd-display-ko {
   font-family: var(--dd-font-display-ko);
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 .dd-logo {
   font-family: var(--dd-font-logo);
@@ -79,7 +83,10 @@
 
 /* 0 LINEUP — 화면을 붙잡아 두고(pin) 그 안에서 제품들이 만난다 */
 .dd-s0 {
-  background: var(--dd-lime);
+  background:
+    radial-gradient(60% 55% at 50% 58%, rgba(218, 31, 46, 0.22), transparent 70%),
+    radial-gradient(80% 70% at 0% 0%, #fff6f3, transparent 60%),
+    linear-gradient(180deg, #fbe6e2, #f4cdc7);
   color: var(--dd-ink);
   height: 260svh;
   overflow: clip; /* hidden 이면 sticky 가 안 붙는다 */
@@ -205,10 +212,10 @@
   gap: 2px;
   background: #fff;
   color: var(--dd-ink);
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 16px;
   padding: 8px 14px;
-  box-shadow: 4px 4px 0 var(--dd-navy);
+  box-shadow: var(--dd-soft);
   white-space: nowrap;
   transition:
     transform 250ms var(--dd-ease),
@@ -233,7 +240,7 @@
 }
 .dd-lp:hover .dd-tag,
 .dd-lp:focus-visible .dd-tag {
-  transform: translateY(-3px) rotate(-2deg);
+  transform: translateY(-3px);
 }
 
 /* 1 UNBEETABLE — 화면에 들어오면(.in) 글자 · 통비트 연출 시작 */
@@ -281,7 +288,7 @@
   border-radius: 999px;
   padding: 12px 22px;
   cursor: pointer;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.45);
   transition: transform 200ms;
 }
 .dd-s1 .try:hover {
@@ -336,7 +343,7 @@
   z-index: 1;
   margin: 0;
   font-family: var(--dd-font-display-ko);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(54px, 8.6vw, 140px);
   line-height: 1;
   letter-spacing: -0.02em;
@@ -373,9 +380,9 @@
   font-size: 14px;
   padding: 10px 16px;
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
-  box-shadow: 4px 4px 0 var(--dd-navy);
-  transform: rotate(var(--r, -4deg));
+  border: 1px solid var(--dd-hair);
+  box-shadow: var(--dd-soft);
+  transform: none;
 }
 
 /* 3 + DAILY RED */
@@ -600,7 +607,7 @@
 .dd-buybar h2 {
   margin: 0;
   font-family: var(--dd-font-display-ko);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(34px, 4.4vw, 60px);
   line-height: 1.05;
 }
@@ -631,7 +638,7 @@
   color: var(--dd-navy);
   font-weight: 900;
   font-size: 16px;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.45);
   transition: transform 200ms;
 }
 .dd-buybar .btn:hover {
@@ -666,8 +673,8 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  border: 2px solid var(--dd-navy);
-  box-shadow: 8px 8px 0 var(--dd-navy);
+  border: 1px solid var(--dd-hair);
+  box-shadow: var(--dd-soft);
   touch-action: pan-y;
   user-select: none;
   animation: dd-up 700ms var(--dd-ease) both;
@@ -771,7 +778,7 @@
 .dd-info h1 {
   margin: 10px 0 0;
   font-family: var(--dd-font-display-ko);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(38px, 5vw, 68px);
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -804,15 +811,15 @@
   font-size: 13px;
   padding: 8px 14px;
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
-  box-shadow: 3px 3px 0 var(--dd-navy);
-  transform: rotate(var(--r, -2deg));
+  border: 1px solid var(--dd-hair);
+  box-shadow: var(--dd-soft);
+  transform: none;
 }
 
 .dd-buy {
   margin-top: 34px;
   padding-top: 28px;
-  border-top: 2px dashed currentColor;
+  border-top: 1px solid var(--dd-hair);
 }
 .dd-buy .price {
   font-family: var(--dd-font-display);
@@ -822,7 +829,7 @@
 .dd-qty {
   display: inline-flex;
   align-items: center;
-  border: 2px solid currentColor;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -856,7 +863,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 2px solid currentColor;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
   border-radius: 18px;
   padding: 12px 16px;
   text-align: left;
@@ -889,13 +896,13 @@
   height: 58px;
   padding: 0 28px;
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   cursor: pointer;
   font-weight: 900;
   font-size: 16px;
   background: #fff;
   color: var(--dd-navy);
-  box-shadow: 0 5px 0 var(--dd-navy);
+  box-shadow: none;
   transition:
     transform 200ms,
     box-shadow 200ms;
@@ -906,11 +913,11 @@
 }
 .dd-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 7px 0 var(--dd-navy);
+  box-shadow: none;
 }
 .dd-btn:active:not(:disabled) {
   transform: translateY(3px);
-  box-shadow: 0 2px 0 var(--dd-navy);
+  box-shadow: none;
 }
 .dd-btn:disabled {
   cursor: not-allowed;
@@ -950,21 +957,36 @@
   gap: 18px;
 }
 .dd-card {
-  border-radius: 22px;
+  border-radius: 28px;
   overflow: hidden;
   background: var(--c-bg);
   color: var(--c-fg);
-  border: 2px solid #fff;
+  box-shadow: var(--dd-soft);
   transition: transform 300ms var(--dd-ease);
 }
 .dd-card:hover {
-  transform: translateY(-6px) rotate(-1deg);
+  transform: translateY(-6px);
 }
 .dd-card .pic {
+  position: relative;
   height: 220px;
   display: grid;
   place-items: center;
   background: var(--c-stage);
+  isolation: isolate;
+}
+/* 제품 뒤로 은은하게 번지는 빛 */
+.dd-card .pic::before {
+  content: '';
+  position: absolute;
+  inset: 8% 14%;
+  z-index: -1;
+  background: var(--dd-glow);
+  filter: blur(18px);
+  transition: transform 600ms var(--dd-ease);
+}
+.dd-card:hover .pic::before {
+  transform: scale(1.15);
 }
 .dd-card .pic svg {
   height: 78%;
@@ -1000,7 +1022,7 @@
 .dd-guide,
 .dd-faq {
   padding: clamp(40px, 7vw, 80px) clamp(16px, 4vw, 48px);
-  border-top: 2px dashed currentColor;
+  border-top: 1px solid var(--dd-hair);
 }
 .dd-guide .inner,
 .dd-faq .inner {
@@ -1011,7 +1033,7 @@
 .dd-faq h2 {
   margin: 0 0 28px;
   font-family: var(--dd-font-display-ko);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(28px, 3.2vw, 44px);
 }
 .dd-guide dl {
@@ -1064,7 +1086,7 @@
   border-radius: 18px;
   background: #fff;
   color: var(--dd-navy);
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
 }
 .dd-faq summary {
   display: flex;
@@ -1129,7 +1151,7 @@
 }
 .dd-reviews {
   padding: clamp(40px, 7vw, 80px) clamp(16px, 4vw, 48px);
-  border-top: 2px dashed currentColor;
+  border-top: 1px solid var(--dd-hair);
 }
 .dd-reviews .inner {
   max-width: 1240px;
@@ -1155,8 +1177,8 @@
   border-radius: 22px;
   background: #fff;
   color: var(--dd-navy);
-  border: 2px solid var(--dd-navy);
-  box-shadow: 6px 6px 0 var(--dd-navy);
+  border: 1px solid var(--dd-hair);
+  box-shadow: var(--dd-soft);
 }
 .dd-reviews .avg {
   display: grid;
@@ -1210,7 +1232,7 @@
 .dd-reviews .sorts button {
   padding: 8px 14px;
   border-radius: 999px;
-  border: 2px solid currentColor;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
   font-size: 13px;
   font-weight: 800;
   opacity: 0.6;
@@ -1264,8 +1286,8 @@
   border-radius: 20px;
   background: #fff;
   color: var(--dd-navy);
-  border: 2px solid var(--dd-navy);
-  box-shadow: 4px 4px 0 var(--dd-navy);
+  border: 1px solid var(--dd-hair);
+  box-shadow: var(--dd-soft);
 }
 .dd-review .head {
   display: flex;
@@ -1280,7 +1302,7 @@
   font-weight: 900;
   padding: 3px 8px;
   border-radius: 999px;
-  border: 1.5px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
 }
 .dd-review .meta {
   font-size: 12px;
@@ -1342,7 +1364,7 @@
   .dd-tag {
     padding: 6px 9px;
     border-radius: 12px;
-    box-shadow: 3px 3px 0 var(--dd-navy);
+    box-shadow: var(--dd-soft);
   }
   .dd-tag b {
     font-size: 11px;
