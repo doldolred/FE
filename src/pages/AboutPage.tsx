@@ -24,8 +24,8 @@ export default function AboutPage() {
       <PageHead kicker="ABOUT" title="매일 가볍게 채우는 건강" sub="돌돌은 제주 비트 하나로 만드는 레드비트즙 브랜드예요." />
 
       <section className="dd-box" data-tone="navy">
-        <p className="dd-display text-[clamp(44px,9vw,110px)] leading-[0.9] text-white/90">UNBEETABLE</p>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed break-keep text-white/85">
+        <p className="dd-display text-[clamp(44px,9vw,110px)] leading-[0.9] text-[#da1f2e]">UNBEETABLE</p>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed break-keep">
           아침에 한 포, 가방에 한 포 — 돌돌은 뜯어서 바로 마시는 120ml 비트즙이에요. 재료는 제주산 비트 하나, 물도 설탕도 넣지 않고
           착즙만 했어요.
         </p>
@@ -37,7 +37,7 @@ export default function AboutPage() {
           {PROMISES.map((p, i) => (
             <article key={p.title} className="dd-box" data-tone={i === 1 ? 'lime' : undefined}>
               <p className="dd-display text-5xl text-[#da1f2e]">{p.big}</p>
-              <h3 className="mt-3 text-lg font-extrabold">{p.title}</h3>
+              <h3 className="mt-3 text-lg font-black">{p.title}</h3>
               <p className="mt-2 text-sm leading-relaxed break-keep opacity-80">{p.text}</p>
             </article>
           ))}
@@ -48,9 +48,9 @@ export default function AboutPage() {
         <h2>이렇게 만들어요</h2>
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
-            <li key={s.no} className="rounded-2xl border border-[#222021]/10 bg-white p-4">
+            <li key={s.no} className="rounded-2xl border-2 border-[#222021] bg-white p-4">
               <span className="dd-display text-3xl text-[#da1f2e]">{s.no}</span>
-              <b className="mt-1 block font-extrabold">{s.title}</b>
+              <b className="mt-1 block font-black">{s.title}</b>
               <span className="mt-1 block text-sm opacity-75">{s.text}</span>
             </li>
           ))}

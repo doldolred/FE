@@ -51,7 +51,7 @@ export default function WishlistPage() {
                   <article
                     key={p.id}
                     className="dd-card relative"
-                    style={{ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage } as CSSProperties}
+                    style={{ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage, borderColor: '#222021', boxShadow: '6px 6px 0 #222021' } as CSSProperties}
                   >
                     <Link to={`/products/${p.id}`} className="block">
                       <div className="pic" data-art={artKind(p.art)}>
@@ -78,7 +78,7 @@ export default function WishlistPage() {
                 {others.map((p) => (
                   <li key={p.id} className="dd-box flex items-center justify-between gap-3 py-3!">
                     <Link to={`/products/${p.id}`} className="min-w-0 hover:underline">
-                      <b className="block truncate font-extrabold">{p.name}</b>
+                      <b className="block truncate font-black">{p.name}</b>
                       <span className="text-xs font-bold opacity-70">{statusLine(p)}</span>
                     </Link>
                     <WishButton productId={p.id} name={p.name} size="sm" />

@@ -117,15 +117,15 @@ export default function OrderDetailPage() {
             </span>
           </div>
           {ended ? (
-            <p className="mt-5 rounded-2xl border border-white/40 px-4 py-3 text-sm font-bold">
+            <p className="mt-5 rounded-2xl border-2 border-white/40 px-4 py-3 text-sm font-bold">
               {order.status === 'CANCELLED' ? '취소된 주문이에요.' : '반품이 끝난 주문이에요.'}
             </p>
           ) : (
-            <ol className="mt-6 grid grid-cols-5 gap-1 text-center text-[11px] font-extrabold sm:text-xs" aria-label="배송 진행">
+            <ol className="mt-6 grid grid-cols-5 gap-1 text-center text-[11px] font-black sm:text-xs" aria-label="배송 진행">
               {FLOW.map((f, i) => (
                 <li key={f.status} aria-current={i === step ? 'step' : undefined}>
                   <span
-                    className={`mx-auto mb-2 block h-3 rounded-full border border-white ${i <= step ? 'bg-[#f6d4cf]' : 'bg-transparent opacity-40'}`}
+                    className={`mx-auto mb-2 block h-3 rounded-full border-2 border-white ${i <= step ? 'bg-[#f6d4cf]' : 'bg-transparent opacity-40'}`}
                     aria-hidden="true"
                   />
                   <span className={i === step ? 'text-[#f6d4cf]' : i < step ? '' : 'opacity-50'}>{f.label}</span>
@@ -146,7 +146,7 @@ export default function OrderDetailPage() {
                 <Link to={`/products/${item.productId}?option=${item.optionId}`} className="min-w-0 flex-1 break-keep hover:underline">
                   <b>{item.productName}</b> {item.optionName} <span className="text-neutral-500">× {item.quantity}</span>
                 </Link>
-                <span className="font-extrabold">{formatPrice(item.lineTotal)}</span>
+                <span className="font-black">{formatPrice(item.lineTotal)}</span>
               </li>
             ))}
           </ul>
@@ -167,7 +167,7 @@ export default function OrderDetailPage() {
             </div>
           </dl>
           <div className="mt-3 flex items-end justify-between">
-            <span className="font-extrabold">총 결제 금액</span>
+            <span className="font-black">총 결제 금액</span>
             <span className="dd-price-big">{formatPrice(order.totalPrice)}</span>
           </div>
         </section>

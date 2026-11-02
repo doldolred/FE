@@ -9,7 +9,7 @@ interface Props {
 export default function PayMethodPicker({ value, onChange, disabled }: Props) {
   return (
     <fieldset disabled={disabled}>
-      <legend className="mb-4 font-extrabold">결제 수단</legend>
+      <legend className="mb-4 font-black">결제 수단</legend>
       <div className="grid grid-cols-2 gap-3">
         {PAY_METHODS.map((m) => {
           const on = m.key === value

@@ -56,7 +56,7 @@ function ProductCard({ product: p }: { product: Product }) {
   return (
     <article
       className="dd-card relative flex flex-col"
-      style={{ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage } as CSSProperties}
+      style={{ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage, borderColor: '#222021', boxShadow: '6px 6px 0 #222021' } as CSSProperties}
     >
       <Link to={`/products/${p.id}`} className="flex flex-1 flex-col" aria-label={`${p.name} ${p.status === 'COMING_SOON' ? '미리 보기' : '자세히 보기'}`}>
         <div className="pic" data-art={artKind(p.art)}>
@@ -69,7 +69,7 @@ function ProductCard({ product: p }: { product: Product }) {
           {p.points.length > 0 && (
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {p.points.map((t) => (
-                <li key={t} className="rounded-full border border-current/30 px-2.5 py-0.5 text-[11px] font-extrabold">
+                <li key={t} className="rounded-full border-2 border-current px-2.5 py-0.5 text-[11px] font-black">
                   {t}
                 </li>
               ))}

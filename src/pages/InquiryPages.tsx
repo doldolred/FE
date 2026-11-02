@@ -14,7 +14,7 @@ import { formatDate, formatDay, INQUIRY_CATEGORY_LABEL, INQUIRY_STATUS_LABEL } f
 import MyNav from '../components/store/MyNav'
 
 const fieldClass =
-  'w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-neutral-900'
+  'w-full rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-neutral-900'
 
 export function InquiryStatusBadge({ status }: { status: InquiryStatus }) {
   return (
@@ -147,7 +147,7 @@ export function InquiryNewPage() {
             {CATEGORIES.map((c) => (
               <label
                 key={c}
-                className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
+                className={`cursor-pointer rounded-full border-2 px-4 py-2 text-sm font-bold transition-colors ${
                   form.category === c ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-neutral-300 hover:border-neutral-900'
                 }`}
               >
@@ -230,10 +230,10 @@ export function InquiryDetailPage() {
       <article>
         <header className="border-b-2 border-neutral-900 pb-5">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-extrabold tracking-[0.1em] text-[#da1f2e]">{INQUIRY_CATEGORY_LABEL[data.category]}</p>
+            <p className="text-xs font-black tracking-[0.1em] text-[#da1f2e]">{INQUIRY_CATEGORY_LABEL[data.category]}</p>
             <InquiryStatusBadge status={data.status} />
           </div>
-          <h1 className="mt-2 text-2xl leading-snug font-extrabold tracking-[-0.02em] break-keep md:text-3xl">{data.title}</h1>
+          <h1 className="mt-2 text-2xl leading-snug font-black tracking-[-0.02em] break-keep md:text-3xl">{data.title}</h1>
           <p className="mt-2 text-sm text-neutral-500">
             {formatDate(data.createdAt)}
             {data.orderNumber && (
@@ -249,10 +249,10 @@ export function InquiryDetailPage() {
         <div className="pt-6 text-[15px] leading-[1.85] break-keep whitespace-pre-line text-neutral-800">{data.content}</div>
       </article>
 
-      <section className="mt-10 rounded-[22px] bg-[#f6f4f1] p-6" aria-label="답변">
+      <section className="mt-10 rounded-[22px] border-2 border-neutral-900 p-6 shadow-[6px_6px_0_#111]" aria-label="답변">
         {data.answer ? (
           <>
-            <p className="flex items-center justify-between text-sm font-extrabold">
+            <p className="flex items-center justify-between text-sm font-black">
               <span>
                 돌돌 <span className="text-[#da1f2e]">답변</span>
               </span>
