@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import type { Product } from '../api/types'
-import { Beetroot, BeetShape, BeetSlice, TornEdge } from '../components/lineup/Art'
+import { Beetroot, TornEdge } from '../components/lineup/Art'
 import { ProductFigure } from '../components/lineup/Stage'
 import SvgPouch from '../components/lineup/SvgPouch'
 import { artKind, mainProductOf, shortName } from '../data/lineup'
@@ -335,25 +335,6 @@ export default function HomePage() {
             120ml × 30포
           </p>
           <div className="dd-plinth" ref={plinthRef} aria-hidden="true" />
-          <div className="dd-props" aria-hidden="true">
-            <div className="beet-a">
-              <BeetShape />
-            </div>
-            <div className="beet-b">
-              <BeetShape />
-            </div>
-            <div className="slice">
-              <BeetSlice />
-            </div>
-            <div className="box">
-              <b>
-                RED
-                <br />
-                BEET
-              </b>
-              <span>120ml × 30포</span>
-            </div>
-          </div>
         </section>
 
         {/* 네 장면 위를 내내 따라가는 비트즙 파우치 */}
