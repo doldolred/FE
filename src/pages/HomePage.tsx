@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
@@ -99,7 +99,6 @@ function interp<T extends { s: number }>(keys: T[], s: number): T {
   return keys[keys.length - 1]
 }
 
-const tilt = (r: string) => ({ '--r': r }) as CSSProperties
 
 /** 라인업 칸 자리 — 메인은 가운데(0), 나머지는 왼쪽 · 오른쪽 번갈아 바깥으로 */
 const slotOf = (i: number) => (i % 2 === 0 ? -1 : 1) * (Math.floor(i / 2) + 1)
@@ -310,18 +309,26 @@ export default function HomePage() {
             <span>없이, 비트만</span>
             <span>꽉 채웠어요</span>
           </h2>
-          <div className="stickers" aria-hidden="true">
-            <span className="dd-sticker" style={tilt('-6deg')}>
-              비트 100%
-            </span>
-            <span className="dd-sticker" style={tilt('5deg')}>
-              물 0% · 설탕 0%
-            </span>
-            <span className="dd-sticker" style={tilt('-3deg')}>
-              120ml 한 포
-            </span>
-          </div>
-          <p className="note">제주산 비트를 통째로 씻어 착즙했어요. 뜯어서 바로, 하루 한 포.</p>
+          {/* 영양성분표처럼 생긴 제품 정보 카드 — 사진(튀는 즙) 위에서도 읽히게 흐린 유리 바탕 */}
+          <aside className="dd-facts" aria-label="제품 정보">
+            <p className="t">제품 정보</p>
+            <p className="s">레드비트즙 · 1포 120ml</p>
+            <dl>
+              <div>
+                <dt>원재료</dt>
+                <dd>제주산 비트 100%</dd>
+              </div>
+              <div>
+                <dt>물 · 설탕 첨가</dt>
+                <dd>없음</dd>
+              </div>
+              <div>
+                <dt>용량</dt>
+                <dd>120ml × 1포</dd>
+              </div>
+            </dl>
+            <p className="note">제주산 비트를 통째로 씻어 착즙했어요. 뜯어서 바로, 하루 한 포.</p>
+          </aside>
           <TornEdge seed={23} color="#141213" />
         </section>
 
