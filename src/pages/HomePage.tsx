@@ -160,7 +160,8 @@ export default function HomePage() {
       const narrow = window.innerWidth < 700
       d = narrow ? 0.7 : 0.85
       keys = buildKeys(d, narrow)
-      lineupRef.current?.style.setProperty('--ah', `${(pouch.offsetHeight * d).toFixed(0)}px`)
+      // 고정 화면(.pin)에 둔다 — 라인업 칸과 배경 선반 높이가 같이 쓴다
+      lineupRef.current?.parentElement?.style.setProperty('--ah', `${(pouch.offsetHeight * d).toFixed(0)}px`)
       if (mainArtRef.current) mainArtRef.current.style.width = `${(pouch.offsetWidth * d).toFixed(0)}px`
     }
     size()

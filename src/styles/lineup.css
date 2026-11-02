@@ -89,6 +89,12 @@
   top: 0;
   height: 100svh;
   overflow: hidden;
+  /*
+   * 블러시 벽 앞 돌 선반 — 제품 바닥(화면 50% + 그림 칸 높이 절반)에 선반 윗면(사진 높이 61%)이 오도록 사진 크기를 정한다.
+   * 화면이 아주 넓으면 가로를 먼저 채운다 (그땐 선반이 조금 어긋나도 빈칸은 안 생기게).
+   */
+  background: url('/bg/hero-shelf.webp') center top no-repeat var(--dd-lime);
+  background-size: auto max(100%, calc((50% + var(--ah, 300px) / 2) / 0.61), calc(100vw * 941 / 1672));
 }
 .dd-s0 .bgword {
   position: absolute;
@@ -1382,6 +1388,9 @@
       linear-gradient(180deg, var(--dd-navy) 0%, rgba(34, 32, 33, 0.55) 16%, rgba(34, 32, 33, 0.2) 55%, rgba(34, 32, 33, 0.75) 100%),
       url('/bg/night-field-sm.webp');
     background-position: center, 22% 62%;
+  }
+  .dd-s0 .pin {
+    background-image: url('/bg/hero-shelf-sm.webp');
   }
   /* 휴대폰 — 사진은 비트 · 튀는 즙 쪽을 아래에 두고, 위는 크림으로 덮어 글자가 읽히게 */
   .dd-s2 {
