@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import type { Product } from '../api/types'
-import { Beetroot, TornEdge } from '../components/lineup/Art'
+import { TornEdge } from '../components/lineup/Art'
 import { ProductFigure } from '../components/lineup/Stage'
 import SvgPouch from '../components/lineup/SvgPouch'
 import { artKind, mainProductOf, shortName } from '../data/lineup'
@@ -288,9 +288,9 @@ export default function HomePage() {
         {/* 1 UNBEETABLE */}
         <section className="dd-sec dd-s1" id="about" ref={s1Ref} aria-label="돌돌 레드비트즙">
           <div className="big">Unbeetable</div>
-          <div className="dd-beetroot" aria-hidden="true">
-            <Beetroot />
-          </div>
+          {/* 떨어지는 통비트 · 반 자른 비트 (배경 지운 사진) */}
+          <img className="dd-beetroot" src="/art/beet-whole.webp" alt="" aria-hidden="true" width={640} height={651} />
+          <img className="dd-beetroot" data-half="" src="/art/beet-half.webp" alt="" aria-hidden="true" width={640} height={610} />
           <p className="lead">
             비트 하나로 꽉 채운
             <br />

@@ -79,60 +79,6 @@ function Jar() {
   )
 }
 
-/** 통비트 (1번 장면에서 떨어지는 것) */
-export function Beetroot() {
-  return (
-    <svg viewBox="0 0 120 150" aria-hidden="true">
-      <path d="M60 62c-26 0-44 18-44 40 0 24 20 40 44 46 24-6 44-22 44-46 0-22-18-40-44-40z" fill="#b0154f" />
-      <path d="M60 62c-26 0-44 18-44 40 0 24 20 40 44 46" fill="#7a0f37" opacity=".45" />
-      <path d="M42 90q8-6 18-6" stroke="#ff8db5" strokeWidth="3" fill="none" strokeLinecap="round" opacity=".7" />
-      <path d="M60 148v2" stroke="#7a0f37" strokeWidth="3" />
-      <g stroke="#a3141f" strokeWidth="3" fill="none" strokeLinecap="round">
-        <path d="M58 64C54 46 44 34 30 24" />
-        <path d="M60 62c0-20 4-36 12-50" />
-        <path d="M62 64c6-14 16-24 30-30" />
-      </g>
-      <g fill="#4f9a3f">
-        <path d="M30 24c-14-6-22-2-24 6 8 6 18 6 24-6z" />
-        <path d="M72 12c-2-10 6-14 14-12-2 10-8 14-14 12z" />
-        <path d="M92 34c6-10 16-12 22-6-6 8-14 10-22 6z" />
-      </g>
-    </svg>
-  )
-}
-
-/** 받침대 위 통비트 (조금 더 진한 색) */
-export function BeetShape() {
-  return (
-    <svg viewBox="0 0 120 150" aria-hidden="true">
-      <path d="M60 62c-26 0-44 18-44 40 0 24 20 40 44 46 24-6 44-22 44-46 0-22-18-40-44-40z" fill="#9e1548" />
-      <path d="M42 90q8-6 18-6" stroke="#ff8db5" strokeWidth="3" fill="none" strokeLinecap="round" opacity=".6" />
-      <g stroke="#7a0f37" strokeWidth="3" fill="none" strokeLinecap="round">
-        <path d="M58 64C54 46 44 34 30 24" />
-        <path d="M60 62c0-20 4-36 12-50" />
-        <path d="M62 64c6-14 16-24 30-30" />
-      </g>
-      <g fill="#4f9a3f">
-        <path d="M30 24c-14-6-22-2-24 6 8 6 18 6 24-6z" />
-        <path d="M72 12c-2-10 6-14 14-12-2 10-8 14-14 12z" />
-        <path d="M92 34c6-10 16-12 22-6-6 8-14 10-22 6z" />
-      </g>
-    </svg>
-  )
-}
-
-/** 비트 단면 한 조각 */
-export function BeetSlice() {
-  return (
-    <svg viewBox="0 0 40 40" aria-hidden="true">
-      <circle cx="20" cy="20" r="18" fill="#c0265f" />
-      <circle cx="20" cy="20" r="13" fill="none" stroke="#f3a6c2" />
-      <circle cx="20" cy="20" r="8" fill="none" stroke="#f3a6c2" />
-      <circle cx="20" cy="20" r="3" fill="#f3a6c2" />
-    </svg>
-  )
-}
-
 /** 찢어진 종이 경계 모양 (seed 가 같으면 같은 모양) */
 export function TornEdge({ seed, color }: { seed: number; color: string }) {
   return (

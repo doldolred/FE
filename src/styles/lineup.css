@@ -300,16 +300,20 @@
 .dd-beetroot {
   position: absolute;
   z-index: 2;
-  width: clamp(110px, 12vw, 190px);
+  width: clamp(130px, 15vw, 240px);
+  height: auto;
   left: 60%;
-  top: 46%;
+  top: 42%;
+  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.45));
   animation: dd-drop 1200ms 250ms var(--dd-ease) both;
 }
-.dd-beetroot svg {
-  width: 100%;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.35));
+/* 반 자른 비트 — 왼쪽에서 조금 늦게, 반대로 기울어 떨어진다 */
+.dd-beetroot[data-half] {
+  --rz: -16deg;
+  width: clamp(100px, 10vw, 160px);
+  left: 22%;
+  top: 50%;
+  animation-delay: 550ms;
 }
 .dd-s1:not(.in) .big,
 .dd-s1:not(.in) .dd-beetroot {
@@ -330,7 +334,7 @@
     transform: translateY(-80vh) rotate(-60deg);
   }
   to {
-    transform: rotate(14deg);
+    transform: rotate(var(--rz, 14deg));
   }
 }
 
@@ -1337,7 +1341,10 @@
   .dd-beetroot {
     left: 4%;
     top: 50%;
-    width: 96px;
+    width: 110px;
+  }
+  .dd-beetroot[data-half] {
+    display: none;
   }
   .dd-s2 .big {
     top: calc(86px + var(--dd-banner, 0px)); /* 헤더 · 띠배너 아래 */
