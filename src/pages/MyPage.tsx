@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { changeMarketing, changePassword, fetchMe, withdraw } from '../api/auth'
 import { fetchOrders } from '../api/orders'
+import { fetchPointSummary } from '../api/points'
 import { queryKeys } from '../api/queryKeys'
 import type { OrderStatus, OrderSummary } from '../api/types'
 import OrderStatusBadge from '../components/order/OrderStatusBadge'
@@ -30,6 +31,7 @@ export default function MyPage() {
   const name = useAuthStore((s) => s.member?.name ?? '')
   const wishCount = useWishStore((s) => s.ids.length)
   const orders = useQuery({ queryKey: queryKeys.orders, queryFn: fetchOrders })
+  const points = useQuery({ queryKey: queryKeys.points, queryFn: fetchPointSummary })
 
   return (
     <div>
@@ -91,6 +93,11 @@ export default function MyPage() {
         </div>
 
         <aside className="space-y-4">
+          <Shortcut
+            to="/mypage/points"
+            title="적립금"
+            desc={points.data ? `쓸 수 있는 적립금 ${formatPrice(points.data.balance)}` : '구매확정하면 쌓여요'}
+          />
           <Shortcut to="/wishlist" title="위시리스트" desc={wishCount > 0 ? `찜한 제품 ${wishCount}개` : '마음에 드는 제품을 찜해 두세요'} tone="pink" />
           <Shortcut to="/mypage/reviews" title="후기 쓰기" desc="배송 완료된 제품에 사진 후기를 남겨 주세요" tone="lime" />
           <Shortcut to="/mypage/inquiries/new" title="1:1 문의" desc="주문 · 배송 · 상품 무엇이든 물어보세요" />

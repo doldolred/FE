@@ -4,6 +4,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { fetchCart, fetchShippingQuote } from "../api/cart";
 import { checkCoupon } from "../api/coupons";
 import { createOrder } from "../api/orders";
+import { fetchPointSummary } from "../api/points";
 import { queryKeys } from "../api/queryKeys";
 import type { CouponCheck, CreateOrderRequest } from "../api/types";
 import OrderSummaryBox from "../components/order/OrderSummaryBox";
@@ -42,6 +43,9 @@ export default function CheckoutPage() {
     mutationFn: checkCoupon,
     onSuccess: setCoupon,
   });
+  // 적립금 — 입력칸은 글자 그대로 두고, 한도 안으로 줄인 값만 주문에 싣는다 (주문할 때 서버가 다시 확인)
+  const [pointsInput, setPointsInput] = useState("");
+  const points = useQuery({ queryKey: queryKeys.points, queryFn: fetchPointSummary });
   const [addressError, setAddressError] = useState<string | null>(null);
   // 전자상거래법: 주문 내용 · 배송을 위한 개인정보 처리 위탁 · 결제 진행에 동의해야 주문할 수 있다
   const [agreed, setAgreed] = useState(false);
@@ -66,7 +70,16 @@ export default function CheckoutPage() {
   const shippingFee =
     validZip && quote.data ? quote.data.fee : (cart?.shippingFee ?? 0);
   const discountAmount = coupon?.discountAmount ?? 0;
-  const totalPrice = (cart?.itemsPrice ?? 0) - discountAmount + shippingFee;
+  const beforePoints = (cart?.itemsPrice ?? 0) - discountAmount + shippingFee;
+  // 결제 금액이 최소 결제 금액만큼은 남아야 한다 (PG 최소 금액)
+  const pointsMax = points.data
+    ? Math.max(0, Math.min(points.data.balance, beforePoints - points.data.minPayment))
+    : 0;
+  const pointsWanted = Number(pointsInput.replace(/\D/g, "")) || 0;
+  const pointsTooSmall =
+    pointsWanted > 0 && !!points.data && pointsWanted < points.data.minUse;
+  const pointsUsed = pointsTooSmall ? 0 : Math.min(pointsWanted, pointsMax);
+  const totalPrice = beforePoints - pointsUsed;
 
   const handleSearchAddress = async () => {
     setAddressError(null);
@@ -104,7 +117,11 @@ export default function CheckoutPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!agreed) return;
-    orderMutation.mutate({ ...form, couponCode: coupon?.code });
+    orderMutation.mutate({
+      ...form,
+      couponCode: coupon?.code,
+      points: pointsUsed > 0 ? pointsUsed : undefined,
+    });
   };
 
   return (
@@ -271,6 +288,56 @@ export default function CheckoutPage() {
             )}
           </section>
 
+          {points.data && (
+            <section className="dd-box">
+              <div className="dd-box-title">
+                <span>적립금</span>
+                <Link to="/mypage/points">내역 보기</Link>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  className="ui-field h-12 min-w-0 flex-1 rounded-lg border border-neutral-300 px-3 text-right tabular-nums outline-none focus:border-beet-700"
+                  inputMode="numeric"
+                  placeholder="0"
+                  aria-label="사용할 적립금"
+                  disabled={pointsMax < points.data.minUse}
+                  value={pointsInput}
+                  onChange={(e) => setPointsInput(e.target.value.replace(/\D/g, ""))}
+                  onBlur={() => setPointsInput(pointsUsed > 0 ? String(pointsUsed) : pointsTooSmall ? pointsInput : "")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") e.preventDefault();
+                  }}
+                />
+                <Button
+                  variant="secondary"
+                  disabled={pointsMax < points.data.minUse}
+                  onClick={() => setPointsInput(pointsUsed === pointsMax ? "" : String(pointsMax))}
+                >
+                  {pointsUsed > 0 && pointsUsed === pointsMax ? "사용 안 함" : "모두 사용"}
+                </Button>
+              </div>
+              <p className="mt-2 text-sm">
+                쓸 수 있는 적립금{" "}
+                <b className="tabular-nums">{formatPrice(points.data.balance)}</b>
+                {pointsWanted > pointsMax && pointsMax >= points.data.minUse && (
+                  <span className="ml-2 font-bold text-[#da1f2e]">
+                    이번 주문에는 {formatPrice(pointsMax)}까지 쓸 수 있어요
+                  </span>
+                )}
+              </p>
+              {pointsTooSmall && (
+                <p className="mt-1 text-sm text-red-600">
+                  적립금은 {formatPrice(points.data.minUse)}부터 쓸 수 있어요.
+                </p>
+              )}
+              <p className="mt-1 text-xs text-neutral-500">
+                {formatPrice(points.data.minUse)}부터 쓸 수 있고, 결제 금액은{" "}
+                {formatPrice(points.data.minPayment)} 이상 남아야 해요. 구매확정하면
+                결제 금액의 {points.data.earnRate}%가 다시 쌓여요.
+              </p>
+            </section>
+          )}
+
           {PAYMENT_ENABLED && (
             <section className="dd-box">
               <PayMethodPicker
@@ -287,6 +354,7 @@ export default function CheckoutPage() {
           shippingFee={shippingFee}
           discountAmount={discountAmount}
           couponCode={coupon?.code}
+          pointsUsed={pointsUsed}
           areaName={validZip ? quote.data?.areaName : null}
           freeThreshold={cart.freeShippingThreshold}
         >

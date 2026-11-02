@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { cancelOrder, fetchOrder } from '../api/orders'
+import { cancelOrder, confirmOrder, fetchOrder } from '../api/orders'
+import { fetchPointSummary } from '../api/points'
 import { queryKeys } from '../api/queryKeys'
 import type { OrderStatus } from '../api/types'
 import OrderStatusBadge from '../components/order/OrderStatusBadge'
@@ -14,6 +15,7 @@ import { buttonClass } from '../components/ui/buttonStyles'
 import { OrderClaimsSection } from './ClaimPages'
 import { ErrorMessage, Loading } from '../components/ui/Status'
 import { usePayment } from '../hooks/usePayment'
+import { RETURN_DAYS } from '../lib/claims'
 import { CANCELLABLE_STATUSES, formatDate, formatPrice } from '../lib/format'
 import { PAY_METHODS, PAYMENT_ENABLED, type PayMethod } from '../lib/payment'
 
@@ -48,6 +50,18 @@ export default function OrderDetailPage() {
     },
   })
 
+  const deliveredOpen = order?.status === 'DELIVERED' && !order.confirmedAt
+  const points = useQuery({ queryKey: queryKeys.points, queryFn: fetchPointSummary, enabled: deliveredOpen })
+
+  // 구매확정 — 적립금이 들어오므로 잔액 · 내역도 새로 받는다
+  const confirmMutation = useMutation({
+    mutationFn: () => confirmOrder(orderNumber),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.order(orderNumber), data)
+      queryClient.invalidateQueries({ queryKey: queryKeys.points })
+    },
+  })
+
   if (isPending) return <Loading />
   if (error) return <ErrorMessage error={error} />
 
@@ -59,6 +73,10 @@ export default function OrderDetailPage() {
   const handleCancel = () => {
     const msg = order.status === 'PAID' ? '주문을 취소하고 결제를 환불할까요?' : '주문을 취소할까요?'
     if (window.confirm(msg)) cancelMutation.mutate()
+  }
+
+  const handleConfirm = () => {
+    if (window.confirm('구매확정할까요? 확정하면 적립금이 쌓이고, 이후에는 반품 · 교환을 신청할 수 없어요.')) confirmMutation.mutate()
   }
 
   return (
@@ -116,7 +134,13 @@ export default function OrderDetailPage() {
               <OrderStatusBadge status={order.status} />
             </span>
           </div>
-          {ended ? (
+          {order.confirmedAt ? (
+            <p className="mt-5 rounded-2xl border-2 border-white/40 px-4 py-3 text-sm font-bold">
+              {formatDate(order.confirmedAt)} 구매확정
+              {order.pointsEarned > 0 && <span className="text-[#f6d4cf]"> · 적립금 {formatPrice(order.pointsEarned)} 적립</span>}
+              <span className="mt-1 block text-xs font-medium opacity-70">상품에 문제가 있으면 아래 '이 주문 문의하기'로 알려 주세요.</span>
+            </p>
+          ) : ended ? (
             <p className="mt-5 rounded-2xl border-2 border-white/40 px-4 py-3 text-sm font-bold">
               {order.status === 'CANCELLED' ? '취소된 주문이에요.' : '반품이 끝난 주문이에요.'}
             </p>
@@ -159,6 +183,12 @@ export default function OrderDetailPage() {
               <div className="flex justify-between font-bold text-[#da1f2e]">
                 <dt>할인{order.couponCode ? ` (${order.couponCode})` : ''}</dt>
                 <dd>−{formatPrice(order.discountAmount)}</dd>
+              </div>
+            )}
+            {order.pointsUsed > 0 && (
+              <div className="flex justify-between font-bold text-[#da1f2e]">
+                <dt>적립금 사용</dt>
+                <dd>−{formatPrice(order.pointsUsed)}</dd>
               </div>
             )}
             <div className="flex justify-between">
@@ -215,9 +245,23 @@ export default function OrderDetailPage() {
           )}
         </div>
 
+        {deliveredOpen && (
+          <section className="dd-box" data-tone="lime">
+            <h2>잘 받으셨나요?</h2>
+            <p className="text-sm break-keep">
+              구매확정하면 결제 금액의 {points.data?.earnRate ?? 1}%가 적립금으로 쌓여요. 배송 완료 후 {RETURN_DAYS}일이 지나면 자동으로 확정되고, 확정한 뒤에는 반품 ·
+              교환을 신청할 수 없어요.
+            </p>
+            <Button className="mt-4" onClick={handleConfirm} disabled={confirmMutation.isPending}>
+              {confirmMutation.isPending ? '확정하는 중…' : '구매확정'}
+            </Button>
+          </section>
+        )}
+
         <OrderClaimsSection order={order} />
 
         {cancelMutation.error && <ErrorMessage error={cancelMutation.error} />}
+        {confirmMutation.error && <ErrorMessage error={confirmMutation.error} />}
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link to="/mypage/orders" className="text-sm font-bold underline underline-offset-4">

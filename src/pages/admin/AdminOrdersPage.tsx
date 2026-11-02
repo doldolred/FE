@@ -189,6 +189,7 @@ export function AdminOrderDetailPage() {
             <dl className="mt-3 space-y-1 border-t border-neutral-100 pt-3 text-sm">
               <Row label="상품 금액" value={formatPrice(o.itemsPrice)} />
               {o.discountAmount > 0 && <Row label={`할인 (${o.couponCode ?? ''})`} value={`−${formatPrice(o.discountAmount)}`} />}
+              {o.pointsUsed > 0 && <Row label="적립금 사용" value={`−${formatPrice(o.pointsUsed)}`} />}
               <Row label="배송비" value={o.shippingFee === 0 ? '무료' : formatPrice(o.shippingFee)} />
               <Row label="결제 금액" value={formatPrice(o.totalPrice)} strong />
             </dl>

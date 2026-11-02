@@ -4,9 +4,9 @@ import type { ClaimType, OrderDetail } from '../api/types'
 export const RETURN_DAYS = 7
 export const RETURN_SHIPPING_FEE = 6000
 
-/** 이 주문에서 지금 신청할 수 있는 종류 (결제 대기 · 결제 완료는 신청 없이 바로 취소) */
-export function claimableTypes(order: Pick<OrderDetail, 'status'>): ClaimType[] {
+/** 이 주문에서 지금 신청할 수 있는 종류 (결제 대기 · 결제 완료는 신청 없이 바로 취소, 구매확정 뒤에는 반품 · 교환 없음) */
+export function claimableTypes(order: Pick<OrderDetail, 'status' | 'confirmedAt'>): ClaimType[] {
   if (order.status === 'PREPARING') return ['CANCEL']
-  if (order.status === 'DELIVERED') return ['RETURN', 'EXCHANGE']
+  if (order.status === 'DELIVERED' && !order.confirmedAt) return ['RETURN', 'EXCHANGE']
   return []
 }

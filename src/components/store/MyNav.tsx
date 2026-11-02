@@ -4,6 +4,7 @@ const TABS = [
   { to: '/mypage', label: '홈', end: true },
   { to: '/mypage/orders', label: '주문 내역' },
   { to: '/mypage/claims', label: '취소 · 반품 · 교환' },
+  { to: '/mypage/points', label: '적립금' },
   { to: '/wishlist', label: '위시리스트' },
   { to: '/mypage/reviews', label: '후기' },
   { to: '/mypage/inquiries', label: '1:1 문의' },

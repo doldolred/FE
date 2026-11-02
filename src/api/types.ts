@@ -145,6 +145,8 @@ export interface CreateOrderRequest {
   memo?: string
   /** 할인코드 (선택) — 서버가 다시 계산해 적용 */
   couponCode?: string
+  /** 쓸 적립금 (선택, 1,000원부터) — 서버가 잔액 · 한도를 다시 확인 */
+  points?: number
 }
 
 export interface OrderSummary {
@@ -185,8 +187,14 @@ export interface OrderDetail {
   /** 할인코드로 깎은 금액 (없으면 0) */
   discountAmount: number
   couponCode: string | null
+  /** 쓴 적립금 (없으면 0) */
+  pointsUsed: number
+  /** 구매확정 때 적립된 금액 (확정 전이면 0) */
+  pointsEarned: number
+  /** 구매확정한 때 — 확정 후에는 반품 · 교환 신청을 받지 않는다 */
+  confirmedAt: string | null
   shippingFee: number
-  /** = itemsPrice - discountAmount + shippingFee */
+  /** = itemsPrice - discountAmount - pointsUsed + shippingFee */
   totalPrice: number
   receiverName: string
   receiverPhone: string
@@ -514,4 +522,39 @@ export interface CreateClaimRequest {
   reason: ClaimReason
   detail: string
   imageUrls: string[]
+}
+
+// ── 적립금 ───────────────────────────────────────────
+
+/** EARN 구매확정 적립 · USE 주문에 사용 · RESTORE 취소 · 반품으로 돌려받음 · EXPIRE 유효기간 소멸 · ADMIN 관리자 지급 · 차감 */
+export type PointType = 'EARN' | 'USE' | 'RESTORE' | 'EXPIRE' | 'ADMIN'
+
+export interface PointSummary {
+  /** 지금 쓸 수 있는 적립금 */
+  balance: number
+  /** 30일 안에 사라지는 적립금 */
+  expiringSoon: number
+  /** 정책 — 서버 설정(app.point) 그대로. 화면 안내 · 입력 한도에 쓴다 */
+  earnRate: number
+  minUse: number
+  minPayment: number
+  validDays: number
+}
+
+export interface PointHistory {
+  id: number
+  type: PointType
+  /** 늘면 +, 줄면 − */
+  amount: number
+  orderNumber: string | null
+  memo: string | null
+  /** 적립 · 돌려받음 · 지급일 때 유효기간 */
+  expiresAt: string | null
+  createdAt: string
+}
+
+export interface PointAdjustRequest {
+  /** + 지급, − 차감 */
+  amount: number
+  memo: string
 }

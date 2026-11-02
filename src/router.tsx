@@ -21,6 +21,7 @@ import { InquiryDetailPage, InquiryListPage, InquiryNewPage } from './pages/Inqu
 import { MyReviewsPage, ReviewNewPage } from './pages/ReviewPages'
 import { NoticeDetailPage, NoticeListPage } from './pages/NoticePages'
 import OrderDetailPage from './pages/OrderDetailPage'
+import PointsPage from './pages/PointsPage'
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordPages'
 // 관리자 화면은 손님이 받을 필요가 없어서 따로 나눠 받는다 (lazy)
 import {
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
           { path: 'mypage/orders/:orderNumber', element: <OrderDetailPage /> },
           { path: 'mypage/orders/:orderNumber/claim', element: <ClaimNewPage /> },
           { path: 'mypage/claims', element: <MyClaimsPage /> },
+          { path: 'mypage/points', element: <PointsPage /> },
           { path: 'mypage/reviews', element: <MyReviewsPage /> },
           { path: 'mypage/reviews/new', element: <ReviewNewPage /> },
           { path: 'mypage/inquiries', element: <InquiryListPage /> },

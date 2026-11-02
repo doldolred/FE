@@ -7,6 +7,8 @@ interface Props {
   /** 할인코드로 깎은 금액 */
   discountAmount?: number
   couponCode?: string | null
+  /** 쓴 적립금 */
+  pointsUsed?: number
   /** 제주 · 도서 추가 배송비가 붙었으면 그 지역 이름 */
   areaName?: string | null
   /** 이 금액 이상이면 기본 배송비 무료 — 얼마 더 담으면 되는지 막대로 보여 준다 */
@@ -15,7 +17,7 @@ interface Props {
 }
 
 /** 결제 금액 카드 (장바구니 · 주문서) — 넓은 화면에서는 오른쪽에 붙어 따라온다 */
-export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmount = 0, couponCode, areaName, freeThreshold, children }: Props) {
+export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmount = 0, couponCode, pointsUsed = 0, areaName, freeThreshold, children }: Props) {
   const remaining = freeThreshold ? freeThreshold - itemsPrice : 0
   const progress = freeThreshold ? Math.min(100, Math.round((itemsPrice / freeThreshold) * 100)) : 100
   return (
@@ -40,6 +42,12 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
             <dd>−{formatPrice(discountAmount)}</dd>
           </div>
         )}
+        {pointsUsed > 0 && (
+          <div className="flex justify-between font-bold text-[#da1f2e]">
+            <dt>적립금 사용</dt>
+            <dd>−{formatPrice(pointsUsed)}</dd>
+          </div>
+        )}
         <div className="flex justify-between">
           <dt className="text-neutral-500">배송비{areaName ? ` (${areaName} 추가 포함)` : ''}</dt>
           <dd className="font-bold">{shippingFee === 0 ? '무료' : formatPrice(shippingFee)}</dd>
@@ -47,7 +55,7 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
       </dl>
       <div className="mt-4 flex items-end justify-between border-t-2 border-dashed border-[#222021]/30 pt-4">
         <span className="font-black">총 결제 금액</span>
-        <span className="dd-price-big">{formatPrice(itemsPrice - discountAmount + shippingFee)}</span>
+        <span className="dd-price-big">{formatPrice(itemsPrice - discountAmount - pointsUsed + shippingFee)}</span>
       </div>
       {children}
     </aside>

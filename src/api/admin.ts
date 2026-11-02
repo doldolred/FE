@@ -23,6 +23,9 @@ import type {
   ChangeOrderStatusRequest,
   OrderStatus,
   Page,
+  PointAdjustRequest,
+  PointHistory,
+  PointSummary,
   ProductStatus,
   Role,
   SalesSummary,
@@ -66,6 +69,10 @@ export const fetchAdminMembers = (keyword: string, page: number) =>
   api.get<Page<AdminMember>>(`/api/admin/members${qs({ keyword, page, size: 20 })}`)
 export const fetchAdminMember = (id: number) => api.get<AdminMemberDetail>(`/api/admin/members/${id}`)
 export const changeMemberRole = (id: number, role: Role) => api.patch<AdminMemberDetail>(`/api/admin/members/${id}/role`, { role })
+export const fetchMemberPoints = (id: number) => api.get<PointSummary>(`/api/admin/members/${id}/points`)
+export const fetchMemberPointHistory = (id: number, page = 0) =>
+  api.get<Page<PointHistory>>(`/api/admin/members/${id}/points/history${qs({ page, size: 10 })}`)
+export const adjustMemberPoints = (id: number, req: PointAdjustRequest) => api.post<PointSummary>(`/api/admin/members/${id}/points`, req)
 
 // 배송 지역
 export const fetchShippingAreas = () => api.get<ShippingArea[]>('/api/admin/shipping/areas')
