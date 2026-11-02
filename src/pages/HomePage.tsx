@@ -205,7 +205,10 @@ export default function HomePage() {
       const land = smooth(clamp01((s - 2.5) / 0.55))
       const halfH = (pouch.offsetHeight * sc) / 2
       const plinthTop = plinthRef.current?.getBoundingClientRect().top ?? vh
-      const landY = plinthTop - vh / 2 - halfH + 6
+      // 흐름 끝을 지나면 sticky 가 풀려 파우치 칸이 같이 올라간다 — 화면 가운데가 아니라 칸의 실제 가운데에서 잰다
+      const tr = pouch.parentElement?.getBoundingClientRect()
+      const center = tr ? tr.top + tr.height / 2 : vh / 2
+      const landY = plinthTop - center - halfH + 6
       const x = k.x * vw
       const y = k.y * vh * (1 - land) + landY * land + bob * (1 - land) - hover * 8
       posePouch(pouch, { x, y, rz: k.rz, ry: k.ry, sc })
