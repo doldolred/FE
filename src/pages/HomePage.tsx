@@ -299,7 +299,7 @@ export default function HomePage() {
           <button className="try" type="button" onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}>
             맛보기 →
           </button>
-          <TornEdge seed={7} color="#f3eee8" />
+          <TornEdge seed={7} color="#f9efe5" />
         </section>
 
         {/* 2 비트만 */}
