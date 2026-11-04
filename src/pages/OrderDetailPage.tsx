@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { fetchOrderClaims } from '../api/claims'
 import { cancelOrder, confirmOrder, fetchOrder } from '../api/orders'
 import { fetchPointSummary } from '../api/points'
 import { queryKeys } from '../api/queryKeys'
@@ -50,7 +51,14 @@ export default function OrderDetailPage() {
     },
   })
 
-  const deliveredOpen = order?.status === 'DELIVERED' && !order.confirmedAt
+  // 진행 중인 반품 · 교환 신청이 있으면 구매확정을 받지 않는다 (OrderClaimsSection 과 같은 쿼리를 나눠 쓴다)
+  const claims = useQuery({
+    queryKey: ['order-claims', orderNumber],
+    queryFn: () => fetchOrderClaims(orderNumber),
+    enabled: order?.status === 'DELIVERED',
+  })
+  const claimOpen = claims.data?.some((c) => c.status === 'REQUESTED' || c.status === 'APPROVED') ?? true
+  const deliveredOpen = order?.status === 'DELIVERED' && !order.confirmedAt && !claimOpen
   const points = useQuery({ queryKey: queryKeys.points, queryFn: fetchPointSummary, enabled: deliveredOpen })
 
   // 구매확정 — 적립금이 들어오므로 잔액 · 내역도 새로 받는다
