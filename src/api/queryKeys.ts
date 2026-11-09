@@ -6,6 +6,7 @@ export const queryKeys = {
   orders: ['orders'] as const,
   order: (orderNumber: string) => ['orders', orderNumber] as const,
   banners: ['banners'] as const,
+  addresses: ['addresses'] as const,
   points: ['points'] as const,
   pointHistory: (page: number) => ['points', 'history', page] as const,
   reviews: (productId: number, sort: string, photoOnly: boolean, page: number) => ['reviews', productId, sort, photoOnly, page] as const,

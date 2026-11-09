@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { changeMarketing, changePassword, fetchMe, withdraw } from '../api/auth'
+import { changeMarketing, changePassword, fetchMe, updateProfile, withdraw } from '../api/auth'
 import { fetchOrders } from '../api/orders'
 import { fetchPointSummary } from '../api/points'
 import { queryKeys } from '../api/queryKeys'
-import type { OrderStatus, OrderSummary } from '../api/types'
+import type { Member, OrderStatus, OrderSummary } from '../api/types'
 import OrderStatusBadge from '../components/order/OrderStatusBadge'
 import MyNav from '../components/store/MyNav'
 import PageHead from '../components/store/PageHead'
@@ -15,6 +15,7 @@ import Input from '../components/ui/Input'
 import { Empty, ErrorMessage, Loading } from '../components/ui/Status'
 import { getFieldErrors } from '../lib/errors'
 import { formatDate, formatPrice } from '../lib/format'
+import { SOCIAL_LABEL } from '../lib/oauth'
 import { useAuthStore } from '../stores/authStore'
 import { useWishStore } from '../stores/wishStore'
 
@@ -212,11 +213,7 @@ export function MyProfilePage() {
             <ErrorMessage error={me.error} />
           ) : (
             <>
-              <dl className="dd-rows text-sm">
-                <InfoRow label="이름" value={me.data.name} />
-                <InfoRow label="이메일" value={me.data.email} />
-                <InfoRow label="휴대폰" value={me.data.phone ?? '-'} />
-              </dl>
+              <ProfileRows me={me.data} />
               <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-[#222021] bg-[#f7f3ee] px-4 py-3 text-sm font-bold">
                 <input
                   type="checkbox"
@@ -232,13 +229,6 @@ export function MyProfilePage() {
                   <ErrorMessage error={marketingMutation.error} />
                 </div>
               )}
-              <p className="mt-4 text-xs text-neutral-500">
-                이름 · 휴대폰 번호 변경은{' '}
-                <Link to="/mypage/inquiries/new" className="font-bold underline">
-                  1:1 문의
-                </Link>
-                로 알려 주세요.
-              </p>
             </>
           )}
         </section>
@@ -252,6 +242,8 @@ export function MyProfilePage() {
 /** 회원 탈퇴 (개인정보 삭제 요청) — 비밀번호를 한 번 더 받고, 진행 중인 주문이 있으면 서버가 막는다 */
 function WithdrawSection() {
   const navigate = useNavigate()
+  // 카카오 · 네이버로만 가입해 비밀번호가 없으면 비밀번호 확인 칸을 빼고 체크만 받는다
+  const passwordSet = useQuery({ queryKey: queryKeys.me, queryFn: fetchMe }).data?.passwordSet ?? true
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState('')
   const [checked, setChecked] = useState(false)
@@ -285,24 +277,26 @@ function WithdrawSection() {
             <li>주문 · 결제 기록은 전자상거래법에 따라 5년 동안 보관한 뒤 지워요. 작성한 후기 · 문의는 남아요.</li>
             <li>장바구니와 로그인 정보는 바로 지워요.</li>
           </ul>
-          <Input
-            label="비밀번호 확인"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => {
-              mutation.reset()
-              setPassword(e.target.value)
-            }}
-          />
+          {passwordSet && (
+            <Input
+              label="비밀번호 확인"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => {
+                mutation.reset()
+                setPassword(e.target.value)
+              }}
+            />
+          )}
           <label className="flex cursor-pointer items-center gap-3 text-sm font-bold">
             <input type="checkbox" className="h-5 w-5 accent-[#da1f2e]" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
             위 내용을 확인했고 탈퇴에 동의합니다.
           </label>
           {mutation.error && <ErrorMessage error={mutation.error} />}
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" disabled={!checked || !password || mutation.isPending}>
+            <Button type="submit" disabled={!checked || (passwordSet && !password) || mutation.isPending}>
               {mutation.isPending ? '처리 중…' : '탈퇴하기'}
             </Button>
             <Button variant="ghost" onClick={() => setOpen(false)}>
@@ -312,6 +306,83 @@ function WithdrawSection() {
         </form>
       )}
     </section>
+  )
+}
+
+/** 이름 · 이메일 · 휴대폰 — '정보 수정'을 누르면 이름 · 휴대폰을 바로 고친다 (이메일은 로그인 아이디라 그대로) */
+function ProfileRows({ me }: { me: Member }) {
+  const queryClient = useQueryClient()
+  const updateMember = useAuthStore((s) => s.updateMember)
+  const [editing, setEditing] = useState(false)
+  const [form, setForm] = useState({ name: me.name, phone: me.phone ?? '' })
+  const mutation = useMutation({
+    mutationFn: () => updateProfile(form.name, form.phone),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.me, data)
+      updateMember({ name: data.name })
+      setEditing(false)
+    },
+  })
+  const fieldErrors = getFieldErrors(mutation.error)
+  const set = (key: keyof typeof form) => (e: { target: { value: string } }) => {
+    mutation.reset()
+    setForm((f) => ({ ...f, [key]: e.target.value }))
+  }
+
+  if (!editing) {
+    return (
+      <>
+        <dl className="dd-rows text-sm">
+          <InfoRow label="이름" value={me.name} />
+          <InfoRow label="이메일" value={me.email} />
+          <InfoRow label="휴대폰" value={me.phone ?? '-'} />
+          {me.socialProviders.length > 0 && (
+            <InfoRow label="간편 로그인" value={me.socialProviders.map((p) => `${SOCIAL_LABEL[p]} 연결됨`).join(' · ')} />
+          )}
+        </dl>
+        <Button
+          variant="secondary"
+          className="mt-4"
+          onClick={() => {
+            setForm({ name: me.name, phone: me.phone ?? '' })
+            setEditing(true)
+          }}
+        >
+          정보 수정
+        </Button>
+      </>
+    )
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    mutation.mutate()
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-4">
+      <Input label="이름" autoComplete="name" required maxLength={50} value={form.name} onChange={set('name')} error={fieldErrors.name} />
+      <Input label="이메일 (로그인 아이디 · 바꿀 수 없어요)" value={me.email} disabled readOnly />
+      <Input
+        label="휴대폰 (선택)"
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel"
+        placeholder="010-1234-5678"
+        value={form.phone}
+        onChange={set('phone')}
+        error={fieldErrors.phone}
+      />
+      {mutation.error && !fieldErrors.name && !fieldErrors.phone && <ErrorMessage error={mutation.error} />}
+      <div className="flex gap-2">
+        <Button type="submit" disabled={mutation.isPending}>
+          {mutation.isPending ? '저장하는 중…' : '저장'}
+        </Button>
+        <Button variant="secondary" onClick={() => setEditing(false)}>
+          취소
+        </Button>
+      </div>
+    </form>
   )
 }
 
@@ -326,7 +397,10 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 /** 비밀번호 변경 — 성공하면 다른 기기는 로그아웃되고, 이 기기는 새 토큰으로 계속 로그인 */
 function ChangePasswordSection() {
+  const queryClient = useQueryClient()
   const setLogin = useAuthStore((s) => s.setLogin)
+  // 카카오 · 네이버로만 가입했으면 현재 비밀번호 없이 '비밀번호 만들기' (만들면 이메일로도 로그인)
+  const passwordSet = useQuery({ queryKey: queryKeys.me, queryFn: fetchMe }).data?.passwordSet ?? true
   const [form, setForm] = useState({ current: '', next: '', confirm: '' })
   const mismatch = form.confirm !== '' && form.next !== form.confirm
   const mutation = useMutation({
@@ -334,6 +408,7 @@ function ChangePasswordSection() {
     onSuccess: (res) => {
       setLogin(res)
       setForm({ current: '', next: '', confirm: '' })
+      queryClient.invalidateQueries({ queryKey: queryKeys.me })
     },
   })
   const fieldErrors = getFieldErrors(mutation.error)
@@ -349,9 +424,13 @@ function ChangePasswordSection() {
 
   return (
     <section className="dd-box">
-      <h2>비밀번호 변경</h2>
+      <h2>{passwordSet ? '비밀번호 변경' : '비밀번호 만들기'}</h2>
       <form onSubmit={handleSubmit} className="grid gap-4">
-        <Input label="현재 비밀번호" type="password" autoComplete="current-password" required value={form.current} onChange={set('current')} error={fieldErrors.currentPassword} />
+        {passwordSet ? (
+          <Input label="현재 비밀번호" type="password" autoComplete="current-password" required value={form.current} onChange={set('current')} error={fieldErrors.currentPassword} />
+        ) : (
+          <p className="text-sm text-neutral-600">간편 로그인으로 가입했어요. 비밀번호를 만들면 이메일로도 로그인할 수 있어요.</p>
+        )}
         <Input
           label="새 비밀번호"
           type="password"
@@ -378,7 +457,7 @@ function ChangePasswordSection() {
           <p className="rounded-2xl border-2 border-[#222021] bg-[#f6d4cf] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
         )}
         <Button type="submit" variant="secondary" disabled={mutation.isPending || mismatch}>
-          비밀번호 바꾸기
+          {passwordSet ? '비밀번호 바꾸기' : '비밀번호 만들기'}
         </Button>
       </form>
     </section>

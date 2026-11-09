@@ -21,8 +21,10 @@ import { InquiryDetailPage, InquiryListPage, InquiryNewPage } from './pages/Inqu
 import { MyReviewsPage, ReviewNewPage } from './pages/ReviewPages'
 import { NoticeDetailPage, NoticeListPage } from './pages/NoticePages'
 import OrderDetailPage from './pages/OrderDetailPage'
+import AddressesPage from './pages/AddressesPage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import PointsPage from './pages/PointsPage'
-import { ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordPages'
+import { FindEmailPage, ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordPages'
 // 관리자 화면은 손님이 받을 필요가 없어서 따로 나눠 받는다 (lazy)
 import {
   AdminLayout,
@@ -64,6 +66,8 @@ export const router = createBrowserRouter([
       { path: 'notices/:id', element: <NoticeDetailPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'signup', element: <SignupPage /> },
+      { path: 'email/find', element: <FindEmailPage /> },
+      { path: 'oauth/:provider/callback', element: <OAuthCallbackPage /> },
       { path: 'password/forgot', element: <ForgotPasswordPage /> },
       { path: 'password/reset', element: <ResetPasswordPage /> },
       { path: 'terms', element: <LegalPage doc="terms" /> },
@@ -87,6 +91,7 @@ export const router = createBrowserRouter([
           { path: 'mypage/orders/:orderNumber/claim', element: <ClaimNewPage /> },
           { path: 'mypage/claims', element: <MyClaimsPage /> },
           { path: 'mypage/points', element: <PointsPage /> },
+          { path: 'mypage/addresses', element: <AddressesPage /> },
           { path: 'mypage/reviews', element: <MyReviewsPage /> },
           { path: 'mypage/reviews/new', element: <ReviewNewPage /> },
           { path: 'mypage/inquiries', element: <InquiryListPage /> },

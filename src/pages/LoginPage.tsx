@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { login } from '../api/auth'
 import AuthCard from '../components/AuthCard'
+import SocialLoginButtons from '../components/auth/SocialLoginButtons'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import { ErrorMessage } from '../components/ui/Status'
@@ -58,12 +59,17 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
           로그인
         </Button>
-        <p className="text-right text-sm">
-          <Link to="/password/forgot" className="text-neutral-500 hover:underline">
-            비밀번호를 잊으셨나요?
+        <p className="flex justify-end gap-3 text-sm text-neutral-500">
+          <Link to="/email/find" className="hover:underline">
+            이메일 찾기
+          </Link>
+          <span aria-hidden>·</span>
+          <Link to="/password/forgot" className="hover:underline">
+            비밀번호 찾기
           </Link>
         </p>
       </form>
+      <SocialLoginButtons redirect={redirect} />
     </AuthCard>
   )
 }

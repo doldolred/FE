@@ -8,6 +8,7 @@ const TABS = [
   { to: '/wishlist', label: '위시리스트' },
   { to: '/mypage/reviews', label: '후기' },
   { to: '/mypage/inquiries', label: '1:1 문의' },
+  { to: '/mypage/addresses', label: '배송지' },
   { to: '/mypage/profile', label: '내 정보' },
 ]
 

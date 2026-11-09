@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { createAddress, fetchAddresses } from "../api/addresses";
 import { fetchCart, fetchShippingQuote } from "../api/cart";
 import { checkCoupon } from "../api/coupons";
 import { createOrder } from "../api/orders";
 import { fetchPointSummary } from "../api/points";
 import { queryKeys } from "../api/queryKeys";
-import type { CouponCheck, CreateOrderRequest } from "../api/types";
+import type { Address, CouponCheck, CreateOrderRequest } from "../api/types";
 import OrderSummaryBox from "../components/order/OrderSummaryBox";
 import CheckoutSteps from "../components/store/CheckoutSteps";
 import PageHead from "../components/store/PageHead";
@@ -47,12 +48,37 @@ export default function CheckoutPage() {
   const [pointsInput, setPointsInput] = useState("");
   const points = useQuery({ queryKey: queryKeys.points, queryFn: fetchPointSummary });
   const [addressError, setAddressError] = useState<string | null>(null);
+  // 저장한 배송지 (V16) — 처음 들어오면 기본 배송지를 채워 두고, 칩을 눌러 바꾼다
+  const addresses = useQuery({ queryKey: queryKeys.addresses, queryFn: fetchAddresses });
+  const [pickedAddressId, setPickedAddressId] = useState<number | null>(null);
+  const [saveAddress, setSaveAddress] = useState(false);
+  const pickAddress = (a: Address) => {
+    setPickedAddressId(a.id);
+    setSaveAddress(false);
+    setForm((f) => ({
+      ...f,
+      receiverName: a.receiverName,
+      receiverPhone: a.receiverPhone,
+      zipcode: a.zipcode,
+      address1: a.address1,
+      address2: a.address2 ?? "",
+    }));
+  };
+  const defaultAddress = addresses.data?.find((a) => a.defaultAddress);
+  useEffect(() => {
+    // 아직 아무것도 안 적었을 때만 기본 배송지로 채운다
+    if (defaultAddress && pickedAddressId === null && !form.zipcode && !form.address1) pickAddress(defaultAddress);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultAddress?.id]);
   // 전자상거래법: 주문 내용 · 배송을 위한 개인정보 처리 위탁 · 결제 진행에 동의해야 주문할 수 있다
   const [agreed, setAgreed] = useState(false);
   const { pay, paying } = usePayment();
   const set =
-    (key: keyof CreateOrderRequest) => (e: { target: { value: string } }) =>
+    (key: keyof CreateOrderRequest) => (e: { target: { value: string } }) => {
+      // 받는 분 · 주소를 고치면 저장한 배송지와 달라진 것 (메모는 상관없음)
+      if (key !== "memo") setPickedAddressId(null);
       setForm((f) => ({ ...f, [key]: e.target.value }));
+    };
 
   const {
     data: cart,
@@ -85,6 +111,7 @@ export default function CheckoutPage() {
     setAddressError(null);
     try {
       const picked = await searchAddress();
+      setPickedAddressId(null);
       setForm((f) => ({ ...f, ...picked }));
     } catch (e) {
       setAddressError(getErrorMessage(e));
@@ -93,7 +120,21 @@ export default function CheckoutPage() {
 
   const orderMutation = useMutation({
     mutationFn: createOrder,
-    onSuccess: (order) => {
+    onSuccess: async (order) => {
+      // 새 배송지 저장은 주문과 따로 — 실패해도 주문은 그대로 진행 (결제창으로 넘어가기 전에 끝낸다)
+      if (saveAddress && pickedAddressId === null) {
+        await createAddress({
+          label: (addresses.data?.length ?? 0) === 0 ? "기본" : form.receiverName,
+          receiverName: form.receiverName,
+          receiverPhone: form.receiverPhone,
+          zipcode: form.zipcode,
+          address1: form.address1,
+          address2: form.address2,
+        })
+          .then(() => queryClient.invalidateQueries({ queryKey: queryKeys.addresses }))
+          .catch(() => {});
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.points });
       queryClient.invalidateQueries({ queryKey: queryKeys.cart });
       queryClient.invalidateQueries({ queryKey: queryKeys.orders });
       queryClient.invalidateQueries({ queryKey: queryKeys.products });
@@ -135,7 +176,26 @@ export default function CheckoutPage() {
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           <section className="dd-box">
-            <h2>배송지</h2>
+            <div className="dd-box-title">
+              <span>배송지</span>
+              <Link to="/mypage/addresses">배송지 관리</Link>
+            </div>
+            {addresses.data && addresses.data.length > 0 && (
+              <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="저장한 배송지">
+                {addresses.data.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    aria-pressed={pickedAddressId === a.id}
+                    onClick={() => pickAddress(a)}
+                    className="rounded-full border-2 border-[#222021] px-3 py-1.5 text-sm font-bold aria-pressed:bg-[#222021] aria-pressed:text-white"
+                  >
+                    {a.label}
+                    {a.defaultAddress && <span className="ml-1 text-xs opacity-70">기본</span>}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
                 label="받는 분"
@@ -193,6 +253,18 @@ export default function CheckoutPage() {
                 onChange={set("address2")}
                 error={fieldErrors.address2}
               />
+              {pickedAddressId === null && (
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-bold sm:col-span-2">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-[#da1f2e]"
+                    checked={saveAddress}
+                    onChange={(e) => setSaveAddress(e.target.checked)}
+                  />
+                  이 배송지를 배송지 목록에 저장
+                  {(addresses.data?.length ?? 0) === 0 && <span className="font-medium text-neutral-500">(기본 배송지로)</span>}
+                </label>
+              )}
               <Input
                 label="배송 메모"
                 className="sm:col-span-2"

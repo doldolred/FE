@@ -1,13 +1,98 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { requestPasswordReset, resetPassword } from '../api/auth'
+import { findEmail, requestPasswordReset, resetPassword } from '../api/auth'
 import AuthCard from '../components/AuthCard'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import { buttonClass } from '../components/ui/buttonStyles'
 import { ErrorMessage } from '../components/ui/Status'
 import { getFieldErrors } from '../lib/errors'
+import { formatDate } from '../lib/format'
+
+/** /email/find — 이름 + 휴대폰으로 가입한 이메일 찾기 (이메일은 가려서 보여 준다) */
+export function FindEmailPage() {
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const mutation = useMutation({ mutationFn: () => findEmail(name, phone) })
+  const fieldErrors = getFieldErrors(mutation.error)
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    mutation.mutate()
+  }
+
+  if (mutation.data) {
+    const found = mutation.data
+    return (
+      <AuthCard kicker="FIND EMAIL" title={found.length > 0 ? '가입한 이메일이에요' : '맞는 계정이 없어요'}>
+        {found.length > 0 ? (
+          <ul className="space-y-2">
+            {found.map((f) => (
+              <li key={f.email + f.joinedAt} className="flex items-center justify-between rounded-xl border-2 border-[#222021] px-4 py-3 text-sm">
+                <b className="break-all">{f.email}</b>
+                <span className="shrink-0 pl-3 text-xs text-neutral-500">{formatDate(f.joinedAt)} 가입</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-center text-sm leading-relaxed text-neutral-600">
+            이름과 휴대폰 번호를 다시 확인해 주세요.
+            <br />
+            가입할 때 휴대폰 번호를 적지 않았다면 찾을 수 없어요.
+          </p>
+        )}
+        <div className="mt-8 grid gap-2">
+          <Link to="/login" className={buttonClass('primary', 'w-full')}>
+            로그인
+          </Link>
+          {found.length > 0 ? (
+            <Link to="/password/forgot" className={buttonClass('secondary', 'w-full')}>
+              비밀번호 찾기
+            </Link>
+          ) : (
+            <Button variant="secondary" className="w-full" onClick={() => mutation.reset()}>
+              다시 찾기
+            </Button>
+          )}
+        </div>
+      </AuthCard>
+    )
+  }
+
+  return (
+    <AuthCard kicker="FIND EMAIL" title="이메일 찾기">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <p className="text-sm text-neutral-600">가입할 때 적은 이름과 휴대폰 번호로 이메일을 찾아 드려요.</p>
+        <Input label="이름" autoComplete="name" required maxLength={50} value={name} onChange={(e) => setName(e.target.value)} error={fieldErrors.name} />
+        <Input
+          label="휴대폰 번호"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel"
+          placeholder="010-1234-5678"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          error={fieldErrors.phone}
+        />
+        {mutation.error && !fieldErrors.name && !fieldErrors.phone && <ErrorMessage error={mutation.error} />}
+        <Button type="submit" className="w-full" disabled={mutation.isPending}>
+          이메일 찾기
+        </Button>
+      </form>
+      <p className="mt-6 flex justify-center gap-3 text-sm text-neutral-500">
+        <Link to="/login" className="hover:underline">
+          ← 로그인으로
+        </Link>
+        <span aria-hidden>·</span>
+        <Link to="/password/forgot" className="hover:underline">
+          비밀번호 찾기
+        </Link>
+      </p>
+    </AuthCard>
+  )
+}
 
 /** /password/forgot — 이메일로 재설정 링크 받기. 가입 여부와 상관없이 같은 안내를 보여 준다 */
 export function ForgotPasswordPage() {

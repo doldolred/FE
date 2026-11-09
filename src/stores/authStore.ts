@@ -11,6 +11,8 @@ interface AuthState {
   expiresAt: number | null
   member: MemberSummary | null
   setLogin: (res: LoginResponse) => void
+  /** 회원정보 수정 뒤 헤더 등에 보이는 이름을 바로 바꾼다 */
+  updateMember: (patch: Partial<MemberSummary>) => void
   logout: () => void
 }
 
@@ -26,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
           expiresAt: Date.now() + res.expiresIn * 1000,
           member: res.member,
         }),
+      updateMember: (patch) => set((s) => (s.member ? { member: { ...s.member, ...patch } } : {})),
       logout: () => set({ accessToken: null, expiresAt: null, member: null }),
     }),
     { name: 'doldol-auth' },

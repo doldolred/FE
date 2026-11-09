@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { LoginRequest, LoginResponse, Member, SignupRequest, SignupResponse } from './types'
+import type { FoundEmail, LoginRequest, LoginResponse, Member, SignupRequest, SignupResponse } from './types'
 
 export const signup = (req: SignupRequest) => api.post<SignupResponse>('/api/auth/signup', req)
 
@@ -14,11 +14,17 @@ export const requestPasswordReset = (email: string) => api.post<void>('/api/auth
 export const resetPassword = (token: string, newPassword: string) =>
   api.post<void>('/api/auth/password/reset', { token, newPassword })
 
+/** 아이디(이메일) 찾기 — 이름 + 휴대폰이 맞는 계정의 이메일(가려서). 없으면 빈 배열 */
+export const findEmail = (name: string, phone: string) => api.post<FoundEmail[]>('/api/auth/email/find', { name, phone })
+
 export const fetchMe = () => api.get<Member>('/api/members/me')
 
 /** 다른 기기는 로그아웃되고, 지금 기기에는 새 토큰이 온다 */
 export const changePassword = (currentPassword: string, newPassword: string) =>
   api.patch<LoginResponse>('/api/members/me/password', { currentPassword, newPassword })
+
+/** 회원정보 수정 — 이름 · 휴대폰 (휴대폰은 빈 값이면 지운다) */
+export const updateProfile = (name: string, phone: string) => api.patch<Member>('/api/members/me', { name, phone })
 
 export const changeMarketing = (agreed: boolean) => api.patch<Member>('/api/members/me/marketing', { agreed })
 

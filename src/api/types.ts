@@ -12,6 +12,48 @@ export interface MemberSummary {
 export interface Member extends MemberSummary {
   phone: string | null
   marketingAgreed: boolean
+  /** false 면 카카오 · 네이버로만 가입해 비밀번호를 정한 적이 없다 (V17) */
+  passwordSet: boolean
+  socialProviders: SocialProvider[]
+}
+
+export type SocialProvider = 'KAKAO' | 'NAVER'
+
+export interface OAuthProviderInfo {
+  provider: SocialProvider
+  /** 여기에 &state= 만 붙여서 보낸다 */
+  authorizeUrl: string
+}
+
+/** 처음 온 소셜 계정 — 약관 동의 화면에 채울 값 */
+export interface SocialSignupInfo {
+  signupToken: string
+  provider: SocialProvider
+  email: string | null
+  name: string | null
+  phone: string | null
+}
+
+export interface OAuthCallbackResponse {
+  status: 'LOGIN' | 'SIGNUP'
+  login: LoginResponse | null
+  signup: SocialSignupInfo | null
+}
+
+export interface SocialSignupRequest {
+  signupToken: string
+  email: string
+  name: string
+  phone: string
+  agreeTerms: boolean
+  agreePrivacy: boolean
+  agreeAge: boolean
+  agreeMarketing: boolean
+}
+
+export interface FoundEmail {
+  email: string
+  joinedAt: string
 }
 
 export interface SignupRequest {
@@ -135,6 +177,28 @@ export interface ShippingQuote {
 
 /** RETURNED = 반품 완료 (반품 신청 완료로만) */
 export type OrderStatus = 'PENDING_PAYMENT' | 'PAID' | 'PREPARING' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED' | 'RETURNED'
+
+/** 저장한 배송지 (V16) */
+export interface Address {
+  id: number
+  label: string
+  receiverName: string
+  receiverPhone: string
+  zipcode: string
+  address1: string
+  address2: string | null
+  defaultAddress: boolean
+}
+
+export interface AddressRequest {
+  label: string
+  receiverName: string
+  receiverPhone: string
+  zipcode: string
+  address1: string
+  address2?: string
+  makeDefault?: boolean
+}
 
 export interface CreateOrderRequest {
   receiverName: string
