@@ -19,7 +19,7 @@ const nav = ({ isActive }: { isActive: boolean }) =>
 
 /**
  * 프로토타입 v4 헤더 — 양쪽 메뉴 · 가운데 로고. 맨 위에 띠배너(관리자 > 띠배너)가 붙는다.
- * overHero(메인): v4 원본처럼 장면 위에 떠서 글자가 바탕과 반대색(mix-blend-difference), 로고 끝 DOL 은 라임.
+ * overHero(메인): v4 원본처럼 장면 위에 떠서 글자가 바탕과 반대색(mix-blend-difference) — 로고도 공식 로고처럼 한 색.
  *   띠배너는 섞이면 색이 뒤집히니 따로 맨 위에 고정하고, 메뉴 줄은 그 아래(--dd-banner)에 둔다.
  * 그 밖(상세 등): 위에 붙는 띠. 상품 상세는 제품 바탕색(--dd-page-bg · --dd-page-fg)을 따른다.
  */
@@ -55,7 +55,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           <span className="block h-[2px] w-4 bg-current" />
         </button>
         <Link to="/" className="dd-logo col-start-2" aria-label="돌돌 홈">
-          DOL<em className={overHero ? 'text-[#f6d4cf]' : 'text-[#da1f2e]'}>DOL</em>
+          DOL<em className={overHero ? undefined : 'text-[#da1f2e]'}>DOL</em>
         </Link>
         <nav className="flex items-center justify-end gap-3 sm:gap-[clamp(14px,2.4vw,32px)]" aria-label="내 메뉴">
           <NavLink to="/wishlist" className={(s) => `hidden sm:inline ${nav(s)}`}>
@@ -161,12 +161,12 @@ function MobileMenu({ loggedIn, isAdmin, wishCount, onClose }: { loggedIn: boole
         {SITE_LINKS.map((l) => (
           <Link onClick={onClose} key={l.to} to={l.to} className="group flex items-baseline justify-between border-b border-white/15 py-3">
             <span className="dd-display text-5xl group-hover:text-[#da1f2e]">{l.en}</span>
-            <span className="text-sm font-bold text-[#f6d4cf]">{l.ko}</span>
+            <span className="text-sm font-bold text-white/60">{l.ko}</span>
           </Link>
         ))}
         <Link onClick={onClose} to="/faq" className="flex items-baseline justify-between border-b border-white/15 py-3">
           <span className="dd-display text-5xl">FAQ</span>
-          <span className="text-sm font-bold text-[#f6d4cf]">자주 묻는 질문</span>
+          <span className="text-sm font-bold text-white/60">자주 묻는 질문</span>
         </Link>
       </nav>
       <nav className="mt-auto grid grid-cols-2 gap-x-4 gap-y-3 pt-10 text-sm font-bold" aria-label="내 메뉴">

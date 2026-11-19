@@ -26,14 +26,14 @@ function Bottle() {
         fill="url(#bt-glass)"
       />
       <path d="M24 120 v150" stroke="#fff" strokeWidth="4" strokeLinecap="round" opacity=".22" />
-      <rect x="14" y="150" width="92" height="96" fill="#f6eee9" />
-      <text x="60" y="176" textAnchor="middle" fontFamily="Archivo" fontStyle="italic" fontWeight="900" fontSize="9" letterSpacing="2" fill="#a3141f">
+      <rect x="14" y="150" width="92" height="96" fill="#fff" />
+      <text x="60" y="176" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="900" fontSize="9" letterSpacing="1" fill="#a3141f">
         DOLDOL
       </text>
-      <text x="60" y="200" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="18" fill="#222021">
+      <text x="60" y="200" textAnchor="middle" fontFamily="Anton" fontSize="18" fill="#222021">
         BEET
       </text>
-      <text x="60" y="218" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="14" fill="#222021">
+      <text x="60" y="218" textAnchor="middle" fontFamily="Anton" fontSize="14" fill="#222021">
         EXTRACT
       </text>
       <text x="60" y="236" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="800" fontSize="8.5" fill="#a3141f">
@@ -65,10 +65,10 @@ function Jar() {
       <rect x="18" y="40" width="164" height="172" rx="22" fill="url(#jr-glass)" />
       <path d="M24 92 q76 -16 152 0 V190 q0 16 -16 16 H40 q-16 0 -16 -16 z" fill="url(#jr-powder)" />
       <rect x="34" y="100" width="132" height="76" rx="6" fill="#fff" />
-      <text x="100" y="122" textAnchor="middle" fontFamily="Archivo" fontStyle="italic" fontWeight="900" fontSize="10" letterSpacing="2" fill="#222021">
+      <text x="100" y="122" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="900" fontSize="10" letterSpacing="1" fill="#222021">
         DOLDOL
       </text>
-      <text x="100" y="148" textAnchor="middle" fontFamily="Anton, Archivo" fontSize="24" fill="#222021">
+      <text x="100" y="148" textAnchor="middle" fontFamily="Anton" fontSize="24" fill="#222021">
         BEET POWDER
       </text>
       <text x="100" y="166" textAnchor="middle" fontFamily="Pretendard Variable, Pretendard" fontWeight="800" fontSize="10" fill="#a3141f">

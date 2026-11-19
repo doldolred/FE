@@ -18,10 +18,10 @@ export interface ProductColors {
 }
 
 export const THEMES: Record<LineupTheme, ProductColors & { label: string }> = {
-  // 키 이름은 DB 값이라 그대로 두고, 색은 패키지(빨강 #da1f2e · 먹색 #222021 · 흰색)에 맞춘 묶음
-  NAVY: { label: '먹색 · 블러시', bg: '#222021', stage: '#f6d4cf', dark: true },
-  PINK: { label: '블러시 · 화이트', bg: '#f6d4cf', stage: '#ffffff', dark: false },
-  LIME: { label: '종이 · 블러시', bg: '#f3eee8', stage: '#f6d4cf', dark: false },
+  // 키 이름은 DB 값이라 그대로 두고, 색은 패키지 세 가지(빨강 #da1f2e · 먹색 #222021 · 흰색)만 쓴 묶음
+  NAVY: { label: '먹색 · 흰색', bg: '#222021', stage: '#ffffff', dark: true },
+  PINK: { label: '빨강 · 흰색', bg: '#da1f2e', stage: '#ffffff', dark: true },
+  LIME: { label: '흰색 · 회색', bg: '#ffffff', stage: '#f1f1f1', dark: false },
 }
 
 export const themeColors = (theme: LineupTheme | null | undefined): ProductColors => THEMES[theme ?? 'NAVY'] ?? THEMES.NAVY
@@ -54,8 +54,9 @@ export function pageColors(c: ProductColors) {
     '--bg': c.bg,
     '--fg': c.dark ? '#fff' : '#222021',
     '--stage': c.stage,
-    '--accent': c.dark ? '#f6d4cf' : '#da1f2e',
-    '--accent-fg': c.dark ? '#222021' : '#fff',
+    // 강조는 빨강 — 바탕이 빨강인 묶음만 먹색
+    '--accent': c.bg === '#da1f2e' ? '#222021' : '#da1f2e',
+    '--accent-fg': '#fff',
   }
 }
 

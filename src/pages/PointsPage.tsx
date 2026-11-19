@@ -29,7 +29,7 @@ export default function PointsPage() {
       ) : (
         <section className="dd-box" data-tone="navy">
           <p className="text-sm font-bold opacity-70">쓸 수 있는 적립금</p>
-          <p className="dd-display mt-1 text-5xl text-[#f6d4cf] tabular-nums">{formatPrice(summary.data.balance)}</p>
+          <p className="dd-display mt-1 text-5xl text-white tabular-nums">{formatPrice(summary.data.balance)}</p>
           {summary.data.expiringSoon > 0 && (
             <p className="mt-3 text-sm font-bold">30일 안에 {formatPrice(summary.data.expiringSoon)}이 사라져요.</p>
           )}

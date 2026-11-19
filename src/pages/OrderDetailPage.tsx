@@ -134,7 +134,7 @@ export default function OrderDetailPage() {
         <section className="dd-box" data-tone="navy">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="dd-kicker text-xs tracking-[0.1em] text-[#f6d4cf]">ORDER · {order.orderNumber}</p>
+              <p className="dd-kicker text-xs tracking-[0.1em] text-white/70">ORDER · {order.orderNumber}</p>
               <h1 className="dd-display-ko mt-1 text-3xl">주문 상세</h1>
               <p className="mt-1 text-sm opacity-70">{formatDate(order.createdAt)} 주문</p>
             </div>
@@ -145,7 +145,7 @@ export default function OrderDetailPage() {
           {order.confirmedAt ? (
             <p className="mt-5 rounded-2xl border-2 border-white/40 px-4 py-3 text-sm font-bold">
               {formatDate(order.confirmedAt)} 구매확정
-              {order.pointsEarned > 0 && <span className="text-[#f6d4cf]"> · 적립금 {formatPrice(order.pointsEarned)} 적립</span>}
+              {order.pointsEarned > 0 && <span className="font-black"> · 적립금 {formatPrice(order.pointsEarned)} 적립</span>}
               <span className="mt-1 block text-xs font-medium opacity-70">상품에 문제가 있으면 아래 '이 주문 문의하기'로 알려 주세요.</span>
             </p>
           ) : ended ? (
@@ -157,10 +157,10 @@ export default function OrderDetailPage() {
               {FLOW.map((f, i) => (
                 <li key={f.status} aria-current={i === step ? 'step' : undefined}>
                   <span
-                    className={`mx-auto mb-2 block h-3 rounded-full border-2 border-white ${i <= step ? 'bg-[#f6d4cf]' : 'bg-transparent opacity-40'}`}
+                    className={`mx-auto mb-2 block h-3 rounded-full border-2 border-white ${i <= step ? 'bg-white' : 'bg-transparent opacity-40'}`}
                     aria-hidden="true"
                   />
-                  <span className={i === step ? 'text-[#f6d4cf]' : i < step ? '' : 'opacity-50'}>{f.label}</span>
+                  <span className={i === step ? 'font-black underline decoration-[#da1f2e] decoration-2 underline-offset-4' : i < step ? '' : 'opacity-50'}>{f.label}</span>
                 </li>
               ))}
             </ol>

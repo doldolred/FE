@@ -1,24 +1,38 @@
 /*
  * 프로토타입 v4 (protohtml/v4.html · v4-product.html) 구성 그대로 — 메인 · 상품 상세 · 출시 예정.
- * 색은 제품 패키지에 맞췄다: 빨강 #da1f2e · 먹색 #222021 · 흰색 + 보조 블러시 #f6d4cf · 종이 #f3eee8.
- * 변수 이름(--dd-navy · --dd-lime · --dd-pink)은 v4 때 이름 그대로 — navy = 먹색, lime = 블러시, pink = 종이.
- * Anton · Black Han Sans · Archivo(로고) 글꼴, 3D 파우치(실제 인쇄 도안).
- * 글꼴은 index.html 의 Google Fonts.
+ * 색은 제품 패키지 그대로 세 가지만: 빨강 #da1f2e · 먹색 #222021 · 흰색. 분홍 · 크림 같은 중간색은 쓰지 않고, 옅은 면은 회색(무채색)만.
+ * 변수 이름(--dd-navy · --dd-lime · --dd-pink)은 v4 때 이름 그대로 — navy = 먹색, lime = 옅은 회색 면, pink = 더 옅은 회색 면.
+ * 글꼴도 패키지 인쇄 도안과 같게: 영문 표제 Anton(RED BEET) · 한글 표제 Gmarket Sans Bold(레드비트즙) · 로고 · 본문 Pretendard.
+ * Anton 은 index.html 의 Google Fonts, Gmarket Sans 는 아래 @font-face. 3D 파우치(실제 인쇄 도안).
  */
+/* 한글 표제 — Gmarket Sans 는 Bold 한 굵기만 쓴다. 어떤 font-weight 로 불러도 Bold 가 나오게 범위로 묶었다 */
+@font-face {
+  font-family: 'DD Gmarket';
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src:
+    url('https://cdn.jsdelivr.net/gh/fonts-archive/GmarketSans/GmarketSansBold.woff2') format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/fonts-archive/GmarketSans/GmarketSansBold.woff') format('woff');
+}
+
 :root {
   --dd-navy: #222021;
-  --dd-lime: #f6d4cf;
-  --dd-pink: #f3eee8;
+  --dd-lime: #ededed;
+  --dd-pink: #f6f6f6;
   --dd-beet: #da1f2e;
   --dd-beet-deep: #a3141f;
   --dd-ink: #222021;
   --dd-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --dd-font-display: 'Anton', 'Black Han Sans', sans-serif;
-  --dd-font-display-ko: 'Black Han Sans', 'Anton', sans-serif;
-  --dd-font-logo: 'Archivo', sans-serif;
+  --dd-font-display: 'Anton', 'DD Gmarket', sans-serif;
+  --dd-font-display-ko: 'DD Gmarket', 'Anton', sans-serif;
+  /* 공식 로고는 곧게 선 두꺼운 고딕 */
+  --dd-font-logo: 'Pretendard Variable', Pretendard, sans-serif;
+  /* 작은 영문 머리표 (DOLDOL · CHECKOUT) */
+  --dd-font-kicker: 'DD Gmarket', 'Pretendard Variable', Pretendard, sans-serif;
 }
 
-/* 큰 영문 표제 (Anton) · 한글 표제 (Black Han Sans) */
+/* 큰 영문 표제 (Anton) · 한글 표제 (Gmarket Sans Bold) */
 .dd-display {
   font-family: var(--dd-font-display);
   font-weight: 400;
@@ -32,20 +46,17 @@
 }
 .dd-logo {
   font-family: var(--dd-font-logo);
-  font-style: italic;
   font-weight: 900;
-  font-variation-settings: 'wdth' 125;
-  font-size: 18px;
-  letter-spacing: 0.02em;
+  font-size: 21px;
+  letter-spacing: -0.01em;
 }
 .dd-logo em {
   font-style: normal;
 }
 .dd-kicker {
-  font-family: var(--dd-font-logo);
-  font-style: italic;
-  font-weight: 900;
-  font-variation-settings: 'wdth' 125;
+  font-family: var(--dd-font-kicker);
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 /* 띠배너 — 바뀔 때 아래에서 올라온다 */
@@ -79,7 +90,7 @@
 
 /* 0 LINEUP — 화면을 붙잡아 두고(pin) 그 안에서 제품들이 만난다 */
 .dd-s0 {
-  background: var(--dd-lime);
+  background: #fff;
   color: var(--dd-ink);
   height: 260svh;
   overflow: clip; /* hidden 이면 sticky 가 안 붙는다 */
@@ -89,12 +100,9 @@
   top: 0;
   height: 100svh;
   overflow: hidden;
-  /*
-   * 블러시 벽 앞 돌 선반 — 제품 바닥(화면 50% + 그림 칸 높이 절반)에 선반 윗면(사진 높이 61%)이 오도록 사진 크기를 정한다.
-   * 화면이 아주 넓으면 가로를 먼저 채운다 (그땐 선반이 조금 어긋나도 빈칸은 안 생기게).
-   */
-  background: url('/bg/hero-shelf.webp') center top no-repeat var(--dd-lime);
-  background-size: auto max(100%, calc((50% + var(--ah, 300px) / 2) / 0.61), calc(100vw * 941 / 1672));
+  /* 흰 벽 + 패키지 빨강 바닥 — 제품 바닥(화면 50% + 그림 칸 높이 절반)에서 바닥이 시작한다 */
+  --floor: calc(50% + var(--ah, 300px) / 2);
+  background: linear-gradient(180deg, #fff 0, #fff var(--floor), var(--dd-beet) var(--floor));
 }
 .dd-s0 .bgword {
   position: absolute;
@@ -106,7 +114,7 @@
   line-height: 0.85;
   white-space: nowrap;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(34, 32, 33, 0.16);
+  -webkit-text-stroke: 2px rgba(34, 32, 33, 0.24);
 }
 .dd-s0 .kicker {
   position: absolute;
@@ -134,7 +142,7 @@
   font-weight: 900;
   font-size: clamp(13px, 1.2vw, 16px);
   background: var(--dd-navy);
-  color: var(--dd-lime);
+  color: #fff;
   padding: 10px 18px;
   border-radius: 999px;
 }
@@ -235,7 +243,7 @@
   color: #fff;
 }
 .dd-lp[data-main] .dd-tag i {
-  color: var(--dd-lime);
+  color: #fff;
 }
 .dd-lp:hover .dd-tag,
 .dd-lp:focus-visible .dd-tag {
@@ -244,11 +252,8 @@
 
 /* 1 UNBEETABLE — 화면에 들어오면(.in) 글자 · 통비트 연출 시작 */
 .dd-s1 {
-  /* 달빛 아래 제주 비트밭 — 위는 앞 섹션 먹색과 이어지고, 글자 자리는 어둡게 눌러 둔다 */
-  background:
-    linear-gradient(180deg, var(--dd-navy) 0%, rgba(34, 32, 33, 0.55) 16%, rgba(34, 32, 33, 0.2) 55%, rgba(34, 32, 33, 0.75) 100%),
-    url('/bg/night-field.webp') center 62% / cover no-repeat,
-    var(--dd-navy);
+  /* 사진 없이 먹색 면 — 빨강 글자 · 통비트 · 파우치만 (패키지의 검정 · 빨강) */
+  background: var(--dd-navy);
   color: #fff;
 }
 .dd-s1 .big {
@@ -340,8 +345,8 @@
 
 /* 2 비트만 */
 .dd-s2 {
-  /* 비트즙이 튀는 사진 — 왼쪽은 사진의 크림 바탕이라 큰 글자가 그대로 읽힌다 */
-  background: url('/bg/beet-splash.webp') right bottom / cover no-repeat, #f9efe5;
+  /* 비트즙이 튀는 사진 (바탕을 흰색으로 맞춘 것) — 왼쪽은 흰 바탕이라 큰 글자가 그대로 읽힌다 */
+  background: url('/bg/beet-splash-white.webp') right bottom / cover no-repeat, #fff;
   color: var(--dd-ink);
 }
 .dd-s2 .big {
@@ -370,7 +375,7 @@
   padding: 16px 18px 14px;
   border: 2px solid var(--dd-ink);
   border-radius: 14px;
-  background: rgba(255, 250, 245, 0.72);
+  background: rgba(255, 255, 255, 0.78);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   backdrop-filter: blur(14px) saturate(1.2);
   color: var(--dd-ink);
@@ -584,7 +589,7 @@
 }
 .dd-buybar h2 em {
   font-style: normal;
-  color: var(--dd-lime);
+  color: var(--dd-beet);
 }
 .dd-buybar p {
   margin: 10px 0 0;
@@ -605,8 +610,8 @@
   height: 60px;
   padding: 0 32px;
   border-radius: 999px;
-  background: var(--dd-lime);
-  color: var(--dd-navy);
+  background: var(--dd-beet);
+  color: #fff;
   font-weight: 900;
   font-size: 16px;
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.3);
@@ -620,8 +625,8 @@
 .dd-pd {
   --bg: var(--dd-navy);
   --fg: #fff;
-  --stage: var(--dd-lime);
-  --accent: var(--dd-lime);
+  --stage: #fff;
+  --accent: var(--dd-beet);
   background: var(--bg);
   color: var(--fg);
   transition: background 400ms;
@@ -668,7 +673,7 @@
   top: 18px;
   z-index: 2;
   background: var(--dd-navy);
-  color: var(--dd-lime);
+  color: #fff;
   font-weight: 900;
   font-size: 12px;
   padding: 8px 14px;
@@ -920,7 +925,7 @@
 }
 .dd-more h2 em {
   font-style: normal;
-  color: var(--dd-lime);
+  color: var(--dd-beet);
 }
 .dd-cards {
   display: grid;
@@ -1198,7 +1203,7 @@
   opacity: 1;
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--dd-navy);
+  color: var(--accent-fg, #fff);
 }
 .dd-reviews .photo {
   display: flex;
@@ -1252,8 +1257,8 @@
   gap: 8px;
 }
 .dd-review .best {
-  background: var(--dd-lime);
-  color: var(--dd-navy);
+  background: var(--dd-beet);
+  color: #fff;
   font-size: 11px;
   font-weight: 900;
   padding: 3px 8px;
@@ -1291,7 +1296,7 @@
 .dd-review .reply {
   padding: 12px 14px;
   border-radius: 14px;
-  background: #f4f4f8;
+  background: #f4f4f4;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -1408,21 +1413,12 @@
 }
 
 @media (max-width: 860px) {
-  .dd-s1 {
-    background-image:
-      linear-gradient(180deg, var(--dd-navy) 0%, rgba(34, 32, 33, 0.55) 16%, rgba(34, 32, 33, 0.2) 55%, rgba(34, 32, 33, 0.75) 100%),
-      url('/bg/night-field-sm.webp');
-    background-position: center, 22% 62%;
-  }
-  .dd-s0 .pin {
-    background-image: url('/bg/hero-shelf-sm.webp');
-  }
-  /* 휴대폰 — 사진은 비트 · 튀는 즙 쪽을 아래에 두고, 위는 크림으로 덮어 글자가 읽히게 */
+  /* 휴대폰 — 사진은 비트 · 튀는 즙 쪽을 아래에 두고, 위는 흰색으로 덮어 글자가 읽히게 */
   .dd-s2 {
     background:
-      linear-gradient(180deg, #f9efe5 0%, rgba(249, 239, 229, 0.85) 38%, rgba(249, 239, 229, 0) 62%),
-      url('/bg/beet-splash-sm.webp') 66% bottom / auto 62% no-repeat,
-      #f9efe5;
+      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.85) 38%, rgba(255, 255, 255, 0) 62%),
+      url('/bg/beet-splash-white-sm.webp') 66% bottom / auto 62% no-repeat,
+      #fff;
   }
   /* 휴대폰은 사진이 화면보다 넓다 — 가운데(파우치 · 왼쪽 상자)만 보인다 */
   .dd-s3 {
