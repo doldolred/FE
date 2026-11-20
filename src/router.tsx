@@ -11,7 +11,7 @@ import CheckoutPage from './pages/CheckoutPage'
 import HomePage from './pages/HomePage'
 import FaqPage from './pages/FaqPage'
 import LegalPage from './pages/LegalPage'
-import LoginPage from './pages/LoginPage'
+import AuthPage from './pages/AuthPage'
 import MyPage, { MyOrdersPage, MyProfilePage } from './pages/MyPage'
 import LogoutPage from './pages/LogoutPage'
 import WishlistPage from './pages/WishlistPage'
@@ -49,7 +49,6 @@ import {
 import PortoneRedirectPage from './pages/PortoneRedirectPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import ProductsPage from './pages/ProductsPage'
-import SignupPage from './pages/SignupPage'
 
 const wait = (node: ReactNode) => <Suspense fallback={<Loading />}>{node}</Suspense>
 
@@ -64,8 +63,8 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <ContactPage /> },
       { path: 'notices', element: <NoticeListPage /> },
       { path: 'notices/:id', element: <NoticeDetailPage /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'signup', element: <SignupPage /> },
+      // 로그인 · 회원가입은 한 화면 — 주소만 다르고 AuthPage 가 계속 떠 있어야 전환 애니메이션이 이어진다
+      { element: <AuthPage />, children: [{ path: 'login' }, { path: 'signup' }] },
       { path: 'email/find', element: <FindEmailPage /> },
       { path: 'oauth/:provider/callback', element: <OAuthCallbackPage /> },
       { path: 'password/forgot', element: <ForgotPasswordPage /> },

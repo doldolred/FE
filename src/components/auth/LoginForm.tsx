@@ -1,18 +1,15 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
-import { login } from '../api/auth'
-import AuthCard from '../components/AuthCard'
-import SocialLoginButtons from '../components/auth/SocialLoginButtons'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
-import { ErrorMessage } from '../components/ui/Status'
-import { safeRedirect } from '../lib/errors'
-import { useAuthStore, useIsLoggedIn } from '../stores/authStore'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { login } from '../../api/auth'
+import { useAuthStore, useIsLoggedIn } from '../../stores/authStore'
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import { ErrorMessage } from '../ui/Status'
+import SocialLoginButtons from './SocialLoginButtons'
 
-export default function LoginPage() {
-  const [params] = useSearchParams()
-  const redirect = safeRedirect(params.get('redirect'))
+/** 로그인 폼 — 카드 · 머리말 · 전환 토글은 pages/AuthPage 가 그린다 */
+export default function LoginForm({ redirect }: { redirect: string }) {
   const loggedIn = useIsLoggedIn()
   const setLogin = useAuthStore((s) => s.setLogin)
   const navigate = useNavigate()
@@ -35,16 +32,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthCard
-      title="다시 만나 반가워요"
-      kicker="LOGIN"
-      foot={
-        <>
-          <span>처음 오셨나요?</span>
-          <Link to={`/signup?redirect=${encodeURIComponent(redirect)}`}>회원가입 →</Link>
-        </>
-      }
-    >
+    <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="이메일" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input
@@ -70,6 +58,6 @@ export default function LoginPage() {
         </p>
       </form>
       <SocialLoginButtons redirect={redirect} />
-    </AuthCard>
+    </>
   )
 }

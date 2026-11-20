@@ -1,19 +1,17 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
-import { login, signup } from '../api/auth'
-import AuthCard from '../components/AuthCard'
-import { ConsentFields, useConsent } from '../components/auth/ConsentFields'
-import SocialLoginButtons from '../components/auth/SocialLoginButtons'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
-import { ErrorMessage } from '../components/ui/Status'
-import { getFieldErrors, safeRedirect } from '../lib/errors'
-import { useAuthStore, useIsLoggedIn } from '../stores/authStore'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { login, signup } from '../../api/auth'
+import { getFieldErrors } from '../../lib/errors'
+import { useAuthStore, useIsLoggedIn } from '../../stores/authStore'
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import { ErrorMessage } from '../ui/Status'
+import { ConsentFields, useConsent } from './ConsentFields'
+import SocialLoginButtons from './SocialLoginButtons'
 
-export default function SignupPage() {
-  const [params] = useSearchParams()
-  const redirect = safeRedirect(params.get('redirect'))
+/** 회원가입 폼 — 카드 · 머리말 · 전환 토글은 pages/AuthPage 가 그린다 */
+export default function SignupForm({ redirect }: { redirect: string }) {
   const loggedIn = useIsLoggedIn()
   const setLogin = useAuthStore((s) => s.setLogin)
   const navigate = useNavigate()
@@ -48,17 +46,7 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthCard
-      title="돌돌 회원가입"
-      kicker="JOIN"
-      sub="가입하면 주문 내역 · 후기 · 1:1 문의를 한곳에서 볼 수 있어요."
-      foot={
-        <>
-          <span>이미 회원이신가요?</span>
-          <Link to={`/login?redirect=${encodeURIComponent(redirect)}`}>로그인 →</Link>
-        </>
-      }
-    >
+    <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="이메일" type="email" autoComplete="email" required value={form.email} onChange={set('email')} error={fieldErrors.email} />
         <Input
@@ -101,6 +89,6 @@ export default function SignupPage() {
         </Button>
       </form>
       <SocialLoginButtons redirect={redirect} />
-    </AuthCard>
+    </>
   )
 }
