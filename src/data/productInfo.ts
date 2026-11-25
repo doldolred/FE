@@ -13,7 +13,7 @@ export interface GuideRow {
   numbered?: { title: string; note: string }[]
 }
 
-export const SHIPPING_CUTOFF = '평일 오후 3시'
+export const SHIPPING_CUTOFF = '평일 오후 2시'
 
 export const PRODUCT_GUIDE: GuideRow[] = [
   {

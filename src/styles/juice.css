@@ -1,0 +1,222 @@
+/*
+ * 즙 효과 — 손님 화면의 마우스온 · 클릭.
+ *  1) 마우스를 올리면 버튼 · 탭 · 칩 안에 즙이 밑에서 차오른다 (윗면은 물결).
+ *  2) 누르면 그 자리에서 즙 방울이 튄다 (components/JuiceSplash 가 방울을 만든다).
+ *
+ * 차오르는 즙은 배경 두 겹으로 그린다: 물결 띠(48×10 SVG) + 그 아래 단색.
+ * 가상 요소를 안 쓰니 버튼의 position · overflow 를 건드리지 않는다.
+ *   --dd-fill  0 = 비어 있음 · 1 = 가득 (물결까지 위로 빠져나감)
+ *   --dd-flow  물결이 옆으로 흐른 거리
+ *   --juice · --juice-wave  즙 색과 그 색의 물결 띠 (기본 빨강)
+ * lineup.css · store.css 다음에 불러와야 한다 (같은 선택자를 뒤에서 덮는다).
+ */
+@property --dd-fill {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+@property --dd-flow {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+:root {
+  --dd-wave-red: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 10' preserveAspectRatio='none'%3E%3Cpath d='M0 5Q12 -1 24 5T48 5V10H0Z' fill='%23da1f2e'/%3E%3C/svg%3E");
+  --dd-wave-deep: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 10' preserveAspectRatio='none'%3E%3Cpath d='M0 5Q12 -1 24 5T48 5V10H0Z' fill='%23a3141f'/%3E%3C/svg%3E");
+  --dd-wave-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 10' preserveAspectRatio='none'%3E%3Cpath d='M0 5Q12 -1 24 5T48 5V10H0Z' fill='%23222021'/%3E%3C/svg%3E");
+}
+
+/* ── 즙이 담기는 것들 ─────────────────────────
+ * 원래 규칙이 background 로 그림을 지우는 곳은 같은 선택자를 그대로 적어 뒤에서 되살린다. */
+.dd-juicy,
+.dd-sub .ui-btn-primary,
+.dd-sub .ui-btn-secondary,
+.dd-sub .ui-btn-lime,
+.dd-btn,
+.dd-btn[data-primary],
+.dd-buybar .btn,
+.dd-s1 .try,
+.dd-tabs a,
+.dd-choice,
+.dd-option,
+.dd-option[aria-checked='true'],
+.dd-heart,
+.dd-tag,
+.dd-lp[data-main] .dd-tag,
+.dd-qty button,
+.dd-stats a,
+.dd-stats a[data-hot],
+.dd-pool,
+.dd-box.dd-pool[data-tone] {
+  background-image:
+    var(--juice-wave, var(--dd-wave-red)),
+    linear-gradient(to top, var(--juice, var(--dd-beet)) calc(var(--dd-fill) * (100% + 10px) - 9px), transparent 0);
+  background-repeat: repeat-x, no-repeat;
+  background-size:
+    48px 10px,
+    100% 100%;
+  /* 물결 띠의 윗변 = 높이 − fill × (높이 + 10px) */
+  background-position:
+    var(--dd-flow) calc((1 - var(--dd-fill)) * 100% + 10px - var(--dd-fill) * 20px),
+    0 0;
+  transition:
+    --dd-fill 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+    --dd-flow 0.9s cubic-bezier(0.3, 0.2, 0.3, 1),
+    color 0.25s cubic-bezier(0.32, 0.72, 0, 1),
+    transform 0.2s cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 0.2s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* 빨간 버튼에는 더 짙은 즙이 찬다 */
+.dd-sub .ui-btn-primary,
+.dd-buybar .btn,
+.dd-s1 .try {
+  --juice: var(--dd-beet-deep);
+  --juice-wave: var(--dd-wave-deep);
+}
+/* 상품 상세: 강조색 버튼 · 옵션 — 강조색이 먹색인 묶음(빨강 바탕)도 있어서 data/lineup.ts 가 색을 넘긴다 */
+.dd-btn[data-primary] {
+  --juice: var(--accent-juice, var(--dd-beet-deep));
+  --juice-wave: var(--accent-juice-wave, var(--dd-wave-deep));
+}
+.dd-option,
+.dd-qty button {
+  --juice: var(--accent, var(--dd-beet));
+  --juice-wave: var(--accent-wave, var(--dd-wave-red));
+}
+/* 고른 옵션은 즙이 가득 — 누르면 차오른다 */
+.dd-option[aria-checked='true'] {
+  --dd-fill: 1;
+  background-color: transparent;
+}
+/* 클래스로 붙여 쓰는 것: .dd-juicy = 가득 차는 작은 버튼 (쿠키 알림 확인 · 수량 · 삭제), .dd-pool = 바닥에 고이는 카드 */
+.dd-juicy {
+  --juice: var(--dd-beet);
+}
+
+/* ── 마우스를 올리면 ──────────────────────── */
+@media (hover: hover) {
+  /* 가득 */
+  .dd-juicy:hover:not(:disabled),
+  .dd-qty button:hover:not(:disabled),
+  .dd-sub .ui-btn-primary:hover:not(:disabled),
+  .dd-sub .ui-btn-secondary:hover:not(:disabled),
+  .dd-sub .ui-btn-lime:hover:not(:disabled),
+  .dd-btn:hover:not(:disabled),
+  .dd-buybar .btn:hover,
+  .dd-s1 .try:hover,
+  .dd-tabs a:not([aria-current='page']):hover,
+  .dd-heart:hover,
+  .dd-lp:hover .dd-tag {
+    --dd-fill: 1;
+    --dd-flow: -72px;
+  }
+  /* 흰 바탕이던 것은 글자를 희게 */
+  .dd-juicy:hover:not(:disabled),
+  .dd-sub .ui-btn-secondary:hover:not(:disabled),
+  .dd-sub .ui-btn-lime:hover:not(:disabled),
+  .dd-btn:not([data-primary]):hover:not(:disabled),
+  .dd-tabs a:not([aria-current='page']):hover,
+  .dd-heart:hover,
+  .dd-lp:hover .dd-tag,
+  .dd-lp:hover .dd-tag i {
+    color: #fff;
+  }
+  /* 고르는 칸은 바닥에 조금만 고인다 (가득 = 고른 상태) */
+  .dd-choice:not([data-on]):hover,
+  .dd-option:not([aria-checked='true']):hover:not(:disabled) {
+    --dd-fill: 0.22;
+    --dd-flow: -48px;
+  }
+  /* 카드는 더 얕게 — 글자에 닿지 않게 */
+  .dd-pool:hover,
+  .dd-stats a:hover {
+    --dd-fill: 0.14;
+    --dd-flow: -48px;
+  }
+  .dd-qty button:hover:not(:disabled) {
+    color: var(--accent-fg, #fff);
+  }
+}
+/* 키보드로 옮겨 왔을 때도 똑같이 */
+.dd-sub .ui-btn-primary:focus-visible,
+.dd-sub .ui-btn-secondary:focus-visible,
+.dd-sub .ui-btn-lime:focus-visible,
+.dd-btn:focus-visible:not(:disabled),
+.dd-lp:focus-visible .dd-tag {
+  --dd-fill: 1;
+  --dd-flow: -72px;
+}
+.dd-sub .ui-btn-secondary:focus-visible,
+.dd-sub .ui-btn-lime:focus-visible,
+.dd-btn:not([data-primary]):focus-visible:not(:disabled),
+.dd-lp:focus-visible .dd-tag,
+.dd-lp:focus-visible .dd-tag i {
+  color: #fff;
+}
+
+/* ── 누르는 순간: 꾹 눌린다 (.ui-btn · .dd-btn 은 원래 규칙이 있다) ── */
+.dd-juicy:active:not(:disabled),
+.dd-qty button:active:not(:disabled),
+.dd-stats a:active,
+.dd-pool:active,
+.dd-buybar .btn:active,
+.dd-s1 .try:active,
+.dd-tabs a:active,
+.dd-choice:active,
+.dd-option:active:not(:disabled),
+.dd-heart:active,
+.dd-auth-switch a:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+/* ── 헤더 메뉴: 밑줄이 왼쪽에서 흘러 들어온다 ── */
+.dd-navlink {
+  padding-bottom: 5px;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0 2px no-repeat;
+  transition: background-size 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.dd-navlink[aria-current='page'] {
+  background-size: 100% 2px;
+}
+@media (hover: hover) {
+  .dd-navlink:hover {
+    background-size: 100% 2px;
+  }
+}
+
+/* ── 누르면 튀는 즙 방울 (components/JuiceSplash) ── */
+.dd-splash {
+  position: fixed;
+  z-index: 90;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.dd-splash i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  background: var(--dd-beet);
+  /* 빨간 바탕 위에서도 보이게 흰 테 */
+  box-shadow: 0 0 0 1.5px #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-juicy,
+  .dd-sub .ui-btn,
+  .dd-buybar .btn,
+  .dd-s1 .try,
+  .dd-tabs a,
+  .dd-choice,
+  .dd-heart,
+  .dd-qty button,
+  .dd-stats a,
+  .dd-pool,
+  .dd-navlink {
+    transition: none !important;
+  }
+}

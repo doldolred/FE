@@ -48,7 +48,7 @@ export default function AboutPage() {
         <h2>이렇게 만들어요</h2>
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
-            <li key={s.no} className="rounded-2xl border-2 border-[#222021] bg-white p-4">
+            <li key={s.no} className="rounded-2xl border border-[#222021]/15 bg-white p-4">
               <span className="dd-display text-3xl text-[#da1f2e]">{s.no}</span>
               <b className="mt-1 block font-black">{s.title}</b>
               <span className="mt-1 block text-sm opacity-75">{s.text}</span>
@@ -78,7 +78,7 @@ export default function AboutPage() {
         <section className="dd-box flex flex-col justify-between gap-6" data-tone="lime">
           <div>
             <h2>한 포로 시작해 보세요</h2>
-            <p className="text-sm break-keep">5만원 이상 무료배송 · 평일 오후 3시 이전 결제 건은 당일 발송해요.</p>
+            <p className="text-sm break-keep">5만원 이상 무료배송 · 평일 오후 2시 이전 결제 건은 당일 발송해요.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link to="/products" className={buttonClass('primary')}>

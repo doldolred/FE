@@ -14,13 +14,15 @@ const SITE_LINKS = [
   { to: '/contact', en: 'CONTACT', ko: '문의하기' },
 ]
 
-const nav = ({ isActive }: { isActive: boolean }) =>
-  `whitespace-nowrap transition-opacity hover:opacity-60 ${isActive ? 'underline underline-offset-4' : ''}`
+/** 메뉴 글자 — 밑줄이 왼쪽에서 흘러 들어온다 (styles/juice.css .dd-navlink). 지금 화면은 NavLink 의 aria-current 로 밑줄 고정 */
+const nav = 'dd-navlink whitespace-nowrap'
 
 /**
  * 프로토타입 v4 헤더 — 양쪽 메뉴 · 가운데 로고. 맨 위에 띠배너(관리자 > 띠배너)가 붙는다.
- * overHero(메인): v4 원본처럼 장면 위에 떠서 글자가 바탕과 반대색(mix-blend-difference) — 로고도 공식 로고처럼 한 색.
- *   띠배너는 섞이면 색이 뒤집히니 따로 맨 위에 고정하고, 메뉴 줄은 그 아래(--dd-banner)에 둔다.
+ * 로고는 어디서나 한 색 (바탕이 밝으면 먹색, 어두우면 흰색 — 빨강 포인트 없음).
+ * overHero(메인): 장면 위에 떠 있고, 글자색은 뒤 장면에 따라 먹색/흰색 (--dd-hero-fg — pages/HomePage 가 스크롤마다 정한다).
+ *   로고는 제품이 뒤로 지나갈 때 흰색 (--dd-hero-logo). 색 섞기(mix-blend-difference)는 빨강 위에서 민트색이 나와 쓰지 않는다.
+ *   띠배너는 따로 맨 위에 고정하고, 메뉴 줄은 그 아래(--dd-banner)에 둔다.
  * 그 밖(상세 등): 위에 붙는 띠. 상품 상세는 제품 바탕색(--dd-page-bg · --dd-page-fg)을 따른다.
  */
 export default function Header({ overHero = false }: { overHero?: boolean }) {
@@ -36,7 +38,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
   const cartCount = cart?.items.length ?? 0
 
   const bar = (
-      <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-4 text-[11px] font-extrabold tracking-[0.12em] sm:px-[clamp(16px,3vw,40px)]">
+      <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-4 text-[12px] font-medium tracking-[0.1em] sm:px-[clamp(16px,3vw,40px)]">
         <nav className="hidden gap-[clamp(16px,3vw,44px)] md:flex" aria-label="둘러보기">
           {SITE_LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} className={nav}>
@@ -54,11 +56,16 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           <span className="block h-[2px] w-6 bg-current" />
           <span className="block h-[2px] w-4 bg-current" />
         </button>
-        <Link to="/" className="dd-logo col-start-2" aria-label="돌돌 홈">
-          DOL<em className={overHero ? undefined : 'text-[#da1f2e]'}>DOL</em>
+        <Link
+          to="/"
+          className="dd-logo col-start-2 transition-colors duration-300"
+          style={overHero ? { color: 'var(--dd-hero-logo, inherit)' } : undefined}
+          aria-label="돌돌 홈"
+        >
+          DOLDOL
         </Link>
         <nav className="flex items-center justify-end gap-3 sm:gap-[clamp(14px,2.4vw,32px)]" aria-label="내 메뉴">
-          <NavLink to="/wishlist" className={(s) => `hidden sm:inline ${nav(s)}`}>
+          <NavLink to="/wishlist" className={`hidden sm:inline ${nav}`}>
             위시{wishCount > 0 && ` ${wishCount}`}
           </NavLink>
           <NavLink to="/cart" className={nav}>
@@ -67,14 +74,14 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
           {loggedIn ? (
             <>
               {isAdmin && (
-                <NavLink to="/admin" className={(s) => `hidden sm:inline ${nav(s)}`}>
+                <NavLink to="/admin" className={`hidden sm:inline ${nav}`}>
                   관리자
                 </NavLink>
               )}
               <NavLink to="/mypage" className={nav}>
                 MY
               </NavLink>
-              <NavLink to="/logout" className={(s) => `hidden sm:inline ${nav(s)}`}>
+              <NavLink to="/logout" className={`hidden sm:inline ${nav}`}>
                 로그아웃
               </NavLink>
             </>
@@ -83,7 +90,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
               <NavLink to="/login" className={nav}>
                 로그인
               </NavLink>
-              <NavLink to="/signup" className={(s) => `hidden sm:inline ${nav(s)}`}>
+              <NavLink to="/signup" className={`hidden sm:inline ${nav}`}>
                 회원가입
               </NavLink>
             </>
@@ -101,7 +108,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
         <div className="fixed inset-x-0 top-0 z-[61]">
           <TopBanner />
         </div>
-        <header className="fixed inset-x-0 z-[60] text-white mix-blend-difference" style={{ top: 'var(--dd-banner, 0px)' }}>
+        <header className="fixed inset-x-0 z-[60] text-[var(--dd-hero-fg,#222021)] transition-colors duration-300" style={{ top: 'var(--dd-banner, 0px)' }}>
           {bar}
         </header>
       </>
@@ -110,7 +117,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
   return (
     <>
       {menu}
-      <header className="sticky top-0 z-20 border-b-2 border-[var(--dd-page-line,#222021)] bg-[var(--dd-page-bg,#fff)] text-[var(--dd-page-fg,#222021)] transition-colors duration-300">
+      <header className="sticky top-0 z-20 border-b border-[var(--dd-page-line,rgba(34,32,33,0.14))] bg-[var(--dd-page-bg,#fff)] text-[var(--dd-page-fg,#222021)] transition-colors duration-300">
         <TopBanner />
         {bar}
       </header>
@@ -118,7 +125,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
   )
 }
 
-/** 휴대폰 전체 화면 메뉴 — 헤더 밖에 두어 메인의 색 뒤집기(mix-blend)를 받지 않는다 */
+/** 휴대폰 전체 화면 메뉴 */
 function MobileMenu({ loggedIn, isAdmin, wishCount, onClose }: { loggedIn: boolean; isAdmin: boolean; wishCount: number; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -149,7 +156,7 @@ function MobileMenu({ loggedIn, isAdmin, wishCount, onClose }: { loggedIn: boole
     <div className="fixed inset-0 z-[70] flex flex-col bg-[#222021] px-6 pt-5 pb-10 text-white md:hidden" role="dialog" aria-modal="true" aria-label="메뉴">
       <div className="flex items-center justify-between">
         <Link onClick={onClose} to="/" className="dd-logo" aria-label="돌돌 홈">
-          DOL<em className="text-[#da1f2e]">DOL</em>
+          DOLDOL
         </Link>
         {/* 열리면 닫기 버튼에 초점 — 키보드로 바로 Esc · Tab 이동 */}
         {/* oxlint-disable-next-line jsx-a11y/no-autofocus */}

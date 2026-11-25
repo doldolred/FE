@@ -1,4 +1,5 @@
-import type { CSSProperties, Ref } from 'react'
+import { useEffect, useRef, type CSSProperties, type Ref } from 'react'
+import { attachPouch3D } from '../../lib/pouch'
 
 /**
  * 3D 그림 파우치 — 프로토타입 v4(protohtml/v4-shared.js)와 같은 그림.
@@ -7,7 +8,20 @@ import type { CSSProperties, Ref } from 'react'
  *
  * 관리자가 파우치 도안(펼친 앞 · 뒤 PNG, 배경 투명 · 2:3)을 올리면 그림 대신 그 도안을 쓴다 (front · back).
  * 두께 실루엣도 앞 도안을 어둡게 겹쳐 모양을 맞춘다.
+ *
+ * webgl 을 켜면 도안을 입힌 진짜 입체 모델(lib/pouch3d)로 바뀐다.
+ *   true     돌아가는 모델 (메인의 흐르는 파우치 · 상세의 돌리는 파우치)
+ *   'still'  stillAngle 각도로 한 번 찍은 상품컷 그림 (카드 · 썸네일 — 기울기 rz 는 posePouch 가 그대로 준다)
+ * three.js 를 그때 불러오므로, 준비될 때까지 · WebGL 이 안 되는 기기에서는 위의 그림 파우치가 그대로 보인다.
  */
+
+/** 캔버스는 상자보다 넉넉하게 (lineup.css .dd-pouch-gl 의 130% 와 같은 값) · 뚜껑은 상자 위로 조금 올라온다 */
+const GL_FRAME = { box: 1 / 1.3, scale: 1.08 }
+/** 상품컷 크기 — 상자 폭 480px 기준 (카드의 파우치가 가장 커도 폭 ~240px, 2배 해상도) */
+const STILL_W = 480
+/** 상품컷은 카드 · 썸네일 칸 안에 들어가야 해서 뚜껑까지 상자 안에 (그림 파우치와 같은 크기) */
+const STILL_FRAME = { box: 1 / 1.3, scale: 1 }
+const noTurn = () => {}
 
 const BODY = 'M36 44 Q100 33 164 44 C169 118 175 196 178 262 Q179 294 151 297 L49 297 Q21 294 22 262 C25 196 31 118 36 44 Z'
 
@@ -66,12 +80,91 @@ interface Props {
   /** 파우치 도안 앞 · 뒤 (없으면 기본 그림) */
   front?: string | null
   back?: string | null
+  /** 도안이 있으면 WebGL 입체 모델로 바꾼다 (true = 돌아가는 모델, 'still' = 멈춘 상품컷) */
+  webgl?: boolean | 'still'
+  /** 'still' 일 때 찍는 각도(도) */
+  stillAngle?: number
 }
 
-export default function SvgPouch({ ref, className = '', style, label, front, back }: Props) {
+export default function SvgPouch({ ref, className = '', style, label, front, back, webgl = false, stillAngle = -18 }: Props) {
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const setRoot = (el: HTMLDivElement | null) => {
+    rootRef.current = el
+    if (typeof ref === 'function') ref(el)
+    else if (ref) ref.current = el
+  }
+
+  useEffect(() => {
+    const root = rootRef.current
+    const body = root?.firstElementChild
+    if (!webgl || !front || !root || !body) return
+    if (webgl === 'still') {
+      let dead = false
+      const img = document.createElement('img')
+      img.className = 'dd-pouch-gl'
+      img.alt = ''
+      img.draggable = false
+      import('../../lib/pouch3d')
+        .then((m) =>
+          m.renderPouchStill({ front, back }, { ry: stillAngle, width: STILL_W * 1.2, height: STILL_W * 1.5 * 1.3, frame: STILL_FRAME }),
+        )
+        .then((url) => {
+          if (dead) return
+          img.src = url
+          return img.decode()
+        })
+        .then(() => {
+          if (dead) return
+          body.append(img)
+          // 도는 각도는 그림에 들어 있다 — 요소는 옮기고 기울이기만
+          attachPouch3D(root, noTurn)
+          // 붙인 다음 프레임에 켜야 서서히 바뀐다
+          requestAnimationFrame(() => !dead && root.setAttribute('data-gl', ''))
+        })
+        .catch(() => {
+          // WebGL 을 못 쓰거나 도안을 못 읽으면 그림 파우치로 남는다
+        })
+      return () => {
+        dead = true
+        if (img.isConnected) {
+          attachPouch3D(root, null)
+          root.removeAttribute('data-gl')
+          img.remove()
+        }
+      }
+    }
+    // 실행마다 새 캔버스 — 한 캔버스에 렌더러를 두 번 붙이지 않는다
+    const canvas = document.createElement('canvas')
+    canvas.className = 'dd-pouch-gl'
+    body.append(canvas)
+    let dead = false
+    let dispose: (() => void) | undefined
+    import('../../lib/pouch3d')
+      .then((m) => (dead ? null : m.createPouch3D(canvas, { front, back }, GL_FRAME)))
+      .then((pouch) => {
+        if (!pouch) return
+        if (dead) return pouch.dispose()
+        dispose = pouch.dispose
+        attachPouch3D(root, pouch.setRotation)
+        root.setAttribute('data-gl', '')
+      })
+      .catch(() => {
+        // WebGL 을 못 쓰거나 도안을 못 읽으면 그림 파우치로 남는다
+      })
+    return () => {
+      dead = true
+      if (dispose) {
+        attachPouch3D(root, null)
+        root.removeAttribute('data-gl')
+        dispose()
+      }
+      canvas.remove()
+    }
+  }, [webgl, front, back, stillAngle])
+
   return (
     <div
-      ref={ref}
+      ref={setRoot}
       className={`dd-pouch ${className}`}
       style={style}
       role={label ? 'img' : undefined}

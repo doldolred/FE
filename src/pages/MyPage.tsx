@@ -115,7 +115,7 @@ export default function MyPage() {
 
 function Shortcut({ to, title, desc, tone }: { to: string; title: string; desc: string; tone?: 'pink' | 'lime' }) {
   return (
-    <Link to={to} className="dd-box group flex items-center justify-between gap-3 py-4! transition-transform hover:-translate-y-0.5" data-tone={tone}>
+    <Link to={to} className="dd-box dd-pool group flex items-center justify-between gap-3 py-4!" data-tone={tone}>
       <span>
         <b className="block font-black">{title}</b>
         <span className="mt-0.5 block text-xs font-bold opacity-70">{desc}</span>
@@ -214,7 +214,7 @@ export function MyProfilePage() {
           ) : (
             <>
               <ProfileRows me={me.data} />
-              <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-[#222021] bg-[#f4f4f4] px-4 py-3 text-sm font-bold">
+              <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-2xl border border-[#222021]/15 bg-[#f4f4f4] px-4 py-3 text-sm font-bold">
                 <input
                   type="checkbox"
                   className="h-5 w-5 accent-[#da1f2e]"
@@ -454,7 +454,7 @@ function ChangePasswordSection() {
         />
         {mutation.error && <ErrorMessage error={mutation.error} />}
         {mutation.isSuccess && (
-          <p className="rounded-2xl border-2 border-[#222021] bg-[#f4f4f4] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
+          <p className="rounded-2xl border border-[#222021]/15 bg-[#f4f4f4] px-4 py-3 text-sm font-bold">비밀번호를 바꿨어요. 다른 기기에서는 로그아웃됐어요.</p>
         )}
         <Button type="submit" variant="secondary" disabled={mutation.isPending || mismatch}>
           {passwordSet ? '비밀번호 바꾸기' : '비밀번호 만들기'}

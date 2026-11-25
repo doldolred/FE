@@ -50,13 +50,18 @@ export function statusLine(p: Product) {
 
 /** 상세 페이지 색 변수 (v4-product 의 --bg · --fg · --stage · --accent) */
 export function pageColors(c: ProductColors) {
+  const onRed = c.bg === '#da1f2e'
   return {
     '--bg': c.bg,
     '--fg': c.dark ? '#fff' : '#222021',
     '--stage': c.stage,
     // 강조는 빨강 — 바탕이 빨강인 묶음만 먹색
-    '--accent': c.bg === '#da1f2e' ? '#222021' : '#da1f2e',
+    '--accent': onRed ? '#222021' : '#da1f2e',
     '--accent-fg': '#fff',
+    // 즙 효과 (styles/juice.css): 강조색 물결 띠 · 강조색 버튼 위에 차오르는 즙
+    '--accent-wave': onRed ? 'var(--dd-wave-ink)' : 'var(--dd-wave-red)',
+    '--accent-juice': onRed ? '#da1f2e' : '#a3141f',
+    '--accent-juice-wave': onRed ? 'var(--dd-wave-red)' : 'var(--dd-wave-deep)',
   }
 }
 

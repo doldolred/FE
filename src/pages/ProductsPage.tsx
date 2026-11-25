@@ -69,7 +69,7 @@ function ProductCard({ product: p }: { product: Product }) {
           {p.points.length > 0 && (
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {p.points.map((t) => (
-                <li key={t} className="rounded-full border-2 border-current px-2.5 py-0.5 text-[11px] font-black">
+                <li key={t} className="rounded-full border border-current px-2.5 py-0.5 text-[11px] font-black">
                   {t}
                 </li>
               ))}

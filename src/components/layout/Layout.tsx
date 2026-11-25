@@ -1,4 +1,5 @@
 import { Outlet, useMatch } from 'react-router-dom'
+import JuiceSplash from '../JuiceSplash'
 import CookieNotice from './CookieNotice'
 import Footer from './Footer'
 import Header from './Header'
@@ -30,6 +31,7 @@ export default function Layout() {
       )}
       <Footer dark />
       <CookieNotice />
+      <JuiceSplash />
     </div>
   )
 }

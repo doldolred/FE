@@ -95,7 +95,7 @@ export default function OrderDetailPage() {
           <div className="dd-hero-note pt-4!">
             <p className="big">Thank you!</p>
             <h1>{order.status === 'PAID' ? '결제가 완료되었어요' : '주문이 접수되었어요'}</h1>
-            <p>주문번호 {order.orderNumber} · 평일 오후 3시 이전 결제 건은 오늘 보내 드려요.</p>
+            <p>주문번호 {order.orderNumber} · 평일 오후 2시 이전 결제 건은 오늘 보내 드려요.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link to="/mypage/orders" className={buttonClass('secondary')}>
                 주문 내역
@@ -143,13 +143,13 @@ export default function OrderDetailPage() {
             </span>
           </div>
           {order.confirmedAt ? (
-            <p className="mt-5 rounded-2xl border-2 border-white/40 px-4 py-3 text-sm font-bold">
+            <p className="mt-5 rounded-2xl border border-white/40 px-4 py-3 text-sm font-bold">
               {formatDate(order.confirmedAt)} 구매확정
               {order.pointsEarned > 0 && <span className="font-black"> · 적립금 {formatPrice(order.pointsEarned)} 적립</span>}
               <span className="mt-1 block text-xs font-medium opacity-70">상품에 문제가 있으면 아래 '이 주문 문의하기'로 알려 주세요.</span>
             </p>
           ) : ended ? (
-            <p className="mt-5 rounded-2xl border-2 border-white/40 px-4 py-3 text-sm font-bold">
+            <p className="mt-5 rounded-2xl border border-white/40 px-4 py-3 text-sm font-bold">
               {order.status === 'CANCELLED' ? '취소된 주문이에요.' : '반품이 끝난 주문이에요.'}
             </p>
           ) : (
@@ -157,7 +157,7 @@ export default function OrderDetailPage() {
               {FLOW.map((f, i) => (
                 <li key={f.status} aria-current={i === step ? 'step' : undefined}>
                   <span
-                    className={`mx-auto mb-2 block h-3 rounded-full border-2 border-white ${i <= step ? 'bg-white' : 'bg-transparent opacity-40'}`}
+                    className={`mx-auto mb-2 block h-3 rounded-full border border-white ${i <= step ? 'bg-white' : 'bg-transparent opacity-40'}`}
                     aria-hidden="true"
                   />
                   <span className={i === step ? 'font-black underline decoration-[#da1f2e] decoration-2 underline-offset-4' : i < step ? '' : 'opacity-50'}>{f.label}</span>

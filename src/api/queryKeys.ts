@@ -13,6 +13,7 @@ export const queryKeys = {
   reviewSummary: (productId: number) => ['reviews', productId, 'summary'] as const,
   myReviews: (page: number) => ['reviews', 'mine', page] as const,
   writableReviews: ['reviews', 'writable'] as const,
+  homeReviews: (productIds: number[]) => ['reviews', 'home', ...productIds] as const,
   inquiries: (page: number) => ['inquiries', page] as const,
   inquiry: (id: number) => ['inquiries', 'detail', id] as const,
   notices: (page: number) => ['notices', page] as const,

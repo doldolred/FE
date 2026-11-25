@@ -14,7 +14,7 @@ import { formatDate, formatDay, INQUIRY_CATEGORY_LABEL, INQUIRY_STATUS_LABEL } f
 import MyNav from '../components/store/MyNav'
 
 const fieldClass =
-  'w-full rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-neutral-900'
+  'w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-neutral-900'
 
 export function InquiryStatusBadge({ status }: { status: InquiryStatus }) {
   return (
@@ -147,7 +147,7 @@ export function InquiryNewPage() {
             {CATEGORIES.map((c) => (
               <label
                 key={c}
-                className={`cursor-pointer rounded-full border-2 px-4 py-2 text-sm font-bold transition-colors ${
+                className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
                   form.category === c ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-neutral-300 hover:border-neutral-900'
                 }`}
               >
@@ -249,7 +249,7 @@ export function InquiryDetailPage() {
         <div className="pt-6 text-[15px] leading-[1.85] break-keep whitespace-pre-line text-neutral-800">{data.content}</div>
       </article>
 
-      <section className="mt-10 rounded-[22px] border-2 border-neutral-900 p-6 shadow-[6px_6px_0_#111]" aria-label="답변">
+      <section className="mt-10 rounded-[22px] border border-[#222021]/15 p-6" aria-label="답변">
         {data.answer ? (
           <>
             <p className="flex items-center justify-between text-sm font-black">

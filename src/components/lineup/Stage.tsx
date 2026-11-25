@@ -104,22 +104,18 @@ export function SpinPouch({ label, front, back }: { label: string; front?: strin
     <>
       <span className="spin-hint">← 끌어서 돌려 보세요 →</span>
       <div className="art" data-art="pouch" ref={ref}>
-        <SvgPouch ref={pouchRef} label={label} front={front} back={back} />
+        <SvgPouch ref={pouchRef} label={label} front={front} back={back} webgl />
       </div>
     </>
   )
 }
 
-const TILT = ['-3deg', '2deg', '-1deg']
-
-/** 비스듬한 스티커 줄 */
+/** 키워드 배지 줄 (수평) */
 export function Points({ items }: { items: string[] }) {
   return (
     <ul className="dd-points">
-      {items.map((t, i) => (
-        <li key={t} style={{ '--r': TILT[i % 3] } as CSSProperties}>
-          {t}
-        </li>
+      {items.map((t) => (
+        <li key={t}>{t}</li>
       ))}
     </ul>
   )
@@ -158,7 +154,7 @@ export function MoreFromDoldol({ exceptProductId }: { exceptProductId?: number }
   )
 }
 
-/** 멈춰 있는 제품 그림 — 파우치는 살짝 비스듬히 (도안이 있으면 도안), 병 · 유리병은 SVG */
+/** 멈춰 있는 제품 그림 — 파우치는 살짝 비스듬히 (도안이 있으면 입체 상품컷), 병 · 유리병은 SVG */
 export function ProductFigure({ product }: { product: Product }) {
   const kind = artKind(product.art)
   if (kind !== 'pouch') return <ProductArt kind={kind} />
@@ -170,5 +166,5 @@ function StillPouch({ front, back }: { front: string | null; back: string | null
   useEffect(() => {
     posePouch(ref.current, { rz: -6, ry: -18 })
   }, [])
-  return <SvgPouch ref={ref} front={front} back={back} />
+  return <SvgPouch ref={ref} front={front} back={back} webgl="still" />
 }

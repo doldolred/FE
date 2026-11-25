@@ -29,7 +29,7 @@ export function FindEmailPage() {
         {found.length > 0 ? (
           <ul className="space-y-2">
             {found.map((f) => (
-              <li key={f.email + f.joinedAt} className="flex items-center justify-between rounded-xl border-2 border-[#222021] px-4 py-3 text-sm">
+              <li key={f.email + f.joinedAt} className="flex items-center justify-between rounded-xl border border-[#222021]/15 px-4 py-3 text-sm">
                 <b className="break-all">{f.email}</b>
                 <span className="shrink-0 pl-3 text-xs text-neutral-500">{formatDate(f.joinedAt)} 가입</span>
               </li>

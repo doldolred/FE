@@ -188,7 +188,7 @@ export default function CheckoutPage() {
                     type="button"
                     aria-pressed={pickedAddressId === a.id}
                     onClick={() => pickAddress(a)}
-                    className="rounded-full border-2 border-[#222021] px-3 py-1.5 text-sm font-bold aria-pressed:bg-[#222021] aria-pressed:text-white"
+                    className="rounded-full border border-[#222021] px-3 py-1.5 text-sm font-bold aria-pressed:bg-[#222021] aria-pressed:text-white"
                   >
                     {a.label}
                     {a.defaultAddress && <span className="ml-1 text-xs opacity-70">기본</span>}
@@ -308,7 +308,7 @@ export default function CheckoutPage() {
           <section className="dd-box">
             <h2>할인코드</h2>
             {coupon ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#222021] bg-[#f4f4f4] px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#222021]/15 bg-[#f4f4f4] px-4 py-3">
                 <p className="text-sm">
                   <b className="font-mono">{coupon.code}</b> · {coupon.name}
                   <span className="ml-2 font-bold text-beet-700">
@@ -435,7 +435,7 @@ export default function CheckoutPage() {
               <ErrorMessage error={orderMutation.error} />
             </div>
           )}
-          <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#222021] bg-[#f4f4f4] px-4 py-3 text-xs font-bold leading-relaxed">
+          <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-[#222021]/15 bg-[#f4f4f4] px-4 py-3 text-xs font-bold leading-relaxed">
             <input
               type="checkbox"
               className="mt-0.5 h-5 w-5 shrink-0 accent-[#da1f2e]"

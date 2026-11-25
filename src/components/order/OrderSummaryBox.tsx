@@ -24,9 +24,9 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
     <aside className="dd-box h-fit lg:sticky lg:top-28">
       <h2>결제 금액</h2>
       {freeThreshold ? (
-        <div className="mb-5 rounded-2xl border-2 border-[#222021] bg-[#f4f4f4] p-3 text-xs font-bold">
+        <div className="mb-5 rounded-2xl border border-[#222021]/15 bg-[#f4f4f4] p-3 text-xs font-bold">
           <p>{remaining > 0 ? `${formatPrice(remaining)} 더 담으면 기본 배송비 무료` : '기본 배송비 무료예요'}</p>
-          <div className="mt-2 h-2.5 overflow-hidden rounded-full border-2 border-[#222021] bg-white" aria-hidden="true">
+          <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-[#222021]/15 bg-white" aria-hidden="true">
             <div className="h-full bg-[#da1f2e] transition-[width] duration-500" style={{ width: `${progress}%` }} />
           </div>
         </div>

@@ -27,7 +27,7 @@ const normalize = (p: Product): Product => {
  * 서버에 아예 닿지 못했나 — 연결 실패, 또는 우리 서버 형식이 아닌 응답(코드 없는 404 · 5xx, 예: BE 없는 Vercel).
  * 우리 서버가 준 오류(PRODUCT_NOT_FOUND 등)는 그대로 오류로 둔다.
  */
-const unreachable = (e: unknown) => e instanceof ApiError && (e.code === 'NETWORK_ERROR' || (e.code === 'UNKNOWN' && (e.status === 404 || e.status >= 500)))
+export const unreachable = (e: unknown) => e instanceof ApiError && (e.code === 'NETWORK_ERROR' || (e.code === 'UNKNOWN' && (e.status === 404 || e.status >= 500)))
 
 export const fetchProducts = () =>
   api

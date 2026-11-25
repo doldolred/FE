@@ -26,7 +26,7 @@ export function useConsent() {
 export function ConsentFields({ state, fieldErrors }: { state: ReturnType<typeof useConsent>; fieldErrors: Record<string, string> }) {
   const { consent, toggle, allChecked, toggleAll } = state
   return (
-    <fieldset className="rounded-2xl border-2 border-[#222021] bg-[#f4f4f4] p-4">
+    <fieldset className="rounded-2xl border border-[#222021]/15 bg-[#f4f4f4] p-4">
       <legend className="sr-only">약관 동의</legend>
       <Check checked={allChecked} onChange={toggleAll} strong>
         전체 동의

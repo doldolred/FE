@@ -23,6 +23,8 @@
   --dd-beet: #da1f2e;
   --dd-beet-deep: #a3141f;
   --dd-ink: #222021;
+  /* 카드 · 칸을 나누는 아주 가는 선 (1차 수정: 두꺼운 테두리 · 그림자 대신) */
+  --dd-hair: rgba(34, 32, 33, 0.14);
   --dd-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dd-font-display: 'Anton', 'DD Gmarket', sans-serif;
   --dd-font-display-ko: 'DD Gmarket', 'Anton', sans-serif;
@@ -92,7 +94,7 @@
 .dd-s0 {
   background: #fff;
   color: var(--dd-ink);
-  height: 260svh;
+  height: 300svh; /* 200svh 동안 붙잡고(라인업 → 바다가 화면을 채움 → 현무암이 덮으며 올라옴), 마지막 100svh 는 현무암 밑 */
   overflow: clip; /* hidden 이면 sticky 가 안 붙는다 */
 }
 .dd-s0 .pin {
@@ -100,9 +102,37 @@
   top: 0;
   height: 100svh;
   overflow: hidden;
-  /* 흰 벽 + 패키지 빨강 바닥 — 제품 바닥(화면 50% + 그림 칸 높이 절반)에서 바닥이 시작한다 */
+  /* 흰 벽 + 흑백 제주 바다 — 제품 바닥(화면 50% + 그림 칸 높이 절반)에서 바다가 시작한다 */
   --floor: calc(50% + var(--ah, 300px) / 2);
-  background: linear-gradient(180deg, #fff 0, #fff var(--floor), var(--dd-beet) var(--floor));
+  background: #fff;
+}
+/* 바다 — --sea(0 → 1, 스크롤에 따라 JS 가 준다)만큼 위로 넓어져 화면을 채운다. 하늘이 흰색이라 흰 벽과 이어진다 */
+.dd-s0 .sea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: calc(var(--floor) * (1 - var(--sea, 0)));
+  background: #8a8a8a url('/bg/jeju-sea.webp') center 30% / cover no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 min(16%, 56px));
+  mask-image: linear-gradient(180deg, transparent, #000 min(16%, 56px));
+}
+/* 표지의 구매 버튼 — 들어오자마자 바로 구매 화면으로 */
+.dd-s0 .buy {
+  position: absolute;
+  right: clamp(16px, 4vw, 56px);
+  top: calc(76px + var(--dd-banner, 0px));
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background-color: var(--dd-navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
 }
 .dd-s0 .bgword {
   position: absolute;
@@ -114,7 +144,8 @@
   line-height: 0.85;
   white-space: nowrap;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(34, 32, 33, 0.24);
+  -webkit-text-stroke: 1px rgba(34, 32, 33, 0.22);
+  opacity: calc(1 - var(--sea, 0)); /* 바다가 차오르면 물러난다 */
 }
 .dd-s0 .kicker {
   position: absolute;
@@ -152,10 +183,11 @@
   bottom: 6%;
   translate: -50% 0;
   margin: 0;
-  font-weight: 900;
+  font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.2em;
   text-align: center;
+  color: #fff; /* 바다 위 */
 }
 .dd-s0 .cue i {
   display: block;
@@ -219,10 +251,10 @@
   gap: 2px;
   background: #fff;
   color: var(--dd-ink);
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
   border-radius: 16px;
   padding: 8px 14px;
-  box-shadow: 4px 4px 0 var(--dd-navy);
+  box-shadow: none;
   white-space: nowrap;
   transition:
     transform 250ms var(--dd-ease),
@@ -250,74 +282,122 @@
   transform: translateY(-3px) rotate(-2deg);
 }
 
-/* 1 UNBEETABLE — 화면에 들어오면(.in) 글자 · 통비트 연출 시작 */
+/* ── 메인 1 ~ 3 (1차 수정) ─────────────────
+ * 흰 벽 + 흑백 제주 바다 → 바다가 화면을 채우고 → 현무암이 아래에서 덮으며 올라온다 → 흰 바탕 → 현무암(마무리).
+ * 현무암 면(.dd-rock)은 사진을 돌 모양 가장자리로 잘라 쓴다 — 단색 컷이 아니라 돌 질감이 그대로 경계가 된다.
+ */
+.dd-flow {
+  --eh: clamp(38px, 6vw, 84px); /* 돌 가장자리 높이 */
+  --dd-rock-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L0 52 L12 60 L24 61 L65 70 L72 67 L124 80 L184 92 L197 86 L239 56 L270 24 L281 30 L294 30 L305 26 L323 32 L332 27 L338 32 L354 30 L370 21 L426 19 L437 11 L452 10 L486 42 L493 37 L517 57 L560 54 L610 29 L617 27 L649 59 L658 66 L695 90 L701 92 L733 92 L742 84 L786 67 L796 66 L807 67 L815 61 L830 57 L880 87 L938 92 L949 85 L1007 67 L1016 73 L1025 67 L1031 62 L1047 64 L1064 59 L1096 55 L1124 46 L1131 44 L1149 47 L1162 40 L1184 68 L1202 59 L1213 64 L1231 56 L1246 63 L1260 68 L1269 72 L1286 70 L1302 72 L1312 73 L1318 76 L1334 80 L1349 81 L1365 74 L1370 75 L1378 79 L1391 87 L1396 83 L1404 77 L1417 76 L1427 79 L1440 52 L1440 100 Z'/%3E%3C/svg%3E");
+  --dd-rock-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0 L0 52 L9 58 L21 55 L39 48 L47 46 L56 47 L70 47 L109 40 L121 35 L130 35 L168 54 L183 59 L196 57 L211 50 L221 44 L256 14 L266 17 L283 20 L300 24 L314 32 L347 64 L404 92 L432 92 L448 92 L457 83 L473 91 L479 85 L487 77 L528 51 L556 20 L572 14 L588 10 L605 15 L620 16 L634 21 L668 10 L677 13 L687 13 L701 11 L736 10 L754 10 L771 10 L779 18 L825 28 L848 37 L891 69 L900 62 L909 55 L922 59 L954 88 L990 92 L998 92 L1007 90 L1021 92 L1038 84 L1056 90 L1064 83 L1081 87 L1094 92 L1101 92 L1116 92 L1130 90 L1136 92 L1153 92 L1176 74 L1191 78 L1221 74 L1234 66 L1242 70 L1251 76 L1292 92 L1306 87 L1317 84 L1331 91 L1338 87 L1352 89 L1365 82 L1417 55 L1426 49 L1440 52 L1440 0 Z'/%3E%3C/svg%3E");
+}
+.dd-rock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--eh));
+  bottom: 0;
+  background: #1c1b1b url('/bg/basalt.webp') center / cover no-repeat;
+  -webkit-mask:
+    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
+    var(--dd-rock-bottom) left bottom / 1440px var(--eh) repeat-x,
+    linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - 2 * var(--eh) + 2px) no-repeat;
+  mask:
+    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
+    var(--dd-rock-bottom) left bottom / 1440px var(--eh) repeat-x,
+    linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - 2 * var(--eh) + 2px) no-repeat;
+}
+/* 아래가 구매 띠(먹색)로 이어지는 면 — 위쪽만 돌 가장자리 */
+.dd-rock[data-flat-bottom] {
+  -webkit-mask:
+    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
+    linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - var(--eh) + 1px) no-repeat;
+  mask:
+    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
+    linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - var(--eh) + 1px) no-repeat;
+}
+/* 글자가 읽히게 살짝 눌러 준다 */
+.dd-rock::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 18, 19, 0.2), rgba(20, 18, 19, 0.5));
+}
+
+.dd-home .kicker {
+  position: absolute;
+  left: clamp(16px, 4vw, 56px);
+  z-index: 1;
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+.dd-home .big em {
+  font-style: normal;
+  font-family: var(--dd-font-display);
+  color: var(--dd-beet);
+  letter-spacing: 0;
+}
+.dd-home .big span {
+  display: block;
+}
+
+/* 1 원물 — 현무암. 0번 장면(붙잡힌 바다) 위로 100svh 겹쳐 올라온다. 화면에 들어오면(.in) 글자 · 통비트 연출 시작 */
 .dd-s1 {
-  /* 사진 없이 먹색 면 — 빨강 글자 · 통비트 · 파우치만 (패키지의 검정 · 빨강) */
-  background: var(--dd-navy);
+  margin-top: -100svh;
+  min-height: calc(100svh + var(--eh));
+  overflow: visible;
+  overflow-x: clip;
   color: #fff;
+}
+.dd-s1 .kicker {
+  top: 22%;
 }
 .dd-s1 .big {
   position: absolute;
-  left: 50%;
-  top: 40%;
-  translate: -50% -50%;
+  left: clamp(16px, 4vw, 56px);
+  top: 27%;
   z-index: 1;
-  font-family: var(--dd-font-display);
-  font-size: clamp(80px, 17.5vw, 290px);
-  line-height: 0.9;
-  letter-spacing: -0.01em;
-  color: var(--dd-beet);
-  white-space: nowrap;
-  text-transform: uppercase;
+  margin: 0;
+  font-family: var(--dd-font-display-ko);
+  font-weight: 400;
+  font-size: clamp(50px, min(7.6vw, 11svh), 124px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   animation: dd-rise 900ms var(--dd-ease) both;
+}
+.dd-s1 .big em {
+  font-size: 1.5em;
+  line-height: 0.95;
 }
 .dd-s1 .lead {
   position: absolute;
   left: clamp(16px, 4vw, 56px);
-  bottom: 22%;
+  bottom: calc(14% + var(--eh));
   z-index: 4;
   margin: 0;
-  font-size: clamp(13px, 1.2vw, 16px);
-  line-height: 1.5;
-}
-.dd-s1 .lead b {
-  font-weight: 900;
-}
-.dd-s1 .try {
-  position: absolute;
-  right: clamp(16px, 4vw, 56px);
-  bottom: 22%;
-  z-index: 4;
-  background: var(--dd-beet);
-  color: #fff;
-  font-weight: 900;
-  font-size: 13px;
-  border: 0;
-  border-radius: 999px;
-  padding: 12px 22px;
-  cursor: pointer;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
-  transition: transform 200ms;
-}
-.dd-s1 .try:hover {
-  transform: translateY(-2px);
+  max-width: 30ch;
+  font-size: clamp(14px, 1.25vw, 17px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+  word-break: keep-all;
 }
 .dd-beetroot {
   position: absolute;
   z-index: 2;
-  width: clamp(130px, 15vw, 240px);
+  width: clamp(120px, 13vw, 210px);
   height: auto;
-  left: 60%;
-  top: 42%;
-  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.45));
+  left: 76%;
+  top: 12%;
+  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
   animation: dd-drop 1200ms 250ms var(--dd-ease) both;
 }
-/* 반 자른 비트 — 왼쪽에서 조금 늦게, 반대로 기울어 떨어진다 */
+/* 반 자른 비트 — 조금 늦게, 반대로 기울어 떨어진다 */
 .dd-beetroot[data-half] {
   --rz: -16deg;
-  width: clamp(100px, 10vw, 160px);
-  left: 22%;
-  top: 50%;
+  width: clamp(96px, 9.5vw, 150px);
+  left: 44%;
+  top: 62%;
   animation-delay: 550ms;
 }
 .dd-s1:not(.in) .big,
@@ -336,36 +416,40 @@
 }
 @keyframes dd-drop {
   from {
-    transform: translateY(-80vh) rotate(-60deg);
+    opacity: 0;
+    transform: translateY(-120vh) rotate(-140deg);
   }
   to {
     transform: rotate(var(--rz, 14deg));
   }
 }
 
-/* 2 비트만 */
+/* 2 공법 — 사진 없이 흰 바탕 (누끼컷 · 제품 정보 카드만) */
 .dd-s2 {
-  /* 비트즙이 튀는 사진 (바탕을 흰색으로 맞춘 것) — 왼쪽은 흰 바탕이라 큰 글자가 그대로 읽힌다 */
-  background: url('/bg/beet-splash-white.webp') right bottom / cover no-repeat, #fff;
+  background: #fff;
   color: var(--dd-ink);
+}
+.dd-s2 .kicker {
+  top: 15%;
 }
 .dd-s2 .big {
   position: absolute;
   left: clamp(16px, 4vw, 56px);
-  top: 18%;
+  top: 20%;
   z-index: 1;
   margin: 0;
   font-family: var(--dd-font-display-ko);
   font-weight: 400;
-  font-size: clamp(54px, min(8.6vw, 12svh), 140px);
-  line-height: 1;
+  font-size: clamp(46px, min(6.8vw, 10svh), 112px);
+  line-height: 1.04;
   letter-spacing: -0.02em;
   color: var(--dd-navy);
 }
-.dd-s2 .big span {
-  display: block;
+.dd-s2 .big em {
+  font-size: 1.5em;
+  line-height: 0.95;
 }
-/* 제품 정보 카드 — 영양성분표 모양 (굵은 제목 줄 · 실선 칸) + 흐린 유리 바탕 */
+/* 제품 정보 카드 — 영양성분표 모양 (굵은 제목 줄 · 실선 칸) */
 .dd-facts {
   position: absolute;
   left: clamp(16px, 4vw, 56px);
@@ -373,11 +457,9 @@
   z-index: 4;
   width: min(340px, calc(100% - 32px));
   padding: 16px 18px 14px;
-  border: 2px solid var(--dd-ink);
+  border: 1px solid var(--dd-hair);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  backdrop-filter: blur(14px) saturate(1.2);
+  background: #fff;
   color: var(--dd-ink);
 }
 .dd-facts p {
@@ -385,15 +467,15 @@
 }
 .dd-facts .t {
   font-family: var(--dd-font-display-ko);
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.1;
 }
 .dd-facts .s {
   margin-top: 4px;
   padding-bottom: 8px;
-  border-bottom: 8px solid var(--dd-ink);
+  border-bottom: 2px solid var(--dd-ink);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .dd-facts dl {
   margin: 0;
@@ -403,54 +485,37 @@
   justify-content: space-between;
   gap: 12px;
   padding: 7px 0;
-  border-bottom: 1px solid var(--dd-ink);
+  border-bottom: 1px solid var(--dd-hair);
   font-size: 14px;
 }
-.dd-facts dl > div:last-child {
-  border-bottom-width: 4px;
-}
 .dd-facts dt {
-  font-weight: 800;
+  font-weight: 600;
 }
 .dd-facts dd {
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
   text-align: right;
 }
 .dd-facts .note {
   margin-top: 10px;
   font-size: 13px;
   line-height: 1.6;
-  font-weight: 600;
   word-break: keep-all;
 }
 
-/* 3 + DAILY RED */
+/* 3 마무리 — 현무암 위에 파우치가 내려앉고, 아래 구매 띠로 이어진다 */
 .dd-s3 {
-  /* 사진 높이 — 상자가 파우치와 어울리는 크기로 (화면 가득이 아니라 어두운 바탕 위 제품 컷처럼) */
-  --ph: min(78svh, 56vw);
-  background: radial-gradient(70% 60% at 50% 64%, #2b2829, #141213 75%);
-  color: #fff;
   min-height: 110svh;
+  overflow: visible;
+  overflow-x: clip;
+  color: #fff;
 }
-/* 어두운 헬스장 탁자 위 돌돌 상자 두 개 — 아래에 붙이고 가장자리는 바탕으로 녹인다 */
-.dd-s3::before {
+.dd-s3::after {
   content: '';
   position: absolute;
-  left: 50%;
-  bottom: 0;
-  translate: -50% 0;
-  height: var(--ph);
-  aspect-ratio: 1672 / 941;
-  background: url('/bg/gym-boxes.webp') center / cover no-repeat;
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent),
-    linear-gradient(180deg, transparent, #000 32%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent),
-    linear-gradient(180deg, transparent, #000 32%);
-  mask-composite: intersect;
+  inset: auto 0 0 0;
+  height: 34%;
+  background: linear-gradient(180deg, rgba(34, 32, 33, 0), var(--dd-navy));
 }
 .dd-s3 .big {
   position: absolute;
@@ -459,31 +524,142 @@
   translate: -50% -50%;
   z-index: 1;
   font-family: var(--dd-font-display);
-  font-size: clamp(76px, 15vw, 250px);
+  font-size: clamp(72px, 14vw, 230px);
   line-height: 0.9;
   white-space: nowrap;
   text-transform: uppercase;
 }
-/* 파우치가 내려앉는 선 — 보이지 않고 위치만 잡는다. 사진 위로부터 87% (사진 속 상자 앞 탁자 윗면) */
+.dd-s3 .caption {
+  position: absolute;
+  left: clamp(16px, 6vw, 96px);
+  top: 40%;
+  z-index: 4;
+  margin: 0;
+  max-width: 18ch;
+  font-weight: 600;
+  font-size: clamp(15px, 1.5vw, 20px);
+  line-height: 1.5;
+}
+/* 파우치가 내려앉는 선 — 위치만 잡고, 바닥에 닿는 그림자만 그린다 */
 .dd-plinth {
   position: absolute;
   left: 50%;
   bottom: 0;
   translate: -50% 0;
-  z-index: 2;
-  width: min(92vw, 1100px);
-  height: calc(var(--ph) * 0.13);
+  z-index: 1;
+  width: min(70vw, 520px);
+  height: 15%;
 }
-.dd-s3 .caption {
+.dd-plinth::before {
+  content: '';
   position: absolute;
-  left: clamp(16px, 6vw, 96px);
-  top: 38%;
-  z-index: 4;
-  margin: 0;
-  max-width: 18ch;
-  font-weight: 800;
-  font-size: clamp(15px, 1.5vw, 20px);
-  line-height: 1.45;
+  left: 8%;
+  right: 8%;
+  top: -16px;
+  height: 34px;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+}
+
+/* 떠 있는 구매 버튼 — 표지를 지나면 나타나고, 구매 띠가 보이면 숨는다 */
+.dd-floatbuy {
+  position: fixed;
+  right: clamp(14px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 28px);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--dd-beet);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 12px;
+  transition:
+    opacity 300ms var(--dd-ease),
+    translate 300ms var(--dd-ease),
+    visibility 0s 300ms;
+}
+.dd-floatbuy[data-on] {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition:
+    opacity 300ms var(--dd-ease),
+    translate 300ms var(--dd-ease);
+}
+/* 쿠키 알림이 떠 있는 동안은 그 위로 */
+body:has(.dd-cookie) .dd-floatbuy {
+  bottom: 96px;
+}
+
+@media (max-width: 860px) {
+  .dd-s1 .kicker {
+    top: calc(84px + var(--dd-banner, 0px));
+    left: 20px;
+  }
+  .dd-s1 .big {
+    top: calc(112px + var(--dd-banner, 0px));
+    left: 20px;
+    font-size: clamp(40px, 11.5vw, 60px);
+  }
+  .dd-s1 .lead {
+    left: 20px;
+    right: 20px;
+    bottom: calc(9% + var(--eh));
+  }
+  .dd-beetroot {
+    left: 66%;
+    top: 58%;
+    width: 104px;
+  }
+  .dd-beetroot[data-half] {
+    display: none;
+  }
+  .dd-s2 .kicker {
+    top: calc(84px + var(--dd-banner, 0px));
+    left: 20px;
+  }
+  .dd-s2 .big {
+    top: calc(112px + var(--dd-banner, 0px));
+    left: 20px;
+    right: 20px;
+    font-size: clamp(36px, 10.5vw, 56px);
+  }
+  .dd-facts {
+    left: 16px;
+    right: 16px;
+    bottom: 7%;
+    width: auto;
+    padding: 12px 14px 10px;
+  }
+  .dd-facts .t {
+    font-size: 20px;
+  }
+  .dd-facts dl > div {
+    padding: 5px 0;
+    font-size: 13px;
+  }
+  .dd-s3 .big {
+    top: 16%;
+  }
+  .dd-s3 .caption {
+    top: 27%;
+    font-size: 14px;
+  }
+  .dd-rock {
+    background-image: url('/bg/basalt-sm.webp');
+  }
+  .dd-s0 .sea {
+    background-image: url('/bg/jeju-sea-sm.webp');
+  }
+  body:has(.dd-cookie) .dd-floatbuy {
+    bottom: 132px;
+  }
 }
 
 /* ── 흐르는 파우치 — 네 섹션 위를 내내 따라간다 ── */
@@ -552,6 +728,30 @@
 .dd-pouch-art.silhouette {
   filter: brightness(0.35);
 }
+/* WebGL 입체 파우치 (lib/pouch3d) — 준비되면 그림 파우치와 자리를 바꾼다. 캔버스는 상자보다 넉넉하게 (뚜껑이 위로 올라온다) */
+.dd-pouch-gl {
+  position: absolute;
+  left: -10%;
+  top: -15%;
+  width: 120%;
+  height: 130%;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.28));
+  transition: opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.dd-pouch .face,
+.dd-pouch .layer {
+  transition: opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.dd-pouch[data-gl] .dd-pouch-gl {
+  opacity: 1;
+}
+.dd-pouch[data-gl] .face,
+.dd-pouch[data-gl] .layer {
+  opacity: 0;
+}
 .dd-pouch .sheen {
   position: absolute;
   inset: 11% 6% 1.5% 6%;
@@ -614,11 +814,223 @@
   color: #fff;
   font-weight: 900;
   font-size: 16px;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: none;
   transition: transform 200ms;
 }
 .dd-buybar .btn:hover {
   transform: translateY(-2px);
+}
+
+/* ── 메인의 자사몰 후기 (1차 수정) — 구매 띠 아래 흰 바탕. 평점 요약 + 후기 카드 ── */
+.dd-hr {
+  position: relative;
+  z-index: 5;
+  background: #fff;
+  color: var(--dd-ink);
+  padding: clamp(72px, 13vh, 150px) clamp(16px, 5vw, 64px) clamp(64px, 11vh, 130px);
+}
+.dd-hr .inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.dd-hr .head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+  padding-bottom: clamp(24px, 4vh, 40px);
+  border-bottom: 1px solid var(--dd-hair);
+}
+.dd-hr .eyebrow {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: rgba(34, 32, 33, 0.55);
+}
+.dd-hr h2 {
+  margin: 0;
+  font-family: var(--dd-font-display-ko);
+  font-weight: 400;
+  font-size: clamp(30px, 3.8vw, 54px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+}
+.dd-hr .score {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.dd-hr .score b {
+  font-family: var(--dd-font-display);
+  font-weight: 400;
+  font-size: clamp(56px, 6vw, 84px);
+  line-height: 0.9;
+}
+.dd-hr .score div {
+  display: grid;
+  gap: 8px;
+}
+.dd-hr .score div > span:last-child {
+  font-size: 13px;
+  color: rgba(34, 32, 33, 0.6);
+}
+.dd-hr .cards {
+  list-style: none;
+  margin: clamp(28px, 5vh, 48px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.dd-hr .cards li {
+  transition:
+    opacity 800ms var(--dd-ease) calc(var(--i, 0) * 70ms),
+    translate 800ms var(--dd-ease) calc(var(--i, 0) * 70ms);
+}
+.dd-hr:not(.in) .cards li {
+  opacity: 0;
+  translate: 0 28px;
+}
+.dd-hr .card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: 24px;
+  border: 1px solid var(--dd-hair);
+  border-radius: 20px;
+  background: #fff;
+  color: inherit;
+  transition:
+    border-color 300ms var(--dd-ease),
+    transform 300ms var(--dd-ease);
+}
+.dd-hr .card:hover {
+  border-color: var(--dd-ink);
+  transform: translateY(-3px);
+}
+.dd-hr .card:focus-visible {
+  outline: 2px solid var(--dd-ink);
+  outline-offset: 3px;
+}
+.dd-hr .top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dd-hr .best {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--dd-ink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.dd-hr .photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--dd-pink);
+}
+.dd-hr .content {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  white-space: pre-line;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  line-clamp: 7;
+  overflow: hidden;
+}
+.dd-hr .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin: auto 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--dd-hair);
+  font-size: 12px;
+  color: rgba(34, 32, 33, 0.6);
+}
+.dd-hr .meta b {
+  font-weight: 600;
+  color: var(--dd-ink);
+}
+.dd-hr .meta time {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.dd-hr .foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: clamp(28px, 5vh, 44px);
+}
+.dd-hr .more {
+  display: inline-grid;
+  place-items: center;
+  height: 52px;
+  padding: 0 28px;
+  border: 1px solid var(--dd-ink);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background 300ms var(--dd-ease),
+    color 300ms var(--dd-ease);
+}
+.dd-hr .more:hover {
+  background: var(--dd-ink);
+  color: #fff;
+}
+.dd-hr .more:active {
+  transform: scale(0.98);
+}
+.dd-hr .sample {
+  font-size: 12px;
+  color: var(--dd-beet-deep);
+}
+@media (max-width: 860px) {
+  /* 휴대폰 — 카드를 옆으로 넘긴다 (페이지가 길어지지 않게) */
+  .dd-hr .cards {
+    display: flex;
+    gap: 12px;
+    margin-inline: calc(-1 * clamp(16px, 5vw, 64px));
+    padding: 0 clamp(16px, 5vw, 64px) 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: clamp(16px, 5vw, 64px);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dd-hr .cards::-webkit-scrollbar {
+    display: none;
+  }
+  .dd-hr .cards li {
+    flex: 0 0 82%;
+    scroll-snap-align: start;
+  }
+  .dd-hr .foot {
+    margin-top: 24px;
+  }
+  .dd-hr .more {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dd-hr .cards li {
+    transition: none;
+  }
+  .dd-hr:not(.in) .cards li {
+    opacity: 1;
+    translate: none;
+  }
 }
 
 /* ── 상품 상세 · 출시 예정 (v4-product) — 제품마다 --bg · --fg · --stage · --accent ── */
@@ -649,8 +1061,8 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  border: 2px solid var(--dd-navy);
-  box-shadow: 8px 8px 0 var(--dd-navy);
+  border: 1px solid var(--dd-hair);
+  box-shadow: none;
   touch-action: pan-y;
   user-select: none;
   animation: dd-up 700ms var(--dd-ease) both;
@@ -787,9 +1199,8 @@
   font-size: 13px;
   padding: 8px 14px;
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
-  box-shadow: 3px 3px 0 var(--dd-navy);
-  transform: rotate(var(--r, -2deg));
+  border: 1px solid var(--dd-hair);
+  box-shadow: none;
 }
 
 .dd-buy {
@@ -805,7 +1216,7 @@
 .dd-qty {
   display: inline-flex;
   align-items: center;
-  border: 2px solid currentColor;
+  border: 1px solid currentColor;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -818,9 +1229,6 @@
   cursor: pointer;
   font-size: 20px;
   font-weight: 900;
-}
-.dd-qty button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
 }
 .dd-qty button:disabled {
   opacity: 0.35;
@@ -839,7 +1247,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 2px solid currentColor;
+  border: 1px solid currentColor;
   border-radius: 18px;
   padding: 12px 16px;
   text-align: left;
@@ -872,13 +1280,13 @@
   height: 58px;
   padding: 0 28px;
   border-radius: 999px;
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-navy);
   cursor: pointer;
   font-weight: 900;
   font-size: 16px;
   background: #fff;
   color: var(--dd-navy);
-  box-shadow: 0 5px 0 var(--dd-navy);
+  box-shadow: none;
   transition:
     transform 200ms,
     box-shadow 200ms;
@@ -889,11 +1297,11 @@
 }
 .dd-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 7px 0 var(--dd-navy);
+  box-shadow: none;
 }
 .dd-btn:active:not(:disabled) {
   transform: translateY(3px);
-  box-shadow: 0 2px 0 var(--dd-navy);
+  box-shadow: none;
 }
 .dd-btn:disabled {
   cursor: not-allowed;
@@ -937,7 +1345,7 @@
   overflow: hidden;
   background: var(--c-bg);
   color: var(--c-fg);
-  border: 2px solid #fff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   transition: transform 300ms var(--dd-ease);
 }
 .dd-card:hover {
@@ -1047,7 +1455,7 @@
   border-radius: 18px;
   background: #fff;
   color: var(--dd-navy);
-  border: 2px solid var(--dd-navy);
+  border: 1px solid var(--dd-hair);
 }
 .dd-faq summary {
   display: flex;
@@ -1138,8 +1546,8 @@
   border-radius: 22px;
   background: #fff;
   color: var(--dd-navy);
-  border: 2px solid var(--dd-navy);
-  box-shadow: 6px 6px 0 var(--dd-navy);
+  border: 1px solid var(--dd-hair);
+  box-shadow: none;
 }
 .dd-reviews .avg {
   display: grid;
@@ -1193,7 +1601,7 @@
 .dd-reviews .sorts button {
   padding: 8px 14px;
   border-radius: 999px;
-  border: 2px solid currentColor;
+  border: 1px solid currentColor;
   font-size: 13px;
   font-weight: 800;
   opacity: 0.6;
@@ -1247,8 +1655,8 @@
   border-radius: 20px;
   background: #fff;
   color: var(--dd-navy);
-  border: 2px solid var(--dd-navy);
-  box-shadow: 4px 4px 0 var(--dd-navy);
+  border: 1px solid var(--dd-hair);
+  box-shadow: none;
 }
 .dd-review .head {
   display: flex;
@@ -1325,7 +1733,7 @@
   .dd-tag {
     padding: 6px 9px;
     border-radius: 12px;
-    box-shadow: 3px 3px 0 var(--dd-navy);
+    box-shadow: none;
   }
   .dd-tag b {
     font-size: 11px;
@@ -1335,48 +1743,6 @@
   }
   .dd-tag .opt {
     display: none;
-  }
-  .dd-s1 .big {
-    top: 34%;
-  }
-  .dd-s1 .lead,
-  .dd-s1 .try {
-    bottom: 15%;
-  }
-  .dd-beetroot {
-    left: 4%;
-    top: 50%;
-    width: 110px;
-  }
-  .dd-beetroot[data-half] {
-    display: none;
-  }
-  .dd-s2 .big {
-    top: calc(86px + var(--dd-banner, 0px)); /* 헤더 · 띠배너 아래 */
-    left: 20px;
-    right: 20px;
-    font-size: clamp(38px, 11.5vw, 60px);
-  }
-  .dd-facts {
-    left: 16px;
-    bottom: 7%;
-    width: auto;
-    right: 16px;
-    padding: 12px 14px 10px;
-  }
-  .dd-facts .t {
-    font-size: 20px;
-  }
-  .dd-facts dl > div {
-    padding: 5px 0;
-    font-size: 13px;
-  }
-  .dd-s3 .big {
-    top: 16%;
-  }
-  .dd-s3 .caption {
-    top: 27%;
-    font-size: 14px;
   }
   .dd-hero {
     grid-template-columns: 1fr;
@@ -1409,23 +1775,6 @@
   .dd-reviews .list,
   .dd-review-list {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 860px) {
-  /* 휴대폰 — 사진은 비트 · 튀는 즙 쪽을 아래에 두고, 위는 흰색으로 덮어 글자가 읽히게 */
-  .dd-s2 {
-    background:
-      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.85) 38%, rgba(255, 255, 255, 0) 62%),
-      url('/bg/beet-splash-white-sm.webp') 66% bottom / auto 62% no-repeat,
-      #fff;
-  }
-  /* 휴대폰은 사진이 화면보다 넓다 — 가운데(파우치 · 왼쪽 상자)만 보인다 */
-  .dd-s3 {
-    --ph: 50svh;
-  }
-  .dd-s3::before {
-    background-image: url('/bg/gym-boxes-sm.webp');
   }
 }
 
