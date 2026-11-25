@@ -354,7 +354,7 @@ export async function createBoxStage(canvas: HTMLCanvasElement, art: PouchArt): 
       const unit = h / (2 * dist * tan) // 1 단위가 화면에서 몇 px 인가
       floor = (topPx + (avail - SCENE_SPAN * unit) / 2 + SCENE_UP * unit) / h - 0.5
     } else {
-      dist = Math.max(widthDist, sceneH / (0.62 * 2 * tan))
+      dist = Math.max(widthDist, sceneH / (0.66 * 2 * tan))
       floor = Math.min(0.27, (0.5 * sceneH * 0.86) / (2 * dist * tan) + 0.07)
     }
     const viewH = 2 * dist * tan

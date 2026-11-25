@@ -262,6 +262,8 @@ export default function HomePage() {
     const root = document.documentElement
     const logo = document.querySelector<HTMLElement>('header .dd-logo')
     const tones = [...document.querySelectorAll<HTMLElement>('[data-tone]')]
+    // 현무암 면은 돌 가장자리만큼 제 장면보다 위로 올라와 있다 — 그만큼 일찍 어두운 바탕으로 본다
+    const rocky = new Set(tones.filter((el) => el.querySelector('.dd-rock')))
     let fg = ''
     let logoOver = false
     let sea = -1
@@ -375,7 +377,8 @@ export default function HomePage() {
         let tone = 'light'
         for (const el of tones) {
           const r = el.getBoundingClientRect()
-          if (r.top <= mid && r.bottom > mid) tone = el.dataset.tone ?? tone
+          const lead = rocky.has(el) ? Math.min(84, Math.max(38, vw * 0.06)) * 0.6 : 0
+          if (r.top - lead <= mid && r.bottom > mid) tone = el.dataset.tone ?? tone
         }
         const fgNow = tone === 'dark' ? '#fff' : '#222021'
         if (fgNow !== fg) {
@@ -402,7 +405,7 @@ export default function HomePage() {
 
       // 라인업 칸 — 0번 장면을 지나면 계산 안 함
       if (s < 1) {
-        const gap = Math.min(vw < 700 ? 0.33 * vw : 0.27 * vw, 420)
+        const gap = Math.min(vw < 700 ? 0.33 * vw : 0.27 * vw, 560)
         setItem(mainItemRef.current, x, k.y * vh + bob, 0, 1, dwell)
         upcomingRefs.current.forEach((a, i) => {
           const slot = slotOf(i)

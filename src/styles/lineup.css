@@ -398,7 +398,7 @@
 .dd-beetroot {
   position: absolute;
   z-index: 2;
-  width: clamp(120px, 13vw, 210px);
+  width: clamp(120px, 15vw, 300px);
   height: auto;
   left: 76%;
   top: 12%;
@@ -408,7 +408,7 @@
 /* 반 자른 비트 — 조금 늦게, 반대로 기울어 떨어진다 */
 .dd-beetroot[data-half] {
   --rz: -16deg;
-  width: clamp(96px, 9.5vw, 150px);
+  width: clamp(96px, 11vw, 220px);
   left: 44%;
   top: 62%;
   animation-delay: 550ms;
@@ -584,7 +584,7 @@
   right: clamp(16px, 6vw, 96px);
 }
 .dd-s4 .items img {
-  width: clamp(84px, 9vw, 128px);
+  width: clamp(84px, 11vw, 200px);
   height: auto;
 }
 .dd-s4 .items .no {
@@ -959,7 +959,7 @@ body:has(.dd-cookie) .dd-floatbuy {
 }
 /* 흐르는 파우치는 화면 높이에도 맞춘다 — 낮은 화면에서 글자를 덮지 않게 */
 .dd-traveler .dd-pouch {
-  --w: clamp(140px, min(19vw, 27svh), 290px);
+  --w: clamp(140px, min(22vw, 34svh), 460px); /* PC 에서 더 크게 (1차 수정 뒤 요청) — 화면 폭 · 높이 중 작은 쪽에 맞춘다 */
 }
 
 /* 3D 그림 파우치 (SvgPouch) — v1 ~ v4 와 같은 그림 */
@@ -1650,7 +1650,7 @@ body:has(.dd-cookie) .dd-kakaofloat {
   cursor: grabbing;
 }
 .dd-stage .dd-pouch {
-  --w: clamp(170px, 21vw, 300px);
+  --w: clamp(170px, 24vw, 360px);
 }
 @keyframes dd-float {
   50% {
@@ -1907,7 +1907,7 @@ body:has(.dd-cookie) .dd-kakaofloat {
   height: 66%;
 }
 .dd-card .pic .dd-pouch {
-  --w: 120px;
+  --w: 130px;
 }
 .dd-card .pic .dd-pouch svg {
   height: 100%;
