@@ -154,10 +154,15 @@ export function MoreFromDoldol({ exceptProductId }: { exceptProductId?: number }
   )
 }
 
-/** 멈춰 있는 제품 그림 — 파우치는 살짝 비스듬히 (도안이 있으면 입체 상품컷), 병 · 유리병은 SVG */
+/**
+ * 멈춰 있는 제품 그림 — 파우치는 살짝 비스듬히 (도안이 있으면 입체 상품컷).
+ * 병 · 통은 대표 이미지(누끼 — 관리자 상품 화면)가 있으면 그 사진, 없으면 그려 둔 SVG
+ */
 export function ProductFigure({ product }: { product: Product }) {
   const kind = artKind(product.art)
-  if (kind !== 'pouch') return <ProductArt kind={kind} />
+  if (kind !== 'pouch') {
+    return product.imageUrl ? <img className="dd-cutout" src={product.imageUrl} alt="" draggable={false} /> : <ProductArt kind={kind} />
+  }
   return <StillPouch front={product.artFrontUrl} back={product.artBackUrl} />
 }
 

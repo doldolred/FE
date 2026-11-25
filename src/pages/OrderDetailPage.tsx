@@ -182,7 +182,7 @@ export default function OrderDetailPage() {
               </li>
             ))}
           </ul>
-          <dl className="mt-4 space-y-1.5 border-t-2 border-dashed border-[#222021]/25 pt-4 text-sm">
+          <dl className="mt-4 space-y-1.5 border-t border-[#222021]/15 pt-4 text-sm">
             <div className="flex justify-between">
               <dt className="text-neutral-500">상품 금액</dt>
               <dd className="font-bold">{formatPrice(order.itemsPrice)}</dd>

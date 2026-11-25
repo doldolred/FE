@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { fetchProducts } from '../api/products'
 import { queryKeys } from '../api/queryKeys'
 import type { Product } from '../api/types'
 import { ProductFigure } from '../components/lineup/Stage'
+import InstagramFeed from '../components/home/InstagramFeed'
+import { KakaoBanner } from '../components/promo/KakaoChannel'
 import HomeReviews from '../components/review/HomeReviews'
+import { INGREDIENTS } from '../data/ingredients'
 import SvgPouch from '../components/lineup/SvgPouch'
 import { artKind, mainProductOf, shortName } from '../data/lineup'
 import { formatPrice } from '../lib/format'
@@ -20,8 +23,11 @@ import { BOX_HANDOFF, BOX_HOLD, POUCH_GL_FRAME, posePouch } from '../lib/pouch'
  *                   어떤 제품을 어떤 순서로 둘지는 관리자 상품 화면(상태 · 라인업 순서). 가운데 = 맨 앞 판매중 상품
  *   1 원물          현무암 위 — 제주 겨울 비트 100%, 통비트가 떨어진다
  *   2 공법          흰 바탕 — 정제수 0%, 제품 정보 카드
- *   3 마무리        현무암 위 — 화면이 붙잡힌 채 열린 상자로 파우치가 들어가고, 뚜껑이 닫힌 뒤 상자가 일어서 윗면(RED BEET)을 보인다 (lib/box3d)
+ *   3 성분          흰 바탕 — 화면이 붙잡힌 채 비트 성분이 양옆에서 하나씩 들어왔다 나간다 (data/ingredients)
+ *   4 기관 평가     현무암 위 — IOC · AIS, 식이 질산염 수치 두 가지 + 안내 문구 (고객사 요청 문구 그대로)
+ *   5 마무리        현무암 위 — 화면이 붙잡힌 채 열린 상자로 파우치가 들어가고, 뚜껑이 닫힌 뒤 상자가 일어서 윗면(RED BEET)을 보인다 (lib/box3d)
  *   구매 띠         옵션 · 가격 · 구매하기
+ *   카카오 띠       채널 추가 쿠폰 안내 (components/promo/KakaoChannel)
  *   후기            자사몰 후기 (components/review/HomeReviews) — 평점 요약 + 베스트 · 최신 후기 카드
  *
  * 파우치는 네 장면 위를 내내 따라가는 한 장 (components/lineup/SvgPouch — WebGL 입체 모델). 세로로 천천히 넘어가며 돈다 (rx).
@@ -47,7 +53,7 @@ interface Key {
 
 /**
  * s = 흐름 맨 위에서 내려온 정도 (0 ~ 1 = 0번 장면, 1 = 1번 …). x · y 는 화면 비율.
- * 도는 것은 세로(rx)로, 처음부터 끝까지 두 바퀴 — 글을 읽는 자리(1번 · 2번 장면 가운데, 마무리)에서는 바로 선다.
+ * 도는 것은 세로(rx)로, 처음부터 끝까지 세 바퀴 — 글을 읽는 자리(1번 · 2번 장면 가운데, 마무리)에서는 바로 선다.
  * narrow(휴대폰): 글자가 위 · 아래로 쌓이니 파우치는 가운데 빈 띠에 작게 — 제목 · 카드와 겹치지 않게.
  */
 function buildKeys(d: number, narrow: boolean): Key[] {
@@ -60,8 +66,13 @@ function buildKeys(d: number, narrow: boolean): Key[] {
       { s: 1.25, x: 0.04, y: 0.1, rz: 6, ry: -10, rx: 360, sc: 0.82 },
       { s: 1.75, x: 0, y: 0.12, rz: -6, ry: 0, rx: 520, sc: 0.8 },
       { s: 2.3, x: 0, y: -0.03, rz: -8, ry: -10, rx: 720, sc: 0.72 }, // 제목과 제품 정보 카드 사이
-      { s: 2.7, x: 0, y: 0.1, rz: 4, ry: 6, rx: 720, sc: 0.78 },
-      { s: 3.0, x: 0, y: -0.13, rz: 0, ry: 0, rx: 720, sc: 0.62 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
+      // 3 성분 — 제목과 성분 글 사이에 서서 천천히 몸을 돌린다
+      { s: 3.0, x: 0, y: -0.07, rz: 0, ry: -16, rx: 720, sc: 0.62 },
+      { s: 3.75, x: 0, y: -0.07, rz: 0, ry: 16, rx: 720, sc: 0.62 },
+      // 4 기관 평가 — 글이 화면을 다 쓰니 아래로 빠졌다가
+      { s: 4.15, x: 0, y: 0.9, rz: 6, ry: 0, rx: 900, sc: 0.6 },
+      { s: 4.75, x: 0, y: 0.9, rz: 0, ry: 0, rx: 1080, sc: 0.6 },
+      { s: 5.0, x: 0, y: -0.13, rz: 0, ry: 0, rx: 1080, sc: 0.62 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
     ]
   }
   return [
@@ -74,8 +85,13 @@ function buildKeys(d: number, narrow: boolean): Key[] {
     { s: 1.25, x: 0.2, y: 0.06, rz: -8, ry: -14, rx: 360, sc: 1.05 },
     { s: 1.75, x: 0.12, y: 0.12, rz: 8, ry: 0, rx: 520, sc: 1.05 },
     { s: 2.3, x: 0.2, y: 0.04, rz: -10, ry: -12, rx: 720, sc: 1.1 },
-    { s: 2.7, x: 0.06, y: 0.1, rz: 4, ry: 6, rx: 720, sc: 0.95 },
-    { s: 3.0, x: 0.0, y: -0.15, rz: 0, ry: 0, rx: 720, sc: 0.72 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
+    // 3 성분 — 가운데 서서 천천히 몸을 돌린다 (성분은 양옆에서 들어온다)
+    { s: 3.0, x: 0, y: 0.03, rz: 0, ry: -16, rx: 720, sc: 0.95 },
+    { s: 3.75, x: 0, y: 0.03, rz: 0, ry: 16, rx: 720, sc: 0.95 },
+    // 4 기관 평가 — 글은 왼쪽, 파우치는 오른쪽
+    { s: 4.25, x: 0.28, y: 0.05, rz: 7, ry: -10, rx: 1080, sc: 0.9 },
+    { s: 4.7, x: 0.2, y: 0.1, rz: 4, ry: 6, rx: 1080, sc: 0.9 },
+    { s: 5.0, x: 0.0, y: -0.15, rz: 0, ry: 0, rx: 1080, sc: 0.72 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
   ]
 }
 
@@ -123,6 +139,8 @@ export default function HomePage() {
   const s3Ref = useRef<HTMLElement>(null)
   const boxHostRef = useRef<HTMLDivElement>(null)
   const copyRef = useRef<HTMLDivElement>(null)
+  const ingRef = useRef<HTMLElement>(null)
+  const ingCountRef = useRef<HTMLElement>(null)
   const boxStageRef = useRef<BoxStage | null>(null)
   const lineupRef = useRef<HTMLDivElement>(null)
   const mainItemRef = useRef<HTMLAnchorElement>(null)
@@ -253,6 +271,9 @@ export default function HomePage() {
     let boxP = -1
     let boxKey = ''
     let gone = -1
+    // 성분 구간
+    const ingItems = [...(ingRef.current?.querySelectorAll<HTMLElement>('.items li') ?? [])]
+    let ingSeen = -1
 
     const setItem = (a: HTMLElement | null, x: number, y: number, r: number, o: number, dwell: number) => {
       if (!a) return
@@ -279,7 +300,7 @@ export default function HomePage() {
       hover += (mainHot - hover) * 0.15
 
       // 파우치 — 마무리로 갈수록 흔들림을 멈추고 상자 위에 바로 선다
-      const calm = clamp01((s - 2.6) / 0.4)
+      const calm = clamp01((s - (secs.length - 1.4)) / 0.4)
       // 상자 장면이 넘겨받을 때 파우치가 상자 속 파우치보다 작으면 안 된다 (뚜껑 뒤로 멀어지는 셈) — 세로로 긴 화면에서는 그만큼 키운다
       const stage = boxStageRef.current
       const minSc = stage ? (stage.pouchPx() * 1.05) / (pouch.offsetHeight * POUCH_GL_FRAME.scale) : 0
@@ -287,6 +308,26 @@ export default function HomePage() {
       const x = k.x * vw
       const y = k.y * vh + bob * (1 - calm) - hover * 8
       posePouch(pouch, { x, y, rz: k.rz, ry: k.ry, rx: k.rx, sc })
+
+      // 성분 — 붙잡힌 동안 하나씩 제 쪽 옆에서 들어왔다가 위로 사라진다 (마지막 것은 남는다)
+      const ingBox = ingRef.current?.getBoundingClientRect()
+      if (ingBox && ingBox.top < vh && ingBox.bottom > 0) {
+        const n = ingItems.length
+        // 들어오는 동안(-1 ~ 0) + 붙잡힌 동안(0 ~ n)
+        const at = ingBox.top > 0 ? -ingBox.top / vh : clamp01(-ingBox.top / Math.max(1, ingBox.height - vh)) * n
+        if (at !== ingSeen) {
+          ingSeen = at
+          ingItems.forEach((el, i) => {
+            const local = at - i
+            const tin = smooth(clamp01(i === 0 ? (local + 0.45) / 0.4 : local / 0.3))
+            const tout = i === n - 1 ? 0 : smooth(clamp01((local - 0.75) / 0.25))
+            const side = el.dataset.side === 'right' ? 1 : -1
+            el.style.opacity = (tin * (1 - tout)).toFixed(3)
+            el.style.transform = `translate3d(${(side * (1 - tin) * 90).toFixed(1)}px, ${(-tout * 36).toFixed(1)}px, 0)`
+          })
+          if (ingCountRef.current) ingCountRef.current.textContent = String(Math.min(n, Math.max(1, Math.floor(at) + 1))).padStart(2, '0')
+        }
+      }
 
       // 마무리 — 붙잡힌 동안의 진행(p)으로 상자 장면을 그린다. p 가 BOX_HANDOFF 에 이르면 상자 장면이 같은 자리 · 같은 크기의 파우치를 세우고,
       // 흐르던 파우치는 사라진다 (그 뒤는 상자 장면 안에서 상자로 들어간다)
@@ -483,7 +524,63 @@ export default function HomePage() {
           </aside>
         </section>
 
-        {/* 3 마무리 — 현무암 위. 화면이 붙잡힌 채 파우치가 상자에 들어가고, 뚜껑이 닫힌 뒤 상자가 일어서 윗면을 보인다 */}
+        {/* 3 성분 — 흰 바탕. 화면이 붙잡힌 채 성분이 양옆에서 하나씩 들어왔다 나간다 */}
+        <section className="dd-sec dd-s4" data-tone="light" ref={ingRef} style={{ '--n': INGREDIENTS.length } as CSSProperties} aria-label="비트 성분">
+          <div className="stage">
+            <p className="kicker dd-kicker">INSIDE · 비트 성분</p>
+            <h2 className="title">
+              비트 한 뿌리에
+              <br />
+              들어 있는 것
+            </h2>
+            <p className="count" aria-hidden="true">
+              <b ref={ingCountRef}>01</b> / {String(INGREDIENTS.length).padStart(2, '0')}
+            </p>
+            <ol className="items">
+              {INGREDIENTS.map((g, i) => (
+                <li key={g.en} data-side={i % 2 ? 'right' : 'left'}>
+                  <img src={g.img} alt="" width={640} height={640} loading="lazy" />
+                  <p className="no">{String(i + 1).padStart(2, '0')}</p>
+                  <h3>
+                    {g.ko}
+                    <span>{g.en}</span>
+                  </h3>
+                  <p className="text">{g.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* 4 기관 평가 — 현무암 위. 문구 · 수치는 고객사 요청서 그대로 */}
+        <section className="dd-sec dd-s5" data-tone="dark" aria-label="기관 평가">
+          <div className="dd-rock" data-flat-bottom="" aria-hidden="true" />
+          <div className="inner">
+            <p className="eyebrow dd-kicker">IOC · AIS</p>
+            <h2>
+              국제올림픽위원회(IOC) &amp; 호주스포츠연구소(AIS)가 주목한 <em>최상위 Group A 성분,</em> 식이 질산염
+            </h2>
+            <ul className="stats">
+              <li>
+                <span className="k">운동 시 근육 산소 소모량</span>
+                <b>
+                  <small>약</small>3~5%
+                </b>
+                <span className="v">감소</span>
+              </li>
+              <li>
+                <span className="k">고강도 운동 시 탈진 도달 시간</span>
+                <b>
+                  <small>약</small>15%
+                </b>
+                <span className="v">연장</span>
+              </li>
+            </ul>
+            <p className="note">※ 원물(레드비트) 및 식이 질산염에 대한 학술 연구 기준이며, 제품 효능과 무관합니다.</p>
+          </div>
+        </section>
+
+        {/* 5 마무리 — 현무암 위. 화면이 붙잡힌 채 파우치가 상자에 들어가고, 뚜껑이 닫힌 뒤 상자가 일어서 윗면을 보인다 */}
         <section className="dd-sec dd-s3" data-tone="dark" ref={s3Ref} aria-label="매일 한 포">
           <div className="stage">
             <div className="dd-rock" data-flat-bottom="" aria-hidden="true" />
@@ -532,8 +629,14 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 카카오톡 채널 쿠폰 띠 */}
+      <KakaoBanner />
+
       {/* 자사몰 후기 — 후기가 하나도 없거나 서버에 닿지 못하면 구간째 숨는다 */}
       <HomeReviews products={products} />
+
+      {/* 인스타그램 */}
+      <InstagramFeed />
 
       {/* 떠 있는 구매 버튼 — 스크롤 중 언제든 구매 화면으로 */}
       <Link to={mainHref} className="dd-floatbuy" ref={floatRef}>

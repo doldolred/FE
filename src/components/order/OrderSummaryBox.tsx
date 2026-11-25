@@ -53,7 +53,7 @@ export default function OrderSummaryBox({ itemsPrice, shippingFee, discountAmoun
           <dd className="font-bold">{shippingFee === 0 ? '무료' : formatPrice(shippingFee)}</dd>
         </div>
       </dl>
-      <div className="mt-4 flex items-end justify-between border-t-2 border-dashed border-[#222021]/30 pt-4">
+      <div className="mt-4 flex items-end justify-between border-t border-[#222021]/15 pt-4">
         <span className="font-black">총 결제 금액</span>
         <span className="dd-price-big">{formatPrice(itemsPrice - discountAmount - pointsUsed + shippingFee)}</span>
       </div>

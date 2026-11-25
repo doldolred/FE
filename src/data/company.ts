@@ -24,3 +24,22 @@ export const COMPANY = {
 
 /** 공정위 사업자정보 확인 페이지 */
 export const BUSINESS_INFO_URL = `https://www.ftc.go.kr/bizCommPop.do?wrkr_no=${COMPANY.businessNumber.replaceAll('-', '')}`
+
+/**
+ * 카카오톡 채널 — 채널 추가 유도(메인 띠 · 떠 있는 알약)에 쓴다.
+ * url 이 비어 있으면 버튼은 눌리지 않고 "연결 전"으로 보인다. 채널 주소(예: https://pf.kakao.com/_xxxx)를 받으면 채운다.
+ */
+export const KAKAO_CHANNEL = {
+  url: '',
+  coupon: '3,000원',
+}
+
+/**
+ * 인스타그램 — 메인 맨 아래 피드. handle(@ 없이) · url · posts(그림 주소 + 게시물 주소)를 받으면 채운다.
+ * posts 가 비어 있으면 브랜드 그림으로 자리만 잡고 "계정 연결 전"이라고 밝힌다.
+ */
+export const INSTAGRAM: { handle: string; url: string; posts: { img: string; url: string }[] } = {
+  handle: '',
+  url: '',
+  posts: [],
+}

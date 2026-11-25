@@ -51,7 +51,7 @@ export default function WishlistPage() {
                   <article
                     key={p.id}
                     className="dd-card relative"
-                    style={{ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage, borderColor: '#222021', boxShadow: '6px 6px 0 #222021' } as CSSProperties}
+                    style={{ '--c-bg': c.bg, '--c-fg': c.dark ? '#fff' : '#222021', '--c-stage': c.stage } as CSSProperties}
                   >
                     <Link to={`/products/${p.id}`} className="block">
                       <div className="pic" data-art={artKind(p.art)}>

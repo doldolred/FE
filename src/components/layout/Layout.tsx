@@ -1,5 +1,6 @@
 import { Outlet, useMatch } from 'react-router-dom'
 import JuiceSplash from '../JuiceSplash'
+import { KakaoFloat } from '../promo/KakaoChannel'
 import CookieNotice from './CookieNotice'
 import Footer from './Footer'
 import Header from './Header'
@@ -22,14 +23,16 @@ export default function Layout() {
           <Outlet />
         </main>
       ) : (
-        // 나머지 손님 화면 — v4 크림 바탕 (styles/store.css .dd-sub)
+        // 나머지 손님 화면 — 흰 바탕. 맨 위에 메인과 같은 현무암 띠(돌 가장자리)가 깔린다 (styles/store.css .dd-sub · .dd-subtop)
         <main id="main" className="dd-sub flex-1">
+          <div className="dd-subtop" aria-hidden="true" />
           <div className="mx-auto w-full max-w-6xl px-4 py-10 md:py-14">
             <Outlet />
           </div>
         </main>
       )}
       <Footer dark />
+      <KakaoFloat />
       <CookieNotice />
       <JuiceSplash />
     </div>
