@@ -31,40 +31,50 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 
 const W = 1
 const H = 1.6 // 몸통 높이 (도안 2:3.3 을 거의 그대로)
-const T = 0.125 // 가장 부푼 곳의 반 두께
+const T = 0.15 // 가장 부푼 곳(아랫배)의 반 두께
 const SEAM = 0.035 // 접착된 가장자리 (두께 0)
-const R_TOP = 0.1
 const R_BOTTOM = 0.07
+/** 어깨 — 위 두 귀퉁이를 비스듬히 깎은 스파우트 파우치 모양 */
+const SHOULDER_H = 0.17
+const TOP_HW = 0.29 // 맨 위의 반 폭
+const R_TOP = 0.03
 const CAP_R = 0.108
 const CAP_H = 0.15
 const NECK_R = 0.086
 const NECK_H = 0.075
 /** 몸통 + 목 + 뚜껑 */
-const POUCH_HEIGHT = H + NECK_H + CAP_H
+export const POUCH_HEIGHT = H + NECK_H + CAP_H
+/** 몸통 높이 — 파우치 원점은 몸통 가운데 (바닥 y = -POUCH_BODY_H / 2) */
+export const POUCH_BODY_H = H
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
 const smooth = (n: number) => n * n * (3 - 2 * n)
 /** 가장자리 0 → 안쪽 1 로 둥글게 부푸는 곡선 */
 const swell = (n: number) => Math.sin((clamp01(n) * Math.PI) / 2) ** 0.8
 
-/** 그 높이에서 몸통의 반 폭 — 네 귀퉁이를 둥글게 깎는다 */
+/** 그 높이에서 몸통의 반 폭 — 아래 귀퉁이는 둥글게, 위는 어깨를 비스듬히 깎는다 */
 function halfWidth(v: number) {
   const fromBottom = v * H
   const fromTop = (1 - v) * H
   if (fromBottom < R_BOTTOM) return W / 2 - R_BOTTOM + Math.sqrt(R_BOTTOM ** 2 - (R_BOTTOM - fromBottom) ** 2)
-  if (fromTop < R_TOP) return W / 2 - R_TOP + Math.sqrt(R_TOP ** 2 - (R_TOP - fromTop) ** 2)
+  if (fromTop < SHOULDER_H) {
+    // 어깨가 시작되는 곳은 둥글게 꺾이고, 위로 갈수록 곧게
+    const hw = W / 2 - (W / 2 - TOP_HW) * (1 - fromTop / SHOULDER_H) ** 1.3
+    if (fromTop < R_TOP) return hw - R_TOP + Math.sqrt(R_TOP ** 2 - (R_TOP - fromTop) ** 2)
+    return hw
+  }
   return W / 2
 }
 
 /** 필름 한 장이 앞으로 부푼 정도 */
 function bulge(x: number, v: number, hw: number) {
   const side = swell((hw - Math.abs(x) - SEAM) / (W / 2 - SEAM))
-  const bottom = swell((v * H - SEAM) / (0.3 * H))
-  const top = swell(((1 - v) * H - SEAM) / (0.5 * H))
-  // 즙이 아래로 쏠려 아래가 더 통통하다
-  const body = T * side * bottom * top * (0.82 + 0.3 * (1 - v))
-  // 필름이 살짝 우는 자리
-  const wrinkle = 0.007 * Math.sin(9 * x + 5 * v + 1) * Math.sin(11 * v - 4 * x) * side * bottom * top
+  const top = swell(((1 - v) * H - SEAM) / (0.62 * H))
+  // 스탠딩 파우치 — 바닥(가젯)이 벌어져 서 있고, 아랫배가 가장 통통하며 위로 갈수록 납작해진다
+  const belly = 0.84 + 0.16 * Math.sin((Math.PI / 2) * clamp01(v / 0.16))
+  const body = T * side * top * belly * (1 - 0.32 * v)
+  // 필름이 살짝 우는 자리 (바닥 접힌 곳은 팽팽하다)
+  const wrinkle = 0.007 * Math.sin(9 * x + 5 * v + 1) * Math.sin(11 * v - 4 * x) * side * top * clamp01(v / 0.12)
   // 스파우트가 끼워진 자리 — 위쪽 접착선이 가운데만 배 모양으로 벌어진다
   const fitment = 0.072 * Math.exp(-((x / 0.14) ** 2)) * (1 - smooth(clamp01(((1 - v) * H) / (0.13 * H))))
   return body + wrinkle + fitment
@@ -105,6 +115,34 @@ function bodyFace(facing: 1 | -1) {
   const g = new BufferGeometry()
   g.setAttribute('position', new BufferAttribute(pos, 3))
   g.setAttribute('uv', new BufferAttribute(uv, 2))
+  g.setIndex(index)
+  g.computeVertexNormals()
+  return g
+}
+
+/** 바닥(가젯) — 앞 · 뒤 필름의 아랫단 사이를 막는다. 가운데가 살짝 들린 렌즈 모양. 색은 도안의 빈 자리에서 가져온다 */
+function baseGeometry() {
+  const NU = 56
+  const hw = halfWidth(0)
+  const pos: number[] = []
+  const uv: number[] = []
+  for (let i = 0; i <= NU; i++) {
+    const x = ((2 * i) / NU - 1) * hw
+    const z = bulge(x, 0, hw)
+    const lift = 0.05 * (z / T)
+    pos.push(x, -H / 2, z, x, -H / 2 + lift, 0, x, -H / 2, -z)
+    for (let k = 0; k < 3; k++) uv.push(0.06, 0.35)
+  }
+  const index: number[] = []
+  for (let i = 0; i < NU; i++) {
+    const a = i * 3
+    const b = a + 3
+    // 아래에서 올려다봤을 때 앞면이 되게
+    index.push(a, a + 1, b, a + 1, b + 1, b, a + 1, a + 2, b + 1, a + 2, b + 2, b + 1)
+  }
+  const g = new BufferGeometry()
+  g.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3))
+  g.setAttribute('uv', new BufferAttribute(new Float32Array(uv), 2))
   g.setIndex(index)
   g.computeVertexNormals()
   return g
@@ -193,45 +231,76 @@ export interface PouchArt {
   back?: string | null
 }
 
-/** 렌더러 하나에 파우치 장면을 꾸린다 — 빛 · 재질 · 모양 · 카메라. size 로 캔버스 크기에 맞춘 뒤 render */
-function buildScene(renderer: WebGLRenderer, frontImg: HTMLImageElement, backImg: HTMLImageElement | null, frame: PouchFrame) {
+/** 스튜디오 빛 — 부드러운 환경광 + 앞 위에서 드는 주광 + 약한 역광. 돌려주는 함수로 정리한다 */
+export function studio(renderer: WebGLRenderer, scene: Scene) {
   renderer.toneMapping = NeutralToneMapping
   renderer.toneMappingExposure = 1
-
-  const scene = new Scene()
   const pmrem = new PMREMGenerator(renderer)
   const env = pmrem.fromScene(new RoomEnvironment(), 0.04)
   scene.environment = env.texture
-  scene.environmentIntensity = 0.5
+  scene.environmentIntensity = 0.42
   pmrem.dispose()
 
-  const key = new DirectionalLight(0xffffff, 2.4)
-  key.position.set(-2.2, 2.6, 4)
+  const key = new DirectionalLight(0xffffff, 2.5)
+  key.position.set(-1.8, 2.8, 4.4)
   scene.add(key)
-  const rim = new DirectionalLight(0xffffff, 1.6)
+  const rim = new DirectionalLight(0xffffff, 0.7)
   rim.position.set(3, 1, -3)
   scene.add(rim)
+  return () => env.dispose()
+}
 
+export interface PouchKit {
+  /** 파우치 한 개 — 원점은 몸통 가운데. 모양 · 재질은 서로 나눠 쓴다 */
+  create(): Group
+  dispose(): void
+}
+
+/** 파우치 부품 (모양 · 도안 텍스처 · 재질) — 한 번 만들어 여러 개를 찍어 낸다 */
+export function pouchKit(renderer: WebGLRenderer, frontImg: HTMLImageElement, backImg: HTMLImageElement | null): PouchKit {
   const anisotropy = renderer.capabilities.getMaxAnisotropy()
   const frontTex = artTexture(frontImg, anisotropy)
   const backTex = backImg ? artTexture(backImg, anisotropy) : frontTex
+  // 무광 필름 — 넓고 부드러운 하이라이트만
   const film = (map: CanvasTexture) =>
-    new MeshPhysicalMaterial({ map, roughness: 0.5, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.3 })
-  const plastic = new MeshStandardMaterial({ color: 0xececee, roughness: 0.48, metalness: 0 })
+    new MeshPhysicalMaterial({ map, roughness: 0.62, metalness: 0, clearcoat: 0.14, clearcoatRoughness: 0.55 })
+  const frontFilm = film(frontTex)
+  const backFilm = film(backTex)
+  const plastic = new MeshStandardMaterial({ color: 0xf1f1f2, roughness: 0.42, metalness: 0 })
   const neckPlastic = new MeshStandardMaterial({ color: 0xf6f6f6, roughness: 0.6, metalness: 0 })
-
-  const pouch = new Group()
-  const meshes = [
-    new Mesh(bodyFace(1), film(frontTex)),
-    new Mesh(bodyFace(-1), film(backTex)),
-    new Mesh(new CylinderGeometry(NECK_R, NECK_R, NECK_H + 0.1, 48), neckPlastic),
-    new Mesh(new CylinderGeometry(NECK_R + 0.014, NECK_R + 0.014, 0.018, 48), neckPlastic),
-    new Mesh(capGeometry(), plastic),
+  const parts: { geometry: BufferGeometry; material: MeshStandardMaterial; y: number }[] = [
+    { geometry: bodyFace(1), material: frontFilm, y: 0 },
+    { geometry: bodyFace(-1), material: backFilm, y: 0 },
+    { geometry: baseGeometry(), material: frontFilm, y: 0 },
+    { geometry: new CylinderGeometry(NECK_R, NECK_R, NECK_H + 0.1, 48), material: neckPlastic, y: H / 2 + NECK_H / 2 - 0.05 },
+    { geometry: new CylinderGeometry(NECK_R + 0.014, NECK_R + 0.014, 0.018, 48), material: neckPlastic, y: H / 2 + NECK_H * 0.45 },
+    { geometry: capGeometry(), material: plastic, y: H / 2 + NECK_H },
   ]
-  meshes[2].position.y = H / 2 + NECK_H / 2 - 0.05
-  meshes[3].position.y = H / 2 + NECK_H * 0.45
-  meshes[4].position.y = H / 2 + NECK_H
-  pouch.add(...meshes)
+  return {
+    create() {
+      const g = new Group()
+      for (const p of parts) {
+        const m = new Mesh(p.geometry, p.material)
+        m.position.y = p.y
+        g.add(m)
+      }
+      return g
+    },
+    dispose() {
+      for (const p of parts) p.geometry.dispose()
+      for (const m of [frontFilm, backFilm, plastic, neckPlastic]) m.dispose()
+      frontTex.dispose()
+      backTex.dispose()
+    },
+  }
+}
+
+/** 렌더러 하나에 파우치 장면을 꾸린다 — 빛 · 재질 · 모양 · 카메라. size 로 캔버스 크기에 맞춘 뒤 render */
+function buildScene(renderer: WebGLRenderer, frontImg: HTMLImageElement, backImg: HTMLImageElement | null, frame: PouchFrame) {
+  const scene = new Scene()
+  const disposeStudio = studio(renderer, scene)
+  const kit = pouchKit(renderer, frontImg, backImg)
+  const pouch = kit.create()
   // 화면에 보이는 높이(파우치 단위) · 파우치 바닥을 상자 바닥에
   const viewH = POUCH_HEIGHT / (frame.scale * frame.box)
   pouch.position.y = H / 2 - (frame.box * viewH) / 2
@@ -253,20 +322,15 @@ function buildScene(renderer: WebGLRenderer, frontImg: HTMLImageElement, backImg
     },
     render: () => renderer.render(scene, camera),
     dispose() {
-      for (const m of meshes) {
-        m.geometry.dispose()
-        ;(m.material as MeshStandardMaterial).dispose()
-      }
-      frontTex.dispose()
-      backTex.dispose()
-      env.dispose()
+      kit.dispose()
+      disposeStudio()
       renderer.dispose()
       renderer.forceContextLoss()
     },
   }
 }
 
-const loadArt = (art: PouchArt) => Promise.all([loadImage(art.front), art.back ? loadImage(art.back) : null])
+export const loadArt = (art: PouchArt) => Promise.all([loadImage(art.front), art.back ? loadImage(art.back) : null])
 
 /** canvas 에 파우치를 그린다. 캔버스의 CSS 크기는 호출한 쪽이 정한다. 각도가 바뀔 때만 다시 그린다. */
 export async function createPouch3D(canvas: HTMLCanvasElement, art: PouchArt, frame: PouchFrame = { box: 1, scale: 0.94 }): Promise<Pouch3D> {

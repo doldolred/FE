@@ -1,5 +1,5 @@
 import { useEffect, useRef, type CSSProperties, type Ref } from 'react'
-import { attachPouch3D } from '../../lib/pouch'
+import { attachPouch3D, POUCH_GL_FRAME as GL_FRAME } from '../../lib/pouch'
 
 /**
  * 3D 그림 파우치 — 프로토타입 v4(protohtml/v4-shared.js)와 같은 그림.
@@ -16,7 +16,6 @@ import { attachPouch3D } from '../../lib/pouch'
  */
 
 /** 캔버스는 상자보다 넉넉하게 (lineup.css .dd-pouch-gl 의 130% 와 같은 값) · 뚜껑은 상자 위로 조금 올라온다 */
-const GL_FRAME = { box: 1 / 1.3, scale: 1.08 }
 /** 상품컷 크기 — 상자 폭 480px 기준 (카드의 파우치가 가장 커도 폭 ~240px, 2배 해상도) */
 const STILL_W = 480
 /** 상품컷은 카드 · 썸네일 칸 안에 들어가야 해서 뚜껑까지 상자 안에 (그림 파우치와 같은 크기) */

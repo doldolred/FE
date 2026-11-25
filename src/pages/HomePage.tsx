@@ -9,7 +9,8 @@ import HomeReviews from '../components/review/HomeReviews'
 import SvgPouch from '../components/lineup/SvgPouch'
 import { artKind, mainProductOf, shortName } from '../data/lineup'
 import { formatPrice } from '../lib/format'
-import { posePouch } from '../lib/pouch'
+import type { BoxStage } from '../lib/box3d'
+import { BOX_HANDOFF, BOX_HOLD, POUCH_GL_FRAME, posePouch } from '../lib/pouch'
 
 /**
  * 메인 — 프로토타입 v4 의 흐름을 1차 수정 요청(미니멀 · 흑백 제주 바다 · 현무암)에 맞춰 다시 짰다.
@@ -19,7 +20,7 @@ import { posePouch } from '../lib/pouch'
  *                   어떤 제품을 어떤 순서로 둘지는 관리자 상품 화면(상태 · 라인업 순서). 가운데 = 맨 앞 판매중 상품
  *   1 원물          현무암 위 — 제주 겨울 비트 100%, 통비트가 떨어진다
  *   2 공법          흰 바탕 — 정제수 0%, 제품 정보 카드
- *   3 마무리        현무암 위 — 파우치가 내려앉고 구매 띠로 이어진다
+ *   3 마무리        현무암 위 — 화면이 붙잡힌 채 열린 상자로 파우치가 들어가고, 뚜껑이 닫힌 뒤 상자가 일어서 윗면(RED BEET)을 보인다 (lib/box3d)
  *   구매 띠         옵션 · 가격 · 구매하기
  *   후기            자사몰 후기 (components/review/HomeReviews) — 평점 요약 + 베스트 · 최신 후기 카드
  *
@@ -59,8 +60,8 @@ function buildKeys(d: number, narrow: boolean): Key[] {
       { s: 1.25, x: 0.04, y: 0.1, rz: 6, ry: -10, rx: 360, sc: 0.82 },
       { s: 1.75, x: 0, y: 0.12, rz: -6, ry: 0, rx: 520, sc: 0.8 },
       { s: 2.3, x: 0, y: -0.03, rz: -8, ry: -10, rx: 720, sc: 0.72 }, // 제목과 제품 정보 카드 사이
-      { s: 2.7, x: 0, y: 0.14, rz: 4, ry: 6, rx: 720, sc: 0.8 },
-      { s: 3.05, x: 0, y: 0.13, rz: 0, ry: 0, rx: 720, sc: 0.78 },
+      { s: 2.7, x: 0, y: 0.1, rz: 4, ry: 6, rx: 720, sc: 0.78 },
+      { s: 3.0, x: 0, y: -0.13, rz: 0, ry: 0, rx: 720, sc: 0.62 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
     ]
   }
   return [
@@ -73,8 +74,8 @@ function buildKeys(d: number, narrow: boolean): Key[] {
     { s: 1.25, x: 0.2, y: 0.06, rz: -8, ry: -14, rx: 360, sc: 1.05 },
     { s: 1.75, x: 0.12, y: 0.12, rz: 8, ry: 0, rx: 520, sc: 1.05 },
     { s: 2.3, x: 0.2, y: 0.04, rz: -10, ry: -12, rx: 720, sc: 1.1 },
-    { s: 2.7, x: 0.06, y: 0.16, rz: 4, ry: 6, rx: 720, sc: 1.0 },
-    { s: 3.05, x: 0.0, y: 0.13, rz: 0, ry: 0, rx: 720, sc: 0.86 },
+    { s: 2.7, x: 0.06, y: 0.1, rz: 4, ry: 6, rx: 720, sc: 0.95 },
+    { s: 3.0, x: 0.0, y: -0.15, rz: 0, ry: 0, rx: 720, sc: 0.72 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
   ]
 }
 
@@ -119,7 +120,9 @@ export default function HomePage() {
 
   const flowRef = useRef<HTMLDivElement>(null)
   const pouchRef = useRef<HTMLDivElement>(null)
-  const plinthRef = useRef<HTMLDivElement>(null)
+  const s3Ref = useRef<HTMLElement>(null)
+  const boxHostRef = useRef<HTMLDivElement>(null)
+  const boxStageRef = useRef<BoxStage | null>(null)
   const lineupRef = useRef<HTMLDivElement>(null)
   const mainItemRef = useRef<HTMLAnchorElement>(null)
   const mainArtRef = useRef<HTMLDivElement>(null)
@@ -153,6 +156,42 @@ export default function HomePage() {
     io.observe(el)
     return () => io.disconnect()
   }, [])
+
+  // 마무리의 상자 장면 — three.js 를 그때 불러온다. 도안이 없거나 WebGL 이 안 되면 장면을 짧게 접는다 (data-nobox)
+  const artFront = main?.artFrontUrl
+  const artBack = main?.artBackUrl
+  const loaded = !!products
+  useEffect(() => {
+    const host = boxHostRef.current
+    const sec = s3Ref.current
+    if (!host || !sec || !loaded) return
+    if (!artFront) {
+      sec.setAttribute('data-nobox', '')
+      return () => sec.removeAttribute('data-nobox')
+    }
+    let dead = false
+    let stage: BoxStage | null = null
+    // 실행마다 새 캔버스 — 정리할 때 WebGL 을 놓아 버리므로 다시 쓸 수 없다
+    const canvas = document.createElement('canvas')
+    host.append(canvas)
+    import('../lib/box3d')
+      .then((m) => m.createBoxStage(canvas, { front: artFront, back: artBack }))
+      .then((s) => {
+        if (dead) return s.dispose()
+        stage = s
+        boxStageRef.current = s
+      })
+      .catch(() => {
+        if (!dead) sec.setAttribute('data-nobox', '')
+      })
+    return () => {
+      dead = true
+      boxStageRef.current = null
+      stage?.dispose()
+      canvas.remove()
+      sec.removeAttribute('data-nobox')
+    }
+  }, [artFront, artBack, loaded])
 
   // 흐름 — 스크롤 위치로 파우치 · 라인업 칸을 매 프레임 옮긴다 (React 렌더 없이 직접)
   useEffect(() => {
@@ -200,6 +239,11 @@ export default function HomePage() {
     let logoOver = false
     let sea = -1
     let floating = false
+    // 상자 장면에 마지막으로 넘긴 값 (같으면 다시 그리지 않는다)
+    let boxSeen: BoxStage | null = null
+    let boxP = -1
+    let boxKey = ''
+    let gone = -1
 
     const setItem = (a: HTMLElement | null, x: number, y: number, r: number, o: number, dwell: number) => {
       if (!a) return
@@ -225,18 +269,47 @@ export default function HomePage() {
       const mainHot = dwell > 0.5 && mainItemRef.current?.matches(':hover, :focus-visible') ? 1 : 0
       hover += (mainHot - hover) * 0.15
 
-      // 파우치 — 마지막 구간은 받침대 윗면에 정확히 내려앉는다 (받침대 위치를 매번 재서 맞춘다)
-      const sc = k.sc * (1 + hover * 0.05)
-      const land = smooth(clamp01((s - 2.5) / 0.55))
-      const halfH = (pouch.offsetHeight * sc) / 2
-      const plinthTop = plinthRef.current?.getBoundingClientRect().top ?? vh
-      // 흐름 끝을 지나면 sticky 가 풀려 파우치 칸이 같이 올라간다 — 화면 가운데가 아니라 칸의 실제 가운데에서 잰다
-      const tr = pouch.parentElement?.getBoundingClientRect()
-      const center = tr ? tr.top + tr.height / 2 : vh / 2
-      const landY = plinthTop - center - halfH + 6
+      // 파우치 — 마무리로 갈수록 흔들림을 멈추고 상자 위에 바로 선다
+      const calm = clamp01((s - 2.6) / 0.4)
+      // 상자 장면이 넘겨받을 때 파우치가 상자 속 파우치보다 작으면 안 된다 (뚜껑 뒤로 멀어지는 셈) — 세로로 긴 화면에서는 그만큼 키운다
+      const stage = boxStageRef.current
+      const minSc = stage ? (stage.pouchPx() * 1.05) / (pouch.offsetHeight * POUCH_GL_FRAME.scale) : 0
+      const sc = (k.sc + Math.max(0, minSc - k.sc) * calm) * (1 + hover * 0.05)
       const x = k.x * vw
-      const y = k.y * vh * (1 - land) + landY * land + bob * (1 - land) - hover * 8
+      const y = k.y * vh + bob * (1 - calm) - hover * 8
       posePouch(pouch, { x, y, rz: k.rz, ry: k.ry, rx: k.rx, sc })
+
+      // 마무리 — 붙잡힌 동안의 진행(p)으로 상자 장면을 그린다. p 가 BOX_HANDOFF 에 이르면 상자 장면이 같은 자리 · 같은 크기의 파우치를 세우고,
+      // 흐르던 파우치는 사라진다 (그 뒤는 상자 장면 안에서 상자로 들어간다)
+      const sec3 = s3Ref.current
+      const r3 = sec3?.getBoundingClientRect()
+      const p = r3 ? clamp01(-r3.top / Math.max(1, r3.height - vh)) : 0
+      const goneNow = stage ? clamp01((p - BOX_HANDOFF) / BOX_HOLD) : 0
+      if (goneNow !== gone) {
+        gone = goneNow
+        pouch.style.opacity = (1 - gone).toFixed(3)
+        pouch.style.visibility = gone >= 1 ? 'hidden' : ''
+      }
+      if (stage && r3 && r3.top < vh && r3.bottom > 0) {
+        const host = boxHostRef.current!.getBoundingClientRect()
+        // 흐름 끝을 지나면 sticky 가 풀려 파우치 칸이 같이 올라간다 — 화면 가운데가 아니라 칸의 실제 가운데에서 잰다
+        const tr = pouch.parentElement!.getBoundingClientRect()
+        const boxH = pouch.offsetHeight * sc
+        const from = {
+          x: tr.left + tr.width / 2 + x - host.left,
+          // 파우치 바닥은 상자 바닥, 전체 높이는 상자의 scale 배 → 가운데는 그만큼 위
+          y: tr.top + tr.height / 2 + y - (boxH * (POUCH_GL_FRAME.scale - 1)) / 2 - host.top,
+          h: boxH * POUCH_GL_FRAME.scale,
+        }
+        const key = `${from.x.toFixed(1)},${from.y.toFixed(1)},${from.h.toFixed(1)},${host.width},${host.height}`
+        if (stage !== boxSeen || p !== boxP || key !== boxKey) {
+          boxSeen = stage
+          boxP = p
+          boxKey = key
+          stage.set(p, from)
+          sec3!.style.setProperty('--bx', p.toFixed(3))
+        }
+      }
 
       // 바다 — 옆 제품이 빠지는 동안 위아래로 넓어져 화면을 채운다
       const seaNow = Math.round(smooth(clamp01((s - (DWELL_OUT - 0.04)) / (SIDES_GONE - DWELL_OUT + 0.04))) * 1000) / 1000
@@ -261,7 +334,7 @@ export default function HomePage() {
         }
         const pr = (pouch.firstElementChild as HTMLElement).getBoundingClientRect()
         const inset = pr.width * 0.14 // 상자보다 파우치가 좁다
-        const over = pr.left + inset < lr.right && pr.right - inset > lr.left && pr.top < lr.bottom && pr.bottom > lr.top
+        const over = gone < 1 && pr.left + inset < lr.right && pr.right - inset > lr.left && pr.top < lr.bottom && pr.bottom > lr.top
         if (over !== logoOver) {
           logoOver = over
           if (over) root.style.setProperty('--dd-hero-logo', '#fff')
@@ -401,18 +474,25 @@ export default function HomePage() {
           </aside>
         </section>
 
-        {/* 3 마무리 — 현무암 위에 파우치가 내려앉는다 */}
-        <section className="dd-sec dd-s3" data-tone="dark" aria-label="매일 한 포">
-          <div className="dd-rock" data-flat-bottom="" aria-hidden="true" />
-          <div className="big">+ Daily Red</div>
-          <p className="caption">
-            매일 한 포,
-            <br />
-            붉은 습관.
-            <br />
-            120ml × 30포
-          </p>
-          <div className="dd-plinth" ref={plinthRef} aria-hidden="true" />
+        {/* 3 마무리 — 현무암 위. 화면이 붙잡힌 채 파우치가 상자에 들어가고, 뚜껑이 닫힌 뒤 상자가 일어서 윗면을 보인다 */}
+        <section className="dd-sec dd-s3" data-tone="dark" ref={s3Ref} aria-label="매일 한 포">
+          <div className="stage">
+            <div className="dd-rock" data-flat-bottom="" aria-hidden="true" />
+            <div className="boxgl" ref={boxHostRef} aria-hidden="true" />
+            <div className="copy">
+              <div className="big">
+                + Daily <br />
+                Red
+              </div>
+              <p className="caption">
+                매일 한 포,
+                <br />
+                붉은 습관.
+                <br />
+                120ml × 30포
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* 네 장면 위를 내내 따라가는 비트즙 파우치 */}

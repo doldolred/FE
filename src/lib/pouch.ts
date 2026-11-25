@@ -16,6 +16,16 @@ export interface PouchPose {
   sc?: number
 }
 
+/**
+ * WebGL 캔버스 안에서 파우치가 놓이는 자리 — 캔버스가 파우치 상자(.dd-pouch)보다 위아래로 15% 씩 넉넉하고(box),
+ * 파우치 전체 높이(뚜껑 포함)는 상자 높이의 1.08 배(scale), 바닥은 상자 바닥에 닿는다.
+ */
+export const POUCH_GL_FRAME = { box: 1 / 1.3, scale: 1.08 }
+
+/** 메인 마무리의 상자 연출(lib/box3d) — 진행 p 가 여기에 이르면 흐르던 파우치를 상자 장면이 넘겨받고, HOLD 동안 흐르던 파우치가 사라진다 */
+export const BOX_HANDOFF = 0.1
+export const BOX_HOLD = 0.03
+
 /** WebGL 파우치가 붙은 요소 → 도는 각도를 받는 함수 */
 const live3d = new WeakMap<HTMLElement, (ry: number, rx: number) => void>()
 const lastPose = new WeakMap<HTMLElement, PouchPose>()

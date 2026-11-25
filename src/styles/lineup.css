@@ -503,63 +503,68 @@
   word-break: keep-all;
 }
 
-/* 3 마무리 — 현무암 위에 파우치가 내려앉고, 아래 구매 띠로 이어진다 */
+/*
+ * 3 마무리 — 현무암 위. 화면(.stage)이 붙잡힌 채 스크롤(--bx 0 → 1)에 따라 파우치가 상자에 들어가고,
+ * 뚜껑이 닫힌 뒤 상자가 일어서 윗면을 보인다 (lib/box3d 가 .boxgl 캔버스에 그린다). 아래는 구매 띠로 이어진다.
+ * data-nobox = 상자 장면을 못 쓸 때 (도안 없음 · WebGL 안 됨) — 붙잡지 않고 한 화면으로 지나간다
+ */
 .dd-s3 {
-  min-height: 110svh;
+  height: 330svh;
+  min-height: 0;
   overflow: visible;
   overflow-x: clip;
   color: #fff;
 }
-.dd-s3::after {
+.dd-s3[data-nobox] {
+  height: 110svh;
+}
+.dd-s3 .stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+.dd-s3 .stage::after {
   content: '';
   position: absolute;
   inset: auto 0 0 0;
-  height: 34%;
+  height: 30%;
   background: linear-gradient(180deg, rgba(34, 32, 33, 0), var(--dd-navy));
+  pointer-events: none;
+}
+.dd-s3 .boxgl {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.dd-s3 .boxgl canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* 글은 왼쪽에 — 상자는 가운데 */
+.dd-s3 .copy {
+  position: absolute;
+  left: clamp(16px, 6vw, 96px);
+  top: 46%;
+  translate: 0 -50%;
+  z-index: 4;
+  display: grid;
+  gap: clamp(14px, 2vh, 22px);
 }
 .dd-s3 .big {
-  position: absolute;
-  left: 50%;
-  top: 22%;
-  translate: -50% -50%;
-  z-index: 1;
   font-family: var(--dd-font-display);
-  font-size: clamp(72px, 14vw, 230px);
-  line-height: 0.9;
+  font-size: clamp(44px, 5vw, 88px);
+  line-height: 0.95;
   white-space: nowrap;
   text-transform: uppercase;
 }
 .dd-s3 .caption {
-  position: absolute;
-  left: clamp(16px, 6vw, 96px);
-  top: 40%;
-  z-index: 4;
   margin: 0;
   max-width: 18ch;
   font-weight: 600;
   font-size: clamp(15px, 1.5vw, 20px);
   line-height: 1.5;
 }
-/* 파우치가 내려앉는 선 — 위치만 잡고, 바닥에 닿는 그림자만 그린다 */
-.dd-plinth {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  translate: -50% 0;
-  z-index: 1;
-  width: min(70vw, 520px);
-  height: 15%;
-}
-.dd-plinth::before {
-  content: '';
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: -16px;
-  height: 34px;
-  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
-}
-
 /* 떠 있는 구매 버튼 — 표지를 지나면 나타나고, 구매 띠가 보이면 숨는다 */
 .dd-floatbuy {
   position: fixed;
@@ -644,11 +649,20 @@ body:has(.dd-cookie) .dd-floatbuy {
     padding: 5px 0;
     font-size: 13px;
   }
+  /* 휴대폰 — 글은 헤더 아래 한 줄 제목 + 짧은 설명, 상자는 그 아래 */
+  .dd-s3 .copy {
+    left: 20px;
+    top: calc(84px + var(--dd-banner, 0px));
+    translate: none;
+    gap: 10px;
+  }
   .dd-s3 .big {
-    top: 16%;
+    font-size: 40px;
+  }
+  .dd-s3 .big br {
+    display: none;
   }
   .dd-s3 .caption {
-    top: 27%;
     font-size: 14px;
   }
   .dd-rock {
