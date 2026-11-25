@@ -122,6 +122,7 @@ export default function HomePage() {
   const pouchRef = useRef<HTMLDivElement>(null)
   const s3Ref = useRef<HTMLElement>(null)
   const boxHostRef = useRef<HTMLDivElement>(null)
+  const copyRef = useRef<HTMLDivElement>(null)
   const boxStageRef = useRef<BoxStage | null>(null)
   const lineupRef = useRef<HTMLDivElement>(null)
   const mainItemRef = useRef<HTMLAnchorElement>(null)
@@ -202,6 +203,8 @@ export default function HomePage() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let d = 0.85
     let keys = buildKeys(d, window.innerWidth < 700)
+    /** 마무리 장면에서 글이 위쪽에 차지한 높이(px) — 글이 왼쪽에 서는 넓은 화면은 0 */
+    let copyTop = 0
 
     /** 라인업 칸 크기 — 그림 칸 높이를 라인업 때 파우치 높이에 맞춘다 */
     const size = () => {
@@ -211,9 +214,15 @@ export default function HomePage() {
       // 고정 화면(.pin)에 둔다 — 라인업 칸과 배경 선반 높이가 같이 쓴다
       lineupRef.current?.parentElement?.style.setProperty('--ah', `${(pouch.offsetHeight * d).toFixed(0)}px`)
       if (mainArtRef.current) mainArtRef.current.style.width = `${(pouch.offsetWidth * d).toFixed(0)}px`
+      // 세로로 길거나 좁은 화면은 글이 위로 올라간다 (lineup.css 의 --copy-top) — 상자가 그 아래로 오게 높이를 넘긴다
+      const copy = copyRef.current
+      const onTop = copy && window.innerWidth / window.innerHeight < 1.25 && getComputedStyle(copy).getPropertyValue('--copy-top').trim() === '1'
+      copyTop = onTop ? Math.round(copy.offsetTop + copy.offsetHeight + 18) : 0
     }
     size()
     window.addEventListener('resize', size)
+    // 글꼴이 늦게 오면 글 높이가 달라진다
+    void document.fonts.ready.then(size)
 
     /**
      * 지금 몇 번째 장면의 어디쯤인가 — 장면 실제 위치 기준이라 모바일 주소창에도 안 어긋난다.
@@ -301,12 +310,12 @@ export default function HomePage() {
           y: tr.top + tr.height / 2 + y - (boxH * (POUCH_GL_FRAME.scale - 1)) / 2 - host.top,
           h: boxH * POUCH_GL_FRAME.scale,
         }
-        const key = `${from.x.toFixed(1)},${from.y.toFixed(1)},${from.h.toFixed(1)},${host.width},${host.height}`
+        const key = `${from.x.toFixed(1)},${from.y.toFixed(1)},${from.h.toFixed(1)},${host.width},${host.height},${copyTop}`
         if (stage !== boxSeen || p !== boxP || key !== boxKey) {
           boxSeen = stage
           boxP = p
           boxKey = key
-          stage.set(p, from)
+          stage.set(p, from, copyTop)
           sec3!.style.setProperty('--bx', p.toFixed(3))
         }
       }
@@ -479,7 +488,7 @@ export default function HomePage() {
           <div className="stage">
             <div className="dd-rock" data-flat-bottom="" aria-hidden="true" />
             <div className="boxgl" ref={boxHostRef} aria-hidden="true" />
-            <div className="copy">
+            <div className="copy" ref={copyRef}>
               <div className="big">
                 + Daily <br />
                 Red

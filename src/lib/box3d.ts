@@ -54,6 +54,9 @@ const FLAP_OPEN = rad(-38)
 const LEAN = rad(60) // 상자 안의 파우치가 뒤로 누운 각도
 const PITCH = rad(24) // 카메라가 내려다보는 각도
 const FOV = 24
+// 화면에서 잰 장면의 세로 길이 (단위) — 바닥 선에서 열린 뚜껑 끝까지 · 바닥 선에서 상자 앞 아랫단까지
+const SCENE_UP = 5.85
+const SCENE_SPAN = SCENE_UP + 0.75
 const SHOW_TURN = rad(-17) // 윗면을 보일 때 옆으로 살짝 돌아 오른쪽 옆면이 보인다
 const SHOW_LEAN = rad(-7) // 뒤로 살짝 기댄다
 
@@ -213,8 +216,11 @@ export interface BoxFrom {
 }
 
 export interface BoxStage {
-  /** p = 진행 0 ~ 1, from = 넘겨받는 자리 (없으면 마지막으로 받은 자리) */
-  set(p: number, from: BoxFrom | null): void
+  /**
+   * p = 진행 0 ~ 1, from = 넘겨받는 자리 (없으면 마지막으로 받은 자리),
+   * top = 화면 위쪽에 글이 차지한 높이(px) — 0 보다 크면 열린 뚜껑이 그 아래로 오게 상자를 줄이고 내린다
+   */
+  set(p: number, from: BoxFrom | null, top?: number): void
   /**
    * 넘겨받는 자리(상자 앞)에 실제 크기의 파우치를 세웠을 때 화면에 보이는 높이(px).
    * 흐르던 파우치가 이보다 작으면 상자보다 멀리 있는 셈이라, 호출한 쪽이 이만큼은 키워서 넘긴다 (아직 크기를 모르면 0)
@@ -321,6 +327,7 @@ export async function createBoxStage(canvas: HTMLCanvasElement, art: PouchArt): 
   const target = new Vector3()
   let cw = 0
   let ch = 0
+  let topPx = 0
   let showScale = 1
   /** 넘겨받는 파우치가 설 수 있는 가장 먼 거리 — 열린 뚜껑보다 앞 (이보다 멀면 뚜껑에 가려 사라진다) */
   let frontDist = 0
@@ -336,11 +343,22 @@ export async function createBoxStage(canvas: HTMLCanvasElement, art: PouchArt): 
     // 윗면을 보일 때 — 넓은 화면은 조금 키우고, 좁은 화면은 옆으로 돈 만큼 넘치지 않게 줄인다
     showScale = aspect < 0.8 ? 0.95 : 1.05
     const sceneH = 5.6 // 바닥 ~ 열린 뚜껑 끝
-    const dist = Math.max(OW / (fitW * 2 * tan * aspect), sceneH / (0.62 * 2 * tan))
+    const widthDist = OW / (fitW * 2 * tan * aspect)
+    let dist: number
+    /** 바닥이 화면 가운데보다 얼마나 아래에 오나 (화면 높이 비율) */
+    let floor: number
+    if (topPx > 0) {
+      // 위에 글이 있는 배치 — 열린 뚜껑 끝이 글 아래로, 상자 앞 아랫단이 아래 여백 위로 오게 맞춘다
+      const avail = Math.max(h * 0.4, h * 0.92 - topPx)
+      dist = Math.max(widthDist, (SCENE_SPAN * h) / (avail * 2 * tan))
+      const unit = h / (2 * dist * tan) // 1 단위가 화면에서 몇 px 인가
+      floor = (topPx + (avail - SCENE_SPAN * unit) / 2 + SCENE_UP * unit) / h - 0.5
+    } else {
+      dist = Math.max(widthDist, sceneH / (0.62 * 2 * tan))
+      floor = Math.min(0.27, (0.5 * sceneH * 0.86) / (2 * dist * tan) + 0.07)
+    }
     const viewH = 2 * dist * tan
     frontDist = dist - 2.5
-    // 바닥이 화면 가운데보다 얼마나 아래에 오나
-    const floor = Math.min(0.27, (0.5 * sceneH * 0.86) / viewH + 0.07)
     target.set(0, (floor * viewH) / Math.cos(PITCH), 0)
     camera.aspect = aspect
     camera.position.set(0, target.y + Math.sin(PITCH) * dist, Math.cos(PITCH) * dist)
@@ -365,8 +383,12 @@ export async function createBoxStage(canvas: HTMLCanvasElement, art: PouchArt): 
   let disposed = false
 
   return {
-    set(p, nextFrom) {
+    set(p, nextFrom, top = 0) {
       if (disposed) return
+      if (top !== topPx) {
+        topPx = top
+        cw = 0 // 자리를 다시 잡는다
+      }
       size()
       if (!cw) return
       if (nextFrom) from = nextFrom

@@ -649,8 +649,9 @@ body:has(.dd-cookie) .dd-floatbuy {
     padding: 5px 0;
     font-size: 13px;
   }
-  /* 휴대폰 — 글은 헤더 아래 한 줄 제목 + 짧은 설명, 상자는 그 아래 */
+  /* 휴대폰 — 글은 헤더 아래 한 줄 제목 + 짧은 설명, 상자는 그 아래 (--copy-top: 상자 장면이 글 아래로 내려온다) */
   .dd-s3 .copy {
+    --copy-top: 1;
     left: 20px;
     top: calc(84px + var(--dd-banner, 0px));
     translate: none;
@@ -673,6 +674,26 @@ body:has(.dd-cookie) .dd-floatbuy {
   }
   body:has(.dd-cookie) .dd-floatbuy {
     bottom: 132px;
+  }
+}
+
+/* 세로로 길거나 정사각형에 가까운 화면(태블릿 세로 등) — 상자가 폭을 거의 다 쓰니 글은 휴대폰처럼 위로 올린다 */
+@media (min-width: 861px) and (max-aspect-ratio: 5/4) {
+  .dd-s3 .copy {
+    --copy-top: 1;
+    left: clamp(20px, 4vw, 56px);
+    top: calc(84px + var(--dd-banner, 0px));
+    translate: none;
+    gap: 10px;
+  }
+  .dd-s3 .big {
+    font-size: clamp(40px, 5vw, 56px);
+  }
+  .dd-s3 .big br {
+    display: none;
+  }
+  .dd-s3 .caption {
+    font-size: 15px;
   }
 }
 
