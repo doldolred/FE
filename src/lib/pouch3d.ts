@@ -81,9 +81,7 @@ function bulge(x: number, v: number, hw: number) {
 }
 
 /** 몸통 한 면. facing 1 = 앞, -1 = 뒤 (뒤는 도안이 뒤에서 바로 읽히게 좌우를 뒤집는다) */
-function bodyFace(facing: 1 | -1) {
-  const NU = 56
-  const NV = 84
+function bodyFace(facing: 1 | -1, NU = 56, NV = 84) {
   const pos = new Float32Array((NU + 1) * (NV + 1) * 3)
   const uv = new Float32Array((NU + 1) * (NV + 1) * 2)
   let p = 0
@@ -149,7 +147,7 @@ function baseGeometry() {
 }
 
 /** 세로 골이 팬 뚜껑 */
-function capGeometry() {
+function capGeometry(segments = 120, ribbed = true) {
   const bevel = 0.014
   const profile = [
     new Vector2(0, CAP_H),
@@ -159,14 +157,14 @@ function capGeometry() {
     new Vector2(CAP_R - 0.008, 0),
     new Vector2(0, 0),
   ]
-  const g = new LatheGeometry(profile, 120)
+  const g = new LatheGeometry(profile, segments)
   const a = g.getAttribute('position')
   for (let i = 0; i < a.count; i++) {
     const x = a.getX(i)
     const y = a.getY(i)
     const z = a.getZ(i)
     const r = Math.hypot(x, z)
-    if (r < CAP_R - 0.001 || y < 0.02 || y > CAP_H - 0.02) continue
+    if (!ribbed || r < CAP_R - 0.001 || y < 0.02 || y > CAP_H - 0.02) continue
     const rib = 1 - 0.06 * smooth(clamp01(0.5 + 0.9 * Math.cos(30 * Math.atan2(z, x))))
     a.setX(i, x * rib)
     a.setZ(i, z * rib)
@@ -251,8 +249,8 @@ export function studio(renderer: WebGLRenderer, scene: Scene) {
 }
 
 export interface PouchKit {
-  /** 파우치 한 개 — 원점은 몸통 가운데. 모양 · 재질은 서로 나눠 쓴다 */
-  create(): Group
+  /** 파우치 한 개 — 원점은 몸통 가운데. 모양 · 재질은 서로 나눠 쓴다. light = 멀리 작게 여러 개 놓을 때 쓰는 가벼운 모양 */
+  create(light?: boolean): Group
   dispose(): void
 }
 
@@ -276,10 +274,20 @@ export function pouchKit(renderer: WebGLRenderer, frontImg: HTMLImageElement, ba
     { geometry: new CylinderGeometry(NECK_R + 0.014, NECK_R + 0.014, 0.018, 48), material: neckPlastic, y: H / 2 + NECK_H * 0.45 },
     { geometry: capGeometry(), material: plastic, y: H / 2 + NECK_H },
   ]
+  // 가벼운 모양 — 면 수를 1/5 쯤으로 (필요할 때 한 번만 만든다)
+  let lightParts: typeof parts | null = null
+  const light = () =>
+    (lightParts ??= [
+      { geometry: bodyFace(1, 24, 36), material: frontFilm, y: 0 },
+      { geometry: bodyFace(-1, 24, 36), material: backFilm, y: 0 },
+      parts[2],
+      { geometry: new CylinderGeometry(NECK_R, NECK_R, NECK_H + 0.1, 20), material: neckPlastic, y: parts[3].y },
+      { geometry: capGeometry(28, false), material: plastic, y: parts[5].y },
+    ])
   return {
-    create() {
+    create(isLight = false) {
       const g = new Group()
-      for (const p of parts) {
+      for (const p of isLight ? light() : parts) {
         const m = new Mesh(p.geometry, p.material)
         m.position.y = p.y
         g.add(m)
@@ -288,6 +296,7 @@ export function pouchKit(renderer: WebGLRenderer, frontImg: HTMLImageElement, ba
     },
     dispose() {
       for (const p of parts) p.geometry.dispose()
+      for (const p of lightParts ?? []) p.geometry.dispose()
       for (const m of [frontFilm, backFilm, plastic, neckPlastic]) m.dispose()
       frontTex.dispose()
       backTex.dispose()

@@ -10,16 +10,16 @@
  * 헤더 바로 아래에 현무암 띠(.dd-subtop)가 깔리고 돌 가장자리로 흰 바탕에 이어진다. 빨강은 구매 버튼 · 숫자 같은 포인트에만.
  */
 .dd-subtop {
-  --eh: clamp(22px, 3.2vw, 40px);
-  height: calc(clamp(34px, 5vw, 64px) + var(--eh));
+  --eh: clamp(28px, 4vw, 60px);
+  height: calc(clamp(30px, 4.4vw, 58px) + var(--eh));
   background:
     linear-gradient(180deg, rgba(20, 18, 19, 0.3), rgba(20, 18, 19, 0.5)),
     #1c1b1b url('/bg/basalt.webp') center 40% / cover no-repeat;
   -webkit-mask:
-    var(--dd-rock-bottom) left bottom / 1440px var(--eh) repeat-x,
+    var(--dd-rock-bottom) left bottom / auto var(--eh) repeat-x,
     linear-gradient(#000, #000) left top / 100% calc(100% - var(--eh) + 1px) no-repeat;
   mask:
-    var(--dd-rock-bottom) left bottom / 1440px var(--eh) repeat-x,
+    var(--dd-rock-bottom) left bottom / auto var(--eh) repeat-x,
     linear-gradient(#000, #000) left top / 100% calc(100% - var(--eh) + 1px) no-repeat;
 }
 @media (max-width: 860px) {

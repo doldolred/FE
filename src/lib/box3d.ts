@@ -236,7 +236,8 @@ export async function createBoxStage(canvas: HTMLCanvasElement, art: PouchArt): 
   const [[frontImg, backImg], [letterImg]] = await Promise.all([loadArt(art), loadArt({ front: LETTERING_ART }), fontsReady(fontLogo, fontKo)])
 
   const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+  // 화면 전체를 그리는 캔버스라 터치 기기에서는 해상도를 조금 낮춘다
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.matchMedia('(pointer: coarse)').matches ? 1.5 : 2))
   const scene = new Scene()
   const disposeStudio = studio(renderer, scene)
   const kit = pouchKit(renderer, frontImg, backImg)
@@ -287,7 +288,7 @@ export async function createBoxStage(canvas: HTMLCanvasElement, art: PouchArt): 
   for (let row = 0; row < 2; row++) {
     for (let i = 0; i < 5; i++) {
       if (row === 0 && i === 2) continue
-      const p = kit.create()
+      const p = kit.create(true) // 상자 속에 누운 것은 가벼운 모양
       p.position.y = POUCH_BODY_H / 2
       const slot = new Group()
       slot.add(p)

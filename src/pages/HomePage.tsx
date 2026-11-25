@@ -19,7 +19,7 @@ import { BOX_HANDOFF, BOX_HOLD, POUCH_GL_FRAME, posePouch } from '../lib/pouch'
  * 메인 — 프로토타입 v4 의 흐름을 1차 수정 요청(미니멀 · 흑백 제주 바다 · 현무암)에 맞춰 다시 짰다.
  *
  *   0 표지(LINEUP)  화면이 붙잡힌 채, 비트즙 파우치는 위에서 내려오고 다른 제품은 아래에서 올라와 가운데서 만난다.
- *                   흰 벽 아래는 흑백 제주 바다. 더 내리면 다른 제품은 위로 빠지고 바다가 화면을 채운 뒤, 현무암이 아래에서 덮으며 올라온다.
+ *                   뒤에는 큰 DOLDOL 글씨 (제품이 글자 아래쪽을 덮는다). 흰 벽 아래는 흑백 제주 바다. 더 내리면 다른 제품은 위로 빠지고 바다가 화면을 채운 뒤, 현무암이 아래에서 덮으며 올라온다.
  *                   어떤 제품을 어떤 순서로 둘지는 관리자 상품 화면(상태 · 라인업 순서). 가운데 = 맨 앞 판매중 상품
  *   1 원물          현무암 위 — 제주 겨울 비트 100%, 통비트가 떨어진다
  *   2 공법          흰 바탕 — 정제수 0%, 제품 정보 카드
@@ -53,54 +53,63 @@ interface Key {
 
 /**
  * s = 흐름 맨 위에서 내려온 정도 (0 ~ 1 = 0번 장면, 1 = 1번 …). x · y 는 화면 비율.
+ * 파우치는 좌우로 움직이지 않고 수직으로만 떨어진다 (고객 요청) — x 는 늘 0, 기울기(rz)도 0.
  * 도는 것은 세로(rx)로, 처음부터 끝까지 세 바퀴 — 글을 읽는 자리(1번 · 2번 장면 가운데, 마무리)에서는 바로 선다.
  * narrow(휴대폰): 글자가 위 · 아래로 쌓이니 파우치는 가운데 빈 띠에 작게 — 제목 · 카드와 겹치지 않게.
  */
 function buildKeys(d: number, narrow: boolean): Key[] {
   if (narrow) {
     return [
-      { s: 0.0, x: 0, y: -0.6, rz: -18, ry: -16, rx: -55, sc: d },
-      { s: DWELL_IN, x: 0, y: 0, rz: -3, ry: -12, rx: 0, sc: d },
-      { s: DWELL_OUT, x: 0, y: 0, rz: 2, ry: 8, rx: 0, sc: d },
-      { s: 0.7, x: 0, y: 0.04, rz: 4, ry: 6, rx: 110, sc: 0.8 },
-      { s: 1.25, x: 0.04, y: 0.1, rz: 6, ry: -10, rx: 360, sc: 0.82 },
-      { s: 1.75, x: 0, y: 0.12, rz: -6, ry: 0, rx: 520, sc: 0.8 },
-      { s: 2.3, x: 0, y: -0.03, rz: -8, ry: -10, rx: 720, sc: 0.72 }, // 제목과 제품 정보 카드 사이
+      { s: 0.0, x: 0, y: -0.6, rz: 0, ry: -16, rx: -55, sc: d },
+      { s: DWELL_IN, x: 0, y: 0, rz: 0, ry: -12, rx: 0, sc: d },
+      { s: DWELL_OUT, x: 0, y: 0, rz: 0, ry: 8, rx: 0, sc: d },
+      { s: 0.7, x: 0, y: 0.04, rz: 0, ry: 6, rx: 110, sc: 0.8 },
+      { s: 1.25, x: 0, y: 0.1, rz: 0, ry: -10, rx: 360, sc: 0.82 },
+      { s: 1.75, x: 0, y: 0.12, rz: 0, ry: 0, rx: 520, sc: 0.8 },
+      { s: 2.3, x: 0, y: -0.03, rz: 0, ry: -10, rx: 720, sc: 0.72 }, // 제목과 제품 정보 카드 사이
       // 3 성분 — 제목과 성분 글 사이에 서서 천천히 몸을 돌린다
       { s: 3.0, x: 0, y: -0.07, rz: 0, ry: -16, rx: 720, sc: 0.62 },
       { s: 3.75, x: 0, y: -0.07, rz: 0, ry: 16, rx: 720, sc: 0.62 },
-      // 4 기관 평가 — 글이 화면을 다 쓰니 아래로 빠졌다가
-      { s: 4.15, x: 0, y: 0.9, rz: 6, ry: 0, rx: 900, sc: 0.6 },
-      { s: 4.75, x: 0, y: 0.9, rz: 0, ry: 0, rx: 1080, sc: 0.6 },
+      // 4 기관 평가 — 글이 화면을 다 쓰니 아래로 떨어져 빠졌다가, 마무리에서 위에서 다시 떨어진다
+      // (화면 밖에서 위로 자리를 옮기는 4.44 ~ 4.46 은 감춰 둔다 — HIDE_FROM · HIDE_TO)
+      { s: 4.15, x: 0, y: 0.9, rz: 0, ry: 0, rx: 900, sc: 0.6 },
+      { s: 4.44, x: 0, y: 0.9, rz: 0, ry: 0, rx: 1080, sc: 0.6 },
+      { s: 4.46, x: 0, y: -0.9, rz: 0, ry: 0, rx: 1080, sc: 0.62 },
+      { s: 4.75, x: 0, y: -0.9, rz: 0, ry: 0, rx: 1080, sc: 0.62 },
       { s: 5.0, x: 0, y: -0.13, rz: 0, ry: 0, rx: 1080, sc: 0.62 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
     ]
   }
+  // 넓은 화면 — 파우치는 늘 화면 가운데 세로선 위 (x = 0, 기울기 없음). 글은 왼쪽 단, 곁들이는 것은 오른쪽 단
   return [
     // 0 표지 — 위에서 넘어오며 내려와 가운데 멈춤 → 다른 제품이 빠지면 1번으로
-    { s: 0.0, x: 0, y: -0.6, rz: -18, ry: -16, rx: -55, sc: d },
-    { s: DWELL_IN, x: 0, y: 0, rz: -3, ry: -12, rx: 0, sc: d },
-    { s: DWELL_OUT, x: 0, y: 0, rz: 2, ry: 8, rx: 0, sc: d },
-    { s: 0.7, x: 0, y: 0.04, rz: 5, ry: 6, rx: 110, sc: 0.95 },
-    // 1 ~ 3 — 글은 왼쪽, 파우치는 오른쪽
-    { s: 1.25, x: 0.2, y: 0.06, rz: -8, ry: -14, rx: 360, sc: 1.05 },
-    { s: 1.75, x: 0.12, y: 0.12, rz: 8, ry: 0, rx: 520, sc: 1.05 },
-    { s: 2.3, x: 0.2, y: 0.04, rz: -10, ry: -12, rx: 720, sc: 1.1 },
-    // 3 성분 — 가운데 서서 천천히 몸을 돌린다 (성분은 양옆에서 들어온다)
+    { s: 0.0, x: 0, y: -0.6, rz: 0, ry: -16, rx: -55, sc: d },
+    { s: DWELL_IN, x: 0, y: 0, rz: 0, ry: -12, rx: 0, sc: d },
+    { s: DWELL_OUT, x: 0, y: 0, rz: 0, ry: 8, rx: 0, sc: d },
+    { s: 0.7, x: 0, y: 0.04, rz: 0, ry: 6, rx: 110, sc: 0.95 },
+    // 1 원물 · 2 공법
+    { s: 1.25, x: 0, y: 0.04, rz: 0, ry: -10, rx: 360, sc: 1.0 },
+    { s: 1.75, x: 0, y: 0.08, rz: 0, ry: 0, rx: 520, sc: 1.0 },
+    { s: 2.3, x: 0, y: 0.03, rz: 0, ry: -10, rx: 720, sc: 1.0 },
+    // 3 성분 — 천천히 몸을 돌린다 (성분은 양옆에서 들어온다)
     { s: 3.0, x: 0, y: 0.03, rz: 0, ry: -16, rx: 720, sc: 0.95 },
     { s: 3.75, x: 0, y: 0.03, rz: 0, ry: 16, rx: 720, sc: 0.95 },
-    // 4 기관 평가 — 글은 왼쪽, 파우치는 오른쪽
-    { s: 4.25, x: 0.28, y: 0.05, rz: 7, ry: -10, rx: 1080, sc: 0.9 },
-    { s: 4.7, x: 0.2, y: 0.1, rz: 4, ry: 6, rx: 1080, sc: 0.9 },
-    { s: 5.0, x: 0.0, y: -0.15, rz: 0, ry: 0, rx: 1080, sc: 0.72 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
+    // 4 기관 평가
+    { s: 4.25, x: 0, y: 0.04, rz: 0, ry: -10, rx: 1080, sc: 0.9 },
+    { s: 4.7, x: 0, y: 0.06, rz: 0, ry: 6, rx: 1080, sc: 0.9 },
+    { s: 5.0, x: 0, y: -0.15, rz: 0, ry: 0, rx: 1080, sc: 0.72 }, // 열린 상자 위 — 여기서 상자 장면이 넘겨받는다
   ]
 }
 
+/** 휴대폰에서 파우치를 감춰 두는 구간 (기관 평가 — 화면 아래로 빠진 뒤 위로 자리를 옮기는 동안) */
+const HIDE_FROM = 4.2
+const HIDE_TO = 4.72
+
 // 아래에서 올라오는 제품 — 가운데서 멈췄다가 위로 빠진다
 const RISE = [
-  { s: 0.0, y: 0.6, r: 16, o: 1 },
+  { s: 0.0, y: 0.6, r: 0, o: 1 },
   { s: DWELL_IN, y: 0, r: 0, o: 1 },
   { s: DWELL_OUT, y: 0, r: 0, o: 1 },
-  { s: SIDES_GONE, y: -0.78, r: -12, o: 0 },
+  { s: SIDES_GONE, y: -0.78, r: 0, o: 0 },
 ]
 
 const smooth = (t: number) => t * t * (3 - 2 * t)
@@ -220,13 +229,21 @@ export default function HomePage() {
     const secs = [...flow.querySelectorAll<HTMLElement>('.dd-sec')]
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let d = 0.85
-    let keys = buildKeys(d, window.innerWidth < 700)
+    let narrow = window.innerWidth < 700
+    let keys = buildKeys(d, narrow)
+    /**
+     * 화면 높이 — 붙잡힌 칸(100svh)의 높이를 쓴다. window.innerHeight 는 휴대폰에서 위로 스크롤해 주소창이 다시 나올 때마다 바뀌어
+     * 파우치 자리 · 상자 장면이 매 프레임 다시 계산되고 버벅였다.
+     */
+    let viewH = window.innerHeight
+    let lastW = window.innerWidth
     /** 마무리 장면에서 글이 위쪽에 차지한 높이(px) — 글이 왼쪽에 서는 넓은 화면은 0 */
     let copyTop = 0
 
     /** 라인업 칸 크기 — 그림 칸 높이를 라인업 때 파우치 높이에 맞춘다 */
     const size = () => {
-      const narrow = window.innerWidth < 700
+      narrow = window.innerWidth < 700
+      viewH = (pouch.parentElement as HTMLElement).offsetHeight || window.innerHeight
       d = narrow ? 0.7 : 0.85
       keys = buildKeys(d, narrow)
       // 고정 화면(.pin)에 둔다 — 라인업 칸과 배경 선반 높이가 같이 쓴다
@@ -238,7 +255,13 @@ export default function HomePage() {
       copyTop = onTop ? Math.round(copy.offsetTop + copy.offsetHeight + 18) : 0
     }
     size()
-    window.addEventListener('resize', size)
+    // 터치 기기에서 높이만 바뀐 것(주소창이 나오고 들어감)은 무시한다 — 폭이 바뀌었을 때만 다시 잰다
+    const onResize = () => {
+      if (window.innerWidth === lastW && window.matchMedia('(pointer: coarse)').matches) return
+      lastW = window.innerWidth
+      size()
+    }
+    window.addEventListener('resize', onResize)
     // 글꼴이 늦게 오면 글 높이가 달라진다
     void document.fonts.ready.then(size)
 
@@ -291,7 +314,7 @@ export default function HomePage() {
     let raf = 0
     const frame = (now: number) => {
       const vw = window.innerWidth
-      const vh = window.innerHeight
+      const vh = viewH
       const s = flowPos()
       const k = interp(keys, s)
       const bob = reduced ? 0 : Math.sin(now / 1000) * 6
@@ -336,7 +359,7 @@ export default function HomePage() {
       const sec3 = s3Ref.current
       const r3 = sec3?.getBoundingClientRect()
       const p = r3 ? clamp01(-r3.top / Math.max(1, r3.height - vh)) : 0
-      const goneNow = stage ? clamp01((p - BOX_HANDOFF) / BOX_HOLD) : 0
+      const goneNow = narrow && s > HIDE_FROM && s < HIDE_TO ? 1 : stage ? clamp01((p - BOX_HANDOFF) / BOX_HOLD) : 0
       if (goneNow !== gone) {
         gone = goneNow
         pouch.style.opacity = (1 - gone).toFixed(3)
@@ -377,7 +400,7 @@ export default function HomePage() {
         let tone = 'light'
         for (const el of tones) {
           const r = el.getBoundingClientRect()
-          const lead = rocky.has(el) ? Math.min(84, Math.max(38, vw * 0.06)) * 0.6 : 0
+          const lead = rocky.has(el) ? Math.min(124, Math.max(44, vw * 0.075)) * 0.5 : 0
           if (r.top - lead <= mid && r.bottom > mid) tone = el.dataset.tone ?? tone
         }
         const fgNow = tone === 'dark' ? '#fff' : '#222021'
@@ -422,7 +445,7 @@ export default function HomePage() {
     raf = requestAnimationFrame(frame)
     return () => {
       cancelAnimationFrame(raf)
-      window.removeEventListener('resize', size)
+      window.removeEventListener('resize', onResize)
       root.style.removeProperty('--dd-hero-fg')
       root.style.removeProperty('--dd-hero-logo')
     }
@@ -439,9 +462,9 @@ export default function HomePage() {
           <div className="pin" ref={pinRef}>
             <div className="sea" aria-hidden="true" />
             <div className="bgword" aria-hidden="true">
-              LINEUP
+              DOLDOL
             </div>
-            <p className="kicker dd-kicker">DOLDOL · BEET LINEUP</p>
+            <p className="kicker dd-kicker">JEJU · RED BEET</p>
             <div className="dd-lineup" ref={lineupRef}>
               {/* 메인 — 그림은 흐르는 파우치가 맡고, 칸은 누르는 자리 + 이름표만 */}
               <Link to={mainHref} ref={mainItemRef} className="dd-lp" data-main="" aria-label={`${main?.name ?? '돌돌 레드비트즙'} 자세히 보기`}>
@@ -484,7 +507,8 @@ export default function HomePage() {
           <div className="dd-rock" aria-hidden="true" />
           <p className="kicker dd-kicker">UNBEETABLE · 원물</p>
           <h2 className="big">
-            <span>제주 겨울 비트</span>
+            <span>제주</span>
+            <span>겨울 비트</span>
             <span>
               <em>100%</em>
             </span>
@@ -502,8 +526,8 @@ export default function HomePage() {
             <span>
               <em>정제수 0%</em>
             </span>
-            <span>물 한 방울 없는</span>
-            <span>착즙</span>
+            <span>물 한 방울</span>
+            <span>없는 착즙</span>
           </h2>
           {/* 영양성분표처럼 생긴 제품 정보 카드 */}
           <aside className="dd-facts" aria-label="제품 정보">
@@ -559,10 +583,13 @@ export default function HomePage() {
         <section className="dd-sec dd-s5" data-tone="dark" aria-label="기관 평가">
           <div className="dd-rock" data-flat-bottom="" aria-hidden="true" />
           <div className="inner">
-            <p className="eyebrow dd-kicker">IOC · AIS</p>
-            <h2>
-              국제올림픽위원회(IOC) &amp; 호주스포츠연구소(AIS)가 주목한 <em>최상위 Group A 성분,</em> 식이 질산염
-            </h2>
+            <div className="text">
+              <p className="eyebrow dd-kicker">IOC · AIS</p>
+              <h2>
+                국제올림픽위원회(IOC) &amp; 호주스포츠연구소(AIS)가 주목한 <em>최상위 Group A 성분,</em> 식이 질산염
+              </h2>
+              <p className="note">※ 원물(레드비트) 및 식이 질산염에 대한 학술 연구 기준이며, 제품 효능과 무관합니다.</p>
+            </div>
             <ul className="stats">
               <li>
                 <span className="k">운동 시 근육 산소 소모량</span>
@@ -579,7 +606,6 @@ export default function HomePage() {
                 <span className="v">연장</span>
               </li>
             </ul>
-            <p className="note">※ 원물(레드비트) 및 식이 질산염에 대한 학술 연구 기준이며, 제품 효능과 무관합니다.</p>
           </div>
         </section>
 

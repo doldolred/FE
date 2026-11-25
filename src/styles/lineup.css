@@ -137,14 +137,15 @@
 .dd-s0 .bgword {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 31%;
   translate: -50% -50%;
-  font-family: var(--dd-font-display);
-  font-size: clamp(120px, 26vw, 440px);
+  font-family: var(--dd-font-logo);
+  font-weight: 900;
+  font-size: clamp(84px, 21vw, 440px);
   line-height: 0.85;
+  letter-spacing: -0.03em;
   white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(34, 32, 33, 0.22);
+  color: var(--dd-ink);
   opacity: calc(1 - var(--sea, 0)); /* 바다가 차오르면 물러난다 */
 }
 .dd-s0 .kicker {
@@ -300,9 +301,10 @@
  * 현무암 면(.dd-rock)은 사진을 돌 모양 가장자리로 잘라 쓴다 — 단색 컷이 아니라 돌 질감이 그대로 경계가 된다.
  */
 :root {
-  --eh: clamp(38px, 6vw, 84px); /* 돌 가장자리 높이 */
-  --dd-rock-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L0 52 L12 60 L24 61 L65 70 L72 67 L124 80 L184 92 L197 86 L239 56 L270 24 L281 30 L294 30 L305 26 L323 32 L332 27 L338 32 L354 30 L370 21 L426 19 L437 11 L452 10 L486 42 L493 37 L517 57 L560 54 L610 29 L617 27 L649 59 L658 66 L695 90 L701 92 L733 92 L742 84 L786 67 L796 66 L807 67 L815 61 L830 57 L880 87 L938 92 L949 85 L1007 67 L1016 73 L1025 67 L1031 62 L1047 64 L1064 59 L1096 55 L1124 46 L1131 44 L1149 47 L1162 40 L1184 68 L1202 59 L1213 64 L1231 56 L1246 63 L1260 68 L1269 72 L1286 70 L1302 72 L1312 73 L1318 76 L1334 80 L1349 81 L1365 74 L1370 75 L1378 79 L1391 87 L1396 83 L1404 77 L1417 76 L1427 79 L1440 52 L1440 100 Z'/%3E%3C/svg%3E");
-  --dd-rock-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0 L0 52 L9 58 L21 55 L39 48 L47 46 L56 47 L70 47 L109 40 L121 35 L130 35 L168 54 L183 59 L196 57 L211 50 L221 44 L256 14 L266 17 L283 20 L300 24 L314 32 L347 64 L404 92 L432 92 L448 92 L457 83 L473 91 L479 85 L487 77 L528 51 L556 20 L572 14 L588 10 L605 15 L620 16 L634 21 L668 10 L677 13 L687 13 L701 11 L736 10 L754 10 L771 10 L779 18 L825 28 L848 37 L891 69 L900 62 L909 55 L922 59 L954 88 L990 92 L998 92 L1007 90 L1021 92 L1038 84 L1056 90 L1064 83 L1081 87 L1094 92 L1101 92 L1116 92 L1130 90 L1136 92 L1153 92 L1176 74 L1191 78 L1221 74 L1234 66 L1242 70 L1251 76 L1292 92 L1306 87 L1317 84 L1331 91 L1338 87 L1352 89 L1365 82 L1417 55 L1426 49 L1440 52 L1440 0 Z'/%3E%3C/svg%3E");
+  --eh: clamp(44px, 7.5vw, 124px); /* 돌 가장자리 높이 */
+  /* 현무암 사진의 결(밝은 능선 · 어두운 구멍)을 따라 뽑은 가장자리 — 가로로 이어 붙여도 이음매가 없다 (2800×240) */
+  --dd-rock-top: url('/bg/basalt-edge-top.webp');
+  --dd-rock-bottom: url('/bg/basalt-edge-bottom.webp');
 }
 .dd-rock {
   position: absolute;
@@ -312,21 +314,21 @@
   bottom: 0;
   background: #1c1b1b url('/bg/basalt.webp') center / cover no-repeat;
   -webkit-mask:
-    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
-    var(--dd-rock-bottom) left bottom / 1440px var(--eh) repeat-x,
+    var(--dd-rock-top) left top / auto var(--eh) repeat-x,
+    var(--dd-rock-bottom) left bottom / auto var(--eh) repeat-x,
     linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - 2 * var(--eh) + 2px) no-repeat;
   mask:
-    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
-    var(--dd-rock-bottom) left bottom / 1440px var(--eh) repeat-x,
+    var(--dd-rock-top) left top / auto var(--eh) repeat-x,
+    var(--dd-rock-bottom) left bottom / auto var(--eh) repeat-x,
     linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - 2 * var(--eh) + 2px) no-repeat;
 }
 /* 아래가 구매 띠(먹색)로 이어지는 면 — 위쪽만 돌 가장자리 */
 .dd-rock[data-flat-bottom] {
   -webkit-mask:
-    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
+    var(--dd-rock-top) left top / auto var(--eh) repeat-x,
     linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - var(--eh) + 1px) no-repeat;
   mask:
-    var(--dd-rock-top) left top / 1440px var(--eh) repeat-x,
+    var(--dd-rock-top) left top / auto var(--eh) repeat-x,
     linear-gradient(#000, #000) left calc(var(--eh) - 1px) / 100% calc(100% - var(--eh) + 1px) no-repeat;
 }
 /* 글자가 읽히게 살짝 눌러 준다 */
@@ -342,7 +344,7 @@
   left: clamp(16px, 4vw, 56px);
   z-index: 1;
   margin: 0;
-  font-size: 13px;
+  font-size: clamp(13px, 1vw, 17px);
   letter-spacing: 0.08em;
 }
 .dd-home .big em {
@@ -364,33 +366,34 @@
   color: #fff;
 }
 .dd-s1 .kicker {
-  top: 22%;
+  top: 20%;
 }
 .dd-s1 .big {
   position: absolute;
   left: clamp(16px, 4vw, 56px);
-  top: 27%;
+  top: 25%;
   z-index: 1;
   margin: 0;
   font-family: var(--dd-font-display-ko);
   font-weight: 400;
-  font-size: clamp(50px, min(7.6vw, 11svh), 124px);
-  line-height: 1.02;
+  /* 왼쪽 단(화면의 1/3쯤)에 세 줄로 — 가운데는 파우치 자리 */
+  font-size: clamp(50px, min(6.6vw, 11.5svh), 150px);
+  line-height: 1.04;
   letter-spacing: -0.02em;
   animation: dd-rise 900ms var(--dd-ease) both;
 }
 .dd-s1 .big em {
-  font-size: 1.5em;
+  font-size: 1.6em;
   line-height: 0.95;
 }
 .dd-s1 .lead {
   position: absolute;
-  left: clamp(16px, 4vw, 56px);
-  bottom: calc(14% + var(--eh));
+  right: clamp(16px, 4vw, 56px);
+  bottom: calc(16% + var(--eh));
   z-index: 4;
   margin: 0;
-  max-width: 30ch;
-  font-size: clamp(14px, 1.25vw, 17px);
+  max-width: min(30ch, 30vw);
+  font-size: clamp(15px, 1.35vw, 22px);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.82);
   word-break: keep-all;
@@ -400,8 +403,8 @@
   z-index: 2;
   width: clamp(120px, 15vw, 300px);
   height: auto;
-  left: 76%;
-  top: 12%;
+  left: 71%;
+  top: 13%;
   filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
   animation: dd-drop 1200ms 250ms var(--dd-ease) both;
 }
@@ -409,8 +412,8 @@
 .dd-beetroot[data-half] {
   --rz: -16deg;
   width: clamp(96px, 11vw, 220px);
-  left: 44%;
-  top: 62%;
+  left: 8%;
+  top: 70%;
   animation-delay: 550ms;
 }
 .dd-s1:not(.in) .big,
@@ -453,23 +456,24 @@
   margin: 0;
   font-family: var(--dd-font-display-ko);
   font-weight: 400;
-  font-size: clamp(46px, min(6.8vw, 10svh), 112px);
-  line-height: 1.04;
+  font-size: clamp(46px, min(5.4vw, 9.5svh), 124px);
+  line-height: 1.06;
   letter-spacing: -0.02em;
   color: var(--dd-navy);
 }
 .dd-s2 .big em {
-  font-size: 1.5em;
+  font-size: 1.4em;
   line-height: 0.95;
 }
 /* 제품 정보 카드 — 영양성분표 모양 (굵은 제목 줄 · 실선 칸) */
 .dd-facts {
   position: absolute;
-  left: clamp(16px, 4vw, 56px);
-  bottom: 12%;
+  right: clamp(16px, 4vw, 56px);
+  top: 50%;
+  translate: 0 -50%;
   z-index: 4;
-  width: min(340px, calc(100% - 32px));
-  padding: 16px 18px 14px;
+  width: min(30vw, 420px);
+  padding: clamp(16px, 1.6vw, 26px) clamp(18px, 1.8vw, 28px) clamp(14px, 1.4vw, 22px);
   border: 1px solid var(--dd-hair);
   border-radius: 14px;
   background: #fff;
@@ -544,7 +548,7 @@
   margin: 0;
   font-family: var(--dd-font-display-ko);
   font-weight: 400;
-  font-size: clamp(32px, min(4.4vw, 7svh), 72px);
+  font-size: clamp(32px, min(5vw, 8.5svh), 100px);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -602,7 +606,7 @@
   margin: 0;
   font-family: var(--dd-font-display-ko);
   font-weight: 400;
-  font-size: clamp(28px, 3vw, 44px);
+  font-size: clamp(28px, 3.2vw, 60px);
   line-height: 1.1;
 }
 .dd-s4 .items h3 span {
@@ -614,7 +618,7 @@
 .dd-s4 .items .text {
   margin: 0;
   max-width: 26ch;
-  font-size: 15px;
+  font-size: clamp(15px, 1.25vw, 21px);
   line-height: 1.7;
   color: rgba(34, 32, 33, 0.75);
   word-break: keep-all;
@@ -631,9 +635,15 @@
 .dd-s5 .inner {
   position: relative;
   z-index: 1;
-  width: min(100%, 1240px);
-  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(220px, 24vw, 520px) minmax(0, 1fr);
+  column-gap: clamp(16px, 2vw, 40px);
+  align-items: center;
   padding: clamp(96px, 16vh, 160px) clamp(16px, 4vw, 56px) clamp(72px, 12vh, 120px);
+}
+.dd-s5 .text {
+  grid-column: 1;
 }
 .dd-s5 .eyebrow {
   margin: 0 0 18px;
@@ -643,10 +653,9 @@
 }
 .dd-s5 h2 {
   margin: 0;
-  max-width: min(15.5em, 54vw); /* 오른쪽은 파우치 자리 */
   font-family: var(--dd-font-display-ko);
   font-weight: 400;
-  font-size: clamp(25px, 3.1vw, 44px);
+  font-size: clamp(24px, 2.7vw, 52px);
   line-height: 1.28;
   word-break: keep-all;
 }
@@ -657,9 +666,10 @@
 .dd-s5 .stats {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 300px));
-  gap: clamp(24px, 4vw, 64px);
-  margin: clamp(36px, 7vh, 72px) 0 0;
+  grid-column: 3;
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 5vh, 56px);
+  margin: 0;
   padding: 0;
 }
 .dd-s5 .stats li {
@@ -679,7 +689,7 @@
   gap: 10px;
   font-family: var(--dd-font-display);
   font-weight: 400;
-  font-size: clamp(64px, 8.5vw, 132px);
+  font-size: clamp(64px, 9vw, 180px);
   line-height: 0.95;
 }
 .dd-s5 .stats b small {
@@ -885,8 +895,29 @@ body:has(.dd-cookie) .dd-floatbuy {
     max-width: none;
     font-size: 14px;
   }
-  .dd-s5 h2 {
+  .dd-s5 .inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .dd-s5 .text {
+    display: contents;
+  }
+  .dd-s5 .stats {
+    order: 2;
+    margin-top: 36px;
+  }
+  .dd-s5 .note {
+    order: 3;
+  }
+  .dd-s1 .lead {
     max-width: none;
+  }
+  .dd-facts {
+    top: auto;
+    translate: none;
+  }
+  .dd-s0 .bgword {
+    top: 37%;
   }
   .dd-s5 .stats {
     grid-template-columns: 1fr;
@@ -1010,6 +1041,11 @@ body:has(.dd-cookie) .dd-floatbuy {
   filter: brightness(0.35);
 }
 /* WebGL 입체 파우치 (lib/pouch3d) — 준비되면 그림 파우치와 자리를 바꾼다. 캔버스는 상자보다 넉넉하게 (뚜껑이 위로 올라온다) */
+@media (max-width: 860px), (pointer: coarse) {
+  .dd-traveler .dd-pouch-gl {
+    filter: none;
+  }
+}
 .dd-pouch-gl {
   position: absolute;
   left: -10%;
